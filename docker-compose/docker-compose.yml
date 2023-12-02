@@ -1,0 +1,39 @@
+version: '3'
+services:
+  backend-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: connect-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-database:3306/connect_base
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: poorguy
+    networks:
+      - inner_network
+
+  mysql-database:
+    image: mysql:8.0
+    container_name: connect-mysql
+    restart: unless-stopped
+    volumes:
+      - "./mysql8.0/my.cnf:/etc/mysql/my.cnf"
+      - "./mysql8.0/data:/var/lib/mysql"
+      #      - "./mysql/conf.d:/etc/mysql/conf.d"
+      - "./mysql8.0/mysql-files:/var/lib/mysql-files"
+      - "./mysql8.0/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
+    environment:
+      TZ: Asia/Shanghai
+      LANG: en_US.UTF-8
+      MYSQL_ROOT_PASSWORD: poorguy
+    ports:
+      - "3306:3306"
+    networks:
+      - inner_network
+
+networks:
+  inner_network:
