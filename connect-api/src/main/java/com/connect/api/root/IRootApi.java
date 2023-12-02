@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/api/root")
 public interface IRootApi {
     @PostMapping("/test/login")
-    APIResponse testLogin(@RequestHeader("isRoot") String isRoot, @RequestBody RootLoginRequest request);
+    APIResponse testLogin(@RequestBody RootLoginRequest request);
 }

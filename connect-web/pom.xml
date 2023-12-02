@@ -23,10 +23,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.connect</groupId>
             <artifactId>connect-api</artifactId>
             <version>1.0.0-SNAPSHOT</version>
