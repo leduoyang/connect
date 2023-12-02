@@ -10,4 +10,6 @@ public interface IUserVerificationDao {
     int expireCodeByEmail(String email);
 
     int completeCodeByEmail(String email, String code);
+
+    boolean checkEmailComplete(String email);
 }

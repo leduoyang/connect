@@ -10,4 +10,6 @@ public interface IUserVerificationRepository {
     void createUserVerification(UserVerification userVerification);
 
     void verifyCode(UserVerification userVerification);
+
+    boolean checkEmailComplete(String email);
 }

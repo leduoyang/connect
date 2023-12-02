@@ -14,4 +14,6 @@ public interface IUserVerificationService {
     boolean sendCodeByEmail(QueryEmailVerificationRequest request);
 
     boolean verifyCodeByEmail(VerifyEmailVerificationRequest request);
+
+    boolean checkEmailComplete(String email);
 }

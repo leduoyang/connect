@@ -24,6 +24,16 @@
         )
     </insert>
 
+    <select id="checkEmailComplete" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT email
+        FROM email_verification
+        WHERE
+        email = #{email,jdbcType=VARCHAR} AND
+        status = #{status,jdbcType=TINYINT}
+        )
+    </select>
+
     <select id="verifyCode" resultType="java.lang.Boolean">
         SELECT EXISTS(
         SELECT email

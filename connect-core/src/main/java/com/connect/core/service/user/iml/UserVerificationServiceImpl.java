@@ -55,6 +55,11 @@ public class UserVerificationServiceImpl implements IUserVerificationService {
         return true;
     }
 
+    @Override
+    public boolean checkEmailComplete(String email) {
+        return userVerificationRepository.checkEmailComplete(email);
+    }
+
     private String generateRandomCode() {
         return UUID.randomUUID().toString().substring(0, 5);
     }

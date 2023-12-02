@@ -7,7 +7,10 @@ import com.connect.api.user.request.CreateUserRequest;
 import com.connect.api.user.request.QueryUserRequest;
 import com.connect.api.user.request.UpdateUserRequest;
 import com.connect.api.user.response.QueryUserResponse;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.user.IUserService;
+import com.connect.core.service.user.IUserVerificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,8 +26,11 @@ import java.util.List;
 public class UserController implements IUserApi {
     private final IUserService userService;
 
-    public UserController(IUserService userService) {
+    private final IUserVerificationService userVerificationService;
+
+    public UserController(IUserService userService, IUserVerificationService userVerificationService) {
         this.userService = userService;
+        this.userVerificationService = userVerificationService;
     }
 
     @Override
@@ -70,6 +76,13 @@ public class UserController implements IUserApi {
     public APIResponse<Void> signUp(
             @Validated @RequestBody CreateUserRequest request
     ) {
+        if (!userVerificationService.checkEmailComplete(request.getEmail())) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.USER_VERIFICATION_NOT_EXISTED_EXCEPTION,
+                    String.format("Target email has not been verified.", request.getEmail())
+            );
+        }
+
         userService.createUser(request);
         return APIResponse.getOKJsonResult(null);
     }

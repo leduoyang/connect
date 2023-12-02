@@ -53,4 +53,9 @@ public class UserVerificationRepositoryImpl implements IUserVerificationReposito
             throw new ConnectDataException(ConnectErrorCode.USER_CREATE_EXCEPTION);
         }
     }
+
+    @Override
+    public boolean checkEmailComplete(String email) {
+        return userVerificationDao.checkEmailComplete(email);
+    }
 }
