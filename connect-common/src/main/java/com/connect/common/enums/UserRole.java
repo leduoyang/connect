@@ -1,6 +1,6 @@
 package com.connect.common.enums;
 
-public enum Role {
+public enum UserRole {
     ADMIN(0),
     ESSENTIAL(1),
     PLUS(2),
@@ -8,7 +8,7 @@ public enum Role {
 
     final int code;
 
-    Role(int code) {
+    UserRole(int code) {
         this.code = code;
     }
 
@@ -17,7 +17,7 @@ public enum Role {
     }
 
     public static String getRole(int code) {
-        for (Role role : values()) {
+        for (UserRole role : values()) {
             if (role.getCode() == code) {
                 return role.name();
             }

@@ -28,6 +28,20 @@ public class UserController implements IUserApi {
     }
 
     @Override
+    public APIResponse<QueryUserResponse> queryPersonalInfo() {
+        String userId = ""; // get userInfo from token or session
+        UserDto userDto = userService.queryUserByUserId(userId);
+        List<UserDto> userDtoList = new ArrayList<>();
+        userDtoList.add(userDto);
+
+        QueryUserResponse response = new QueryUserResponse()
+                .setItems(userDtoList)
+                .setTotal(userDtoList.size());
+
+        return APIResponse.getOKJsonResult(response);
+    }
+
+    @Override
     public APIResponse<QueryUserResponse> queryUser(String userId) {
         UserDto userDto = userService.queryUserByUserId(userId);
         List<UserDto> userDtoList = new ArrayList<>();
@@ -53,7 +67,7 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<Void> createUser(
+    public APIResponse<Void> signUp(
             @Validated @RequestBody CreateUserRequest request
     ) {
         userService.createUser(request);
@@ -61,10 +75,10 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<Void> updateUser(
-            @Validated @NotNull @PathVariable String userId,
+    public APIResponse<Void> editPersonalInfo(
             @Validated @RequestBody UpdateUserRequest request
     ) {
+        String userId = ""; // get userInfo from token or session
         userService.updateUser(userId, request);
         return APIResponse.getOKJsonResult(null);
     }

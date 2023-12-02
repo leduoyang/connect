@@ -8,8 +8,6 @@ import java.util.List;
 public interface IUserRepository {
     boolean authenticateRootUser(String userId, String password);
 
-    boolean checkUserExisting(String userId);
-
     void createUser(User user);
 
     void deleteUser(String userId);

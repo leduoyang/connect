@@ -1,6 +1,6 @@
 package com.connect.common.enums;
 
-public enum PostStatus {
+public enum CommentStatus {
     DELETED(0),
     PUBLIC(1),
     PRIVATE(2),
@@ -8,7 +8,7 @@ public enum PostStatus {
 
     final int code;
 
-    PostStatus(int code) {
+    CommentStatus(int code) {
         this.code = code;
     }
 

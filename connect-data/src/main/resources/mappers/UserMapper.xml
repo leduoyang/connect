@@ -65,6 +65,14 @@
         )
     </select>
 
+    <select id="userExistingWithEmail" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT userId
+        FROM user
+        WHERE userId = #{userId,jdbcType=VARCHAR} OR email = #{email,jdbcType=VARCHAR}
+        )
+    </select>
+
     <update id="updateUser" parameterType="com.connect.data.entity.User">
         UPDATE user
         <trim prefix="set" suffixOverrides=",">

@@ -20,6 +20,15 @@ public enum ConnectErrorCode {
     USER_EXISTED_EXCEPTION("300005", "User has existed."),
 
     /**
+     * User Verification
+     */
+    USER_VERIFICATION_CREATE_EXCEPTION("300001", "Create user verification failed"),
+    USER_VERIFICATION_UPDATE_EXCEPTION("300002", "Update user verification failed"),
+    USER_VERIFICATION_DELETE_EXCEPTION("300003", "Delete user verification failed"),
+    USER_VERIFICATION_NOT_EXISTED_EXCEPTION("300004", "User verification not existed."),
+    USER_VERIFICATION_EXISTED_EXCEPTION("300005", "User verification has existed."),
+
+    /**
      * Comment
      */
     COMMENT_CREATE_EXCEPTION("300001", "Create comment failed"),
