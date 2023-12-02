@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.connect.data.dao.IUserDao">
+    <resultMap id="userResultMap" type="com.connect.data.entity.User">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
+        <result property="role" column="role"/>
+        <result property="description" column="description"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="profileImage" column="profileImage"/>
+        <result property="dbCreateTime" column="db_create_time"/>
+        <result property="dbModifyTime" column="db_modify_time"/>
+    </resultMap>
+
+    <delete id="deleteUser">
+        UPDATE user
+        SET `status` = 0,
+        WHERE userId = #{userId, jdbcType=VARCHAR}
+    </delete>
+
+    <insert id="createUser" parameterType="com.connect.data.entity.User" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        INSERT INTO user(userId, password, status, role, description, email, phone, profileImage)
+        VALUES (
+        #{userId, jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR},
+        #{status,jdbcType=TINYINT},
+        #{role,jdbcType=TINYINT},
+        #{description, jdbcType=VARCHAR},
+        #{email,jdbcType=VARCHAR},
+        #{phone,jdbcType=VARCHAR},
+        #{profileImage, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="authenticateRootUser" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT userId
+        FROM user
+        WHERE userId = #{userId,jdbcType=VARCHAR} AND password = #{password,jdbcType=VARCHAR}
+        )
+    </select>
+
+    <select id="queryUser" resultMap="userResultMap">
+        SELECT id, userId, status, role, description, email, phone, profileImage
+
+        FROM user
+        WHERE (userId LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
+    </select>
+
+    <select id="queryUserByUserId" resultMap="userResultMap">
+        SELECT id, userId, status, role, description, email, phone, profileImage
+
+        FROM user WHERE userId = #{userId}
+    </select>
+
+    <select id="userExisting" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT userId
+        FROM user
+        WHERE userId = #{userId,jdbcType=VARCHAR}
+        )
+    </select>
+
+    <update id="updateUser" parameterType="com.connect.data.entity.User">
+        UPDATE user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="userId != null and userId != ''">
+                userId = #{userId, jdbcType=VARCHAR},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password, jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status, jdbcType=TINYINT},
+            </if>
+            <if test="role != null">
+                role = #{role, jdbcType=TINYINT},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description, jdbcType=VARCHAR},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email, jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone, jdbcType=VARCHAR},
+            </if>
+        </trim>
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+</mapper>
