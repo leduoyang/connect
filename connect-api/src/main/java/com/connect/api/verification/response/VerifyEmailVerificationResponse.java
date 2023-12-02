@@ -6,5 +6,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class VerifyEmailVerificationResponse {
-    private boolean success = false;
+    private String uid;
 }

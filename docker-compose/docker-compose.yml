@@ -16,6 +16,22 @@ services:
 #    networks:
 #      - inner_network
 
+  connect-redis:
+    image: redis:6.0.8
+    container_name: connect-redis
+    restart: unless-stopped
+    command: redis-server /etc/redis/redis.conf --requirepass poorguy --appendonly no
+    environment:
+      TZ: Asia/Shanghai
+      LANG: en_US.UTF-8
+    volumes:
+      - "./redis/data:/data"
+      - "./redis/config/redis.conf:/etc/redis/redis.conf"
+    ports:
+      - "6379:6379"
+    networks:
+      - inner_network
+
   mysql-database:
     image: mysql:8.0
     container_name: connect-mysql

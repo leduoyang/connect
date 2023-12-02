@@ -7,8 +7,10 @@ import com.connect.api.user.request.CreateUserRequest;
 import com.connect.api.user.request.QueryUserRequest;
 import com.connect.api.user.request.UpdateUserRequest;
 import com.connect.api.user.response.QueryUserResponse;
+import com.connect.common.enums.RedisPrefix;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
+import com.connect.common.util.RedisUtil;
 import com.connect.core.service.user.IUserService;
 import com.connect.core.service.user.IUserVerificationService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +26,16 @@ import java.util.List;
 @Slf4j
 @RestController
 public class UserController implements IUserApi {
+    private final RedisUtil redisUtil;
+
     private final IUserService userService;
 
     private final IUserVerificationService userVerificationService;
 
-    public UserController(IUserService userService, IUserVerificationService userVerificationService) {
+    public UserController(IUserService userService, IUserVerificationService userVerificationService, RedisUtil redisUtil) {
         this.userService = userService;
         this.userVerificationService = userVerificationService;
+        this.redisUtil = redisUtil;
     }
 
     @Override
@@ -79,7 +84,14 @@ public class UserController implements IUserApi {
         if (!userVerificationService.checkEmailComplete(request.getEmail())) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_VERIFICATION_NOT_EXISTED_EXCEPTION,
-                    String.format("Target email has not been verified.", request.getEmail())
+                    String.format("Target email %s has not been verified.", request.getEmail())
+            );
+        }
+
+        if (!request.getUid().equals(redisUtil.getValue(RedisPrefix.USER_SIGNUP_EMAIL, request.getEmail()))) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.USER_VERIFICATION_NOT_EXISTED_EXCEPTION,
+                    String.format("Verified UID of email %s does not align with server.", request.getEmail())
             );
         }
 

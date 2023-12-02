@@ -1,31 +1,33 @@
 package com.connect.common.util;
 
+import com.connect.common.enums.RedisPrefix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
-@Service
+@Component
 public class RedisUtil {
-    private static final String REDIS_KEY_PREFIX = "jwtToken:";
+    private static final String KEY_PREFIX = "signup:verification:";  // Set your desired prefix here
 
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate redisTemplate;
 
-    public void storeToken(String userId, String token, long expirationTimeInMinutes) {
-        String key = REDIS_KEY_PREFIX + userId;
-        redisTemplate.opsForValue().set(key, token, expirationTimeInMinutes, TimeUnit.MINUTES);
+    public void setValueWithExpiration(RedisPrefix prefix, String key, Object value, long expirationTime, TimeUnit timeUnit) {
+        key = prefix.getPrefix() + key;
+        redisTemplate.opsForValue().set(key, value, expirationTime, timeUnit);
     }
 
-    public String retrieveToken(String userId) {
-        String key = REDIS_KEY_PREFIX + userId;
+    public Object getValue(RedisPrefix prefix, String key) {
+        key = prefix.getPrefix() + key;
         return redisTemplate.opsForValue().get(key);
     }
 
-    public void deleteToken(String userId) {
-        String key = REDIS_KEY_PREFIX + userId;
+    public void deleteKey(RedisPrefix prefix, String key) {
+        key = prefix.getPrefix() + key;
         redisTemplate.delete(key);
     }
 }
+
 
