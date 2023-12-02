@@ -8,11 +8,11 @@
         <result property="status" column="status"/>
     </resultMap>
 
-    <delete id="expireCodeByEmail">
+    <update id="expireCodeByEmail">
         UPDATE email_verification
         SET `status` = 3
-        WHERE email = #{email, jdbcType=VARCHAR} AND code = #{code, jdbcType=VARCHAR}
-    </delete>
+        WHERE email = #{email, jdbcType=VARCHAR}
+    </update>
 
     <insert id="createUserVerification" parameterType="com.connect.data.entity.UserVerification" useGeneratedKeys="true"
             keyProperty="id" keyColumn="id">
@@ -30,7 +30,7 @@
         FROM email_verification
         WHERE
         email = #{email,jdbcType=VARCHAR} AND
-        status = #{status,jdbcType=TINYINT}
+        status = 2
         )
     </select>
 
@@ -45,9 +45,9 @@
         )
     </select>
 
-    <delete id="completeCodeByEmail">
+    <update id="completeCodeByEmail">
         UPDATE email_verification
         SET `status` = 2
         WHERE email = #{email, jdbcType=VARCHAR} AND code = #{code, jdbcType=VARCHAR}
-    </delete>
+    </update>
 </mapper>
