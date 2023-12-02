@@ -1,6 +1,7 @@
 package com.connect.web.filter;
 
-import com.connect.web.util.AuthenticationUtil;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
 import com.connect.web.util.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,8 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,12 +20,11 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    private AuthenticationUtil authenticationUtil;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getMethod().equals("GET")) {
+        if (request.getMethod().equals("GET") ||
+                (request.getHeader("isRoot") != null && request.getHeader("isRoot").equals("true"))
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -37,13 +35,16 @@ public class JwtFilter extends OncePerRequestFilter {
             String userId = jwtTokenUtil.getUserIdFromToken(token);
 
             if (userId != null && !jwtTokenUtil.isTokenExpired(token)) {
-                Authentication authentication = authenticationUtil.getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.warn("user verified: " + userId);
+                filterChain.doFilter(request, response);
+                return;
             }
         }
 
-        log.warn("Further authentication is needed as token not found or invalid");
-        filterChain.doFilter(request, response);
+        throw new ConnectDataException(
+                ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                "unauthorized request found"
+        );
     }
 }
 

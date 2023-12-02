@@ -34,14 +34,7 @@ public class RootController implements IRootApi {
     }
 
     @Override
-    public APIResponse testLogin(@RequestHeader("isRoot") String isRoot, @RequestBody RootLoginRequest request) {
-        if (!Boolean.parseBoolean(isRoot)) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.ILLEGAL_REQUESTER_ERROR,
-                    "illegal request"
-            );
-        }
-
+    public APIResponse testLogin(@RequestBody RootLoginRequest request) {
         String token = null;
         if (userService.authenticateRootUser(request)) {
             token = jwtTokenUtil.generateToken(request.getUserId(), "");
