@@ -2,7 +2,7 @@ package com.connect.web.filter;
 
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
-import com.connect.web.util.AuthenticationUtil;
+import com.connect.web.util.JwtAuthenticationUtil;
 import com.connect.web.util.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,7 +14,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -26,7 +25,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     }
 
     @Autowired
-    private AuthenticationUtil authenticationUtil;
+    private JwtAuthenticationUtil jwtAuthenticationUtil;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -47,7 +46,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             String userId = jwtTokenUtil.getUserIdFromToken(token);
 
             if (userId != null && !jwtTokenUtil.isTokenExpired(token)) {
-                Authentication authentication = authenticationUtil.createAuthentication(token);
+                Authentication authentication = jwtAuthenticationUtil.createAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 log.info(SecurityContextHolder.getContext().getAuthentication().toString());
                 log.info("user: " + userId

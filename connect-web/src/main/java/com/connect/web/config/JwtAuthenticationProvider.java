@@ -2,7 +2,8 @@ package com.connect.web.config;
 
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
-import com.connect.web.util.AuthenticationUtil;
+import com.connect.core.service.user.IUserService;
+import com.connect.web.util.JwtAuthenticationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,13 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Autowired
-    private AuthenticationUtil authenticationUtil;
+    private JwtAuthenticationUtil jwtAuthenticationUtil;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         try {
-            return authenticationUtil.createAuthentication(
+            return jwtAuthenticationUtil.createAuthentication(
                     authentication.getCredentials().toString()
             );
         } catch (Exception e) {

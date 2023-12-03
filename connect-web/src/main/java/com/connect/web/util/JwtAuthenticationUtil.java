@@ -13,7 +13,7 @@ import java.util.Collections;
 
 @Slf4j
 @Component
-public class AuthenticationUtil {
+public class JwtAuthenticationUtil {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
