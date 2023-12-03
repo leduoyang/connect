@@ -6,14 +6,14 @@ public class ConnectDataException extends RuntimeException {
     private String errorMsg;
 
     public ConnectDataException(ConnectErrorCode code) {
-        super(code.getCode() + ":" + code.getMsg());
+        super(code.getCode() + " : " + code.getMsg());
         this.code = code;
         this.errorCode = code.getCode();
         this.errorMsg = code.getMsg();
     }
 
     public ConnectDataException(ConnectErrorCode code, String msg) {
-        super(code.getCode() + ":" + code.getMsg() + ":" + msg);
+        super(code.getCode() + " : " + code.getMsg() + " : " + msg);
         this.code = code;
         this.errorCode = code.getCode();
         this.errorMsg = code.getMsg() + ":" + msg;

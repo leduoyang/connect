@@ -10,9 +10,6 @@ import javax.validation.constraints.Size;
 @Accessors(chain = true)
 @Data
 public class CreatePostRequest {
-    @NotNull
-    private String userId;
-
     @Size(max = 3)
     private int status = 1;
 

@@ -12,7 +12,7 @@ public interface IPostService {
 
     List<PostDto> queryPost(QueryPostRequest request);
 
-    void createPost(CreatePostRequest request);
+    void createPost(String userId, CreatePostRequest request);
 
     void updatePost(Long postId, UpdatePostRequest request);
 

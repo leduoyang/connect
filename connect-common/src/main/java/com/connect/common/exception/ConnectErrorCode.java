@@ -6,15 +6,15 @@ import lombok.Getter;
 public enum ConnectErrorCode {
     BLANK("000000", "Default error code"),
     INTERNAL_SERVER_ERROR("100001", "Internal server error"),
-    ILLEGAL_REQUESTER_ERROR("100002", "Illegal Requester"),
+    ILLEGAL_REQUESTER_ERROR("100002", "Not permitted for this request"),
     PARAM_EXCEPTION("100003", "Parameters error"),
-    UNAUTHORIZED_EXCEPTION("100004", "Not Authorized for this action."),
+    UNAUTHORIZED_EXCEPTION("100004", "Not authorized for this action."),
 
     /**
      * User
      */
     USER_CREATE_EXCEPTION("300001", "Create user failed"),
-    USER_UPDATE_EXCEPTION("300002", "Update user failed"),
+    USER_EDIT_EXCEPTION("300002", "Update user failed"),
     USER_DELETE_EXCEPTION("300003", "Delete user failed"),
     USER_NOT_EXISTED_EXCEPTION("300004", "User not existed."),
     USER_EXISTED_EXCEPTION("300005", "User has existed."),

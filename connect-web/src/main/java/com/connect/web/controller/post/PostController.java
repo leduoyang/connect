@@ -9,6 +9,8 @@ import com.connect.api.post.request.QueryPostRequest;
 import com.connect.api.post.request.UpdatePostRequest;
 import com.connect.core.service.post.IPostService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,7 +58,8 @@ public class PostController implements IPostApi {
     public APIResponse<Void> createPost(
             @Validated @RequestBody CreatePostRequest request
     ) {
-        postService.createPost(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        postService.createPost(authentication.getName(), request);
         return APIResponse.getOKJsonResult(null);
     }
 

@@ -9,29 +9,16 @@ import javax.validation.constraints.Size;
 
 @Accessors(chain = true)
 @Data
-public class UpdateUserRequest {
+public class EditProfileRequest {
     @NotNull
     @NotBlank
     private String userId;
 
-    @NotNull
-    @NotBlank
-    private String password;
-
     @Size(max = 3)
     private int status;
 
-    @Size(max = 3)
-    private int role;
-
     @Size(max = 200)
     private String description;
-
-    @NotBlank
-    private String email;
-
-    @NotBlank
-    private String phone;
 
     private String profileImage;
 }

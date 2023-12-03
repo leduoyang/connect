@@ -63,10 +63,10 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public void createPost(CreatePostRequest request) {
+    public void createPost(String userId, CreatePostRequest request) {
         Post post = new Post()
-                .setCreatedUser(request.getUserId())
-                .setUpdatedUser(request.getUserId());
+                .setCreatedUser(userId)
+                .setUpdatedUser(userId);
         if (request.getContent() != null) {
             post.setContent(request.getContent());
         } else if (request.getReferenceId() != null) {

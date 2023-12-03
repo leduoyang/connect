@@ -1,8 +1,8 @@
 package com.connect.web.controller.root;
 
 import com.connect.api.root.IRootApi;
-import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.common.APIResponse;
+import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.user.IUserService;
@@ -10,15 +10,12 @@ import com.connect.web.util.JwtTokenUtil;
 import com.connect.web.common.AppContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Profile;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @Slf4j
-@ConditionalOnProperty(name = "root.controller.enabled", havingValue = "true")
-@Profile({"dev"})
 @RestController
 public class RootController implements IRootApi {
     @Autowired
@@ -34,11 +31,16 @@ public class RootController implements IRootApi {
     }
 
     @Override
-    public APIResponse testLogin(@RequestBody RootLoginRequest request) {
-        String token = null;
-        if (userService.authenticateRootUser(request)) {
-            token = jwtTokenUtil.generateToken(request.getUserId(), "");
+    public APIResponse queryTestToken(@RequestHeader String isRoot) {
+        if (isRoot == null || !Boolean.parseBoolean(isRoot)) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION
+            );
         }
+
+        String role = UserRole.getRole(UserRole.ADMIN.getCode());
+        String token = jwtTokenUtil.generateToken("TEST_" + role, role);
+
         return APIResponse.getOKJsonResult(token);
     }
 }

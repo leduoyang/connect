@@ -2,22 +2,24 @@ package com.connect.core.service.user;
 
 import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.user.dto.UserDto;
-import com.connect.api.user.request.CreateUserRequest;
-import com.connect.api.user.request.QueryUserRequest;
-import com.connect.api.user.request.UpdateUserRequest;
+import com.connect.api.user.request.*;
 
 import java.util.List;
 
 public interface IUserService {
     boolean authenticateRootUser(RootLoginRequest request);
 
-    UserDto queryUserByUserId(String userId);
+    UserDto signIn(SignInRequest request);
+
+    void signUp(SignUpRequest request);
+
+    void editUser(String userId, EditUserRequest request);
+
+    void editUserProfile(String userId, EditProfileRequest request);
+
+    void deleteUser(String userId);
 
     List<UserDto> queryUser(QueryUserRequest request);
 
-    void createUser(CreateUserRequest request);
-
-    void updateUser(String userId, UpdateUserRequest request);
-
-    void deleteUser(String userId);
+    UserDto queryUserByUserId(String userId);
 }

@@ -1,17 +1,15 @@
 package com.connect.api.user.request;
 
-import com.connect.api.post.dto.PostDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
 
 @Accessors(chain = true)
 @Data
-public class CreateUserRequest {
+public class EditUserRequest {
     @NotNull
     @NotBlank
     private String userId;
@@ -21,11 +19,12 @@ public class CreateUserRequest {
     private String password;
 
     @Size(max = 3)
-    private int status = 1;
+    private int status;
 
     @Size(max = 3)
-    private int role = 1;
+    private int role;
 
+    @Size(max = 200)
     private String description;
 
     @NotBlank
@@ -34,7 +33,5 @@ public class CreateUserRequest {
     @NotBlank
     private String phone;
 
-    @NotNull
-    @NotBlank
-    private String uid;
+    private String profileImage;
 }
