@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 /docker-compose/mysql8.0/data
 /docker-compose/mysql8.0/.DS_Store
+/docker-compose/redis/data
 
 ### STS ###
 .apt_generated
