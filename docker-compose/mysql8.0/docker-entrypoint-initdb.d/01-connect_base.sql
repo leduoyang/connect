@@ -3,19 +3,30 @@ USE connect_base;
 -- user table
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-    `id`                INT AUTO_INCREMENT,
-    `userId`            VARCHAR(256) PRIMARY KEY NOT NULL,
+    `id`                INT PRIMARY KEY AUTO_INCREMENT,
+    `userId`            VARCHAR(256) UNIQUE NOT NULL,
     `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - private, 3 - tested',
     `role`              TINYINT(4) DEFAULT '0' COMMENT '0 - admin, 1 - essential, 2 - plus, 3 - premium',
     `password`          VARCHAR(255) NOT NULL,
     `description`       VARCHAR(256),
     `phone`             VARCHAR(255),
-    `email`             VARCHAR(255),
+    `email`             VARCHAR(255) UNIQUE NOT NULL,
     `profileImage`      VARCHAR(255),
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='User';
 CREATE INDEX idx_userId ON `user` (userId);
+CREATE INDEX idx_email ON `user` (email);
+
+DROP TABLE IF EXISTS `email_verification`;
+CREATE TABLE `email_verification` (
+    `id`                INT PRIMARY KEY AUTO_INCREMENT,
+    `email`             VARCHAR(256) NOT NULL,
+    `code`              VARCHAR(256) NOT NULL,
+    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - pending, 2 - completed, 3 - expired',
+    `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Email Verification Code';
+CREATE INDEX idx_email_code ON `email_verification` (email, code);
 
 -- project table
 DROP TABLE IF EXISTS `project`;
@@ -98,7 +109,7 @@ CREATE INDEX idx_type_targetId_star ON `star` (type, targetId);
 
 -- subscribe table
 DROP TABLE IF EXISTS `subscribe`;
-CREATE TABLE `star` (
+CREATE TABLE `subscribe` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `userId`            VARCHAR(256) NOT NULl,
     `targetId`          INT,
@@ -139,7 +150,7 @@ VALUES
     ('olivia_carter', 3, 'oliviapass789', 'olivia@example.com', 'profile_olivia.jpg', CURRENT_TIMESTAMP),
     ('peter_evans', 3, 'peterpass321', 'peter@example.com', 'profile_peter.jpg', CURRENT_TIMESTAMP),
     ('quinn_fisher', 3, 'quinnpass654', 'quinn@example.com', 'profile_quinn.jpg', CURRENT_TIMESTAMP),
-    ('ryan_hall', 3, 'ryanpass987', 'ryan@example.com', 'profile_ryan.jpg', CURRENT_TIMESTAMP),
+    ('ryan_yang', 3, 'ryanpass987', 'ryan@example.com', 'profile_ryan.jpg', CURRENT_TIMESTAMP),
     ('sophie_irwin', 3, 'sophiepass123', 'sophie@example.com', 'profile_sophie.jpg', CURRENT_TIMESTAMP),
     ('tom_king', 3, 'tompass456', 'tom@example.com', 'profile_tom.jpg', CURRENT_TIMESTAMP),
     ('hiroshi', 3, 'hiroshi123', 'hiroshi@example.com', 'profile_hiroshi.jpg', CURRENT_TIMESTAMP),

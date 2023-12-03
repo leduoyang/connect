@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.connect.data.dao.IUserVerificationDao">
+    <resultMap id="userResultMap" type="com.connect.data.entity.UserVerification">
+        <id property="id" column="id"/>
+        <result property="email" column="email"/>
+        <result property="code" column="password"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <update id="expireCodeByEmail">
+        UPDATE email_verification
+        SET `status` = 3
+        WHERE email = #{email, jdbcType=VARCHAR}
+    </update>
+
+    <insert id="createUserVerification" parameterType="com.connect.data.entity.UserVerification" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        INSERT INTO email_verification(email, code, status)
+        VALUES (
+        #{email, jdbcType=VARCHAR},
+        #{code,jdbcType=VARCHAR},
+        #{status,jdbcType=TINYINT}
+        )
+    </insert>
+
+    <select id="checkEmailComplete" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT email
+        FROM email_verification
+        WHERE
+        email = #{email,jdbcType=VARCHAR} AND
+        status = 2
+        )
+    </select>
+
+    <select id="verifyCode" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT email
+        FROM email_verification
+        WHERE
+        email = #{email,jdbcType=VARCHAR} AND
+        code = #{code,jdbcType=VARCHAR} AND
+        status = #{status,jdbcType=TINYINT}
+        )
+    </select>
+
+    <update id="completeCodeByEmail">
+        UPDATE email_verification
+        SET `status` = 2
+        WHERE email = #{email, jdbcType=VARCHAR} AND code = #{code, jdbcType=VARCHAR}
+    </update>
+</mapper>

@@ -27,10 +27,6 @@ public class UserRepositoryImpl implements IUserRepository {
         return userDao.authenticateRootUser(userId, password);
     }
 
-    public boolean checkUserExisting(String userId) {
-        return userDao.userExisting(userId);
-    }
-
     public User queryUserByUserId(String userId) {
         User targetUser = userDao.queryUserByUserId(userId);
         if (targetUser == null) {
@@ -48,11 +44,11 @@ public class UserRepositoryImpl implements IUserRepository {
     }
 
     public void createUser(User user) {
-        boolean existed = userDao.userExisting(user.getUserId());
+        boolean existed = userDao.userExistingWithEmail(user.getUserId(), user.getEmail());
         if (existed) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_EXISTED_EXCEPTION,
-                    String.format("UserId %s has exited.", user.getUserId())
+                    String.format("UserId %s or email %s has exited.", user.getUserId(), user.getEmail())
             );
         }
 

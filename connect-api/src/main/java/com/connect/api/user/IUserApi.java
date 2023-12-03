@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 
 @RequestMapping(value = "/api/connect/v1")
 public interface IUserApi {
+    @GetMapping(value = "/users/me")
+    APIResponse<QueryUserResponse> queryPersonalInfo();
 
     @GetMapping(value = "/user/{userId}")
     APIResponse<QueryUserResponse> queryUser(@NotNull @PathVariable String userId);
@@ -21,16 +23,13 @@ public interface IUserApi {
             @Validated QueryUserRequest request
     );
 
-    @PostMapping(value = "/user")
-    APIResponse<Void> createUser(
+    @PostMapping(value = "/user/signup")
+    APIResponse<Void> signUp(
             @Validated @RequestBody CreateUserRequest request
     );
 
-    @PatchMapping(value = "/user/{userId}")
-    APIResponse<Void> updateUser(
-            @Validated @NotNull @PathVariable String userId,
-            @Validated @RequestBody UpdateUserRequest request
-    );
+    @PatchMapping(value = "/users/me/edit")
+    APIResponse<Void> editPersonalInfo(@Validated @RequestBody UpdateUserRequest request);
 
     @DeleteMapping(value = "/user/{userId}")
     APIResponse<Void> deleteUser(

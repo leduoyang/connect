@@ -1,6 +1,6 @@
 package com.connect.common.enums;
 
-public enum Status {
+public enum UserStatus {
     DELETED(0),
     PUBLIC(1),
     PRIVATE(2),
@@ -8,7 +8,7 @@ public enum Status {
 
     final int code;
 
-    Status(int code) {
+    UserStatus(int code) {
         this.code = code;
     }
 

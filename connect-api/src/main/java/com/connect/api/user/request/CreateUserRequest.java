@@ -33,4 +33,8 @@ public class CreateUserRequest {
 
     @NotBlank
     private String phone;
+
+    @NotNull
+    @NotBlank
+    private String uid;
 }
