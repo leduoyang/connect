@@ -51,8 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/connect/v1/**").authenticated()
                         .anyRequest().authenticated()
                 )
-                //.formLogin(AbstractHttpConfigurer::disable)
-                //.httpBasic(Customizer.withDefaults())
+                .formLogin(AbstractHttpConfigurer::disable)
                 .addFilter(
                         jwtAuthenticationFilter(
                                 authenticationManager(http)
