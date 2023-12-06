@@ -1,6 +1,5 @@
 package com.connect.api.user.dto;
 
-import com.connect.api.post.dto.PostDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,9 +12,9 @@ public class UserDto {
 
     private String description;
 
-    private int status;
+    private Integer status;
 
-    private int role;
+    private Integer role;
 
     private String email;
 

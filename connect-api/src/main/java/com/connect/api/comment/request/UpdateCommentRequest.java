@@ -1,22 +1,20 @@
 package com.connect.api.comment.request;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Accessors(chain = true)
 @Data
 public class UpdateCommentRequest {
-    @Size(max = 3)
-    private int status;
-
-    @NotBlank
-    @Size(min = 1, max = 500)
-    private String content;
+    @Min(value = 1, message = "status must be at least 1")
+    @Max(value = 3, message = "status must be at most 3")
+    private Integer status;
 
     @NotNull
-    private String updatedUser;
+    @Min(value = 1, message = "comment must be at least 1")
+    @Max(value = 500, message = "comment must be at most 500")
+    private String content;
 }

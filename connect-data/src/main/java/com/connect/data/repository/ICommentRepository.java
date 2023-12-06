@@ -6,13 +6,13 @@ import com.connect.data.param.QueryCommentParam;
 import java.util.List;
 
 public interface ICommentRepository {
-    void createComment(Comment post);
+    void createComment(Comment comment);
 
-    void deleteComment(Long id);
+    void deleteComment(Comment comment);
 
     List<Comment> queryComment(QueryCommentParam param);
 
     Comment queryCommentById(long id);
 
-    void updateComment(Comment post);
+    void updateComment(Comment comment);
 }

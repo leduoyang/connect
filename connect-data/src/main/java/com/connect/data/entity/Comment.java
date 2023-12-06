@@ -12,6 +12,8 @@ public class Comment {
 
     private Long postId;
 
+    private int status;
+
     private String content;
 
     private String createdUser;

@@ -4,10 +4,10 @@ import com.connect.api.common.APIResponse;
 import com.connect.api.user.request.*;
 import com.connect.api.user.response.QueryUserResponse;
 import com.connect.api.user.response.SignInResponse;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 @RequestMapping(value = "/api/connect/v1")

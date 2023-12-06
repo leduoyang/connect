@@ -8,7 +8,7 @@ import java.util.List;
 public interface IPostRepository {
     void createPost(Post post);
 
-    void deletePost(Long id);
+    void deletePost(Post post);
 
     List<Post> queryPost(QueryPostParam param);
 

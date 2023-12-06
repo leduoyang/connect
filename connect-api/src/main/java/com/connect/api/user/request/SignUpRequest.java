@@ -1,38 +1,30 @@
 package com.connect.api.user.request;
 
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Accessors(chain = true)
 @Data
 public class SignUpRequest {
-    @NotNull
-    @NotBlank
+    @NotNull(message = "userId can not be null")
+    @Min(value = 8, message = "userId must be at least 8")
+    @Max(value = 20, message = "userId must be at most 20")
     private String userId;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "password can not be null")
+    @Min(value = 8, message = "password must be at least 8")
+    @Max(value = 20, message = "password must be at most 20")
     private String password;
 
-    @Size(max = 3)
-    private int status = 1;
-
-    @Size(max = 3)
-    private int role = 1;
-
+    @Size(max = 200, message = "description must be at most 200")
     private String description;
 
-    @NotBlank
+    @Email(message = "email should be in valid format")
     private String email;
 
-    @NotBlank
     private String phone;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "uid code should not be null")
     private String uid;
 }

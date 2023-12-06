@@ -46,28 +46,34 @@ public class CommentRepositoryImpl implements ICommentRepository {
     }
 
     public void updateComment(Comment comment) {
-        boolean existed = commentDao.commentExisting(comment.getId());
+        long targetId = comment.getId();
+        String userId = comment.getUpdatedUser();
+        boolean existed = commentDao.commentExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
                     ConnectErrorCode.POST_NOT_EXISTED_EXCEPTION,
-                    String.format("Comment %s not exited.", comment.getId())
+                    String.format("Post %s not exited or user %s is not the creator", targetId, userId)
             );
         }
+
         int affected = commentDao.updateComment(comment);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
         }
     }
 
-    public void deleteComment(Long id) {
-        boolean existed = commentDao.commentExisting(id);
+    public void deleteComment(Comment comment) {
+        long targetId = comment.getId();
+        String userId = comment.getUpdatedUser();
+        boolean existed = commentDao.commentExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
                     ConnectErrorCode.POST_NOT_EXISTED_EXCEPTION,
-                    String.format("Comment %s not exited.", id)
+                    String.format("Post %s not exited or user %s is not the creator", targetId, userId)
             );
         }
-        int affected = commentDao.deleteComment(id);
+
+        int affected = commentDao.deleteComment(targetId);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
         }

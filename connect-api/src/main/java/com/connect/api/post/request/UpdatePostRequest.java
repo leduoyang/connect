@@ -1,22 +1,19 @@
 package com.connect.api.post.request;
 
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Accessors(chain = true)
 @Data
 public class UpdatePostRequest {
-    @Size(max = 3)
-    private int status;
+    @Min(value = 1, message = "status must be at least 1")
+    @Max(value = 3, message = "status must be at most 3")
+    private Integer status;
 
-    @NotBlank
-    @Size(min = 1, max = 2000)
+    @Size(max = 2000, message = "post must be at most 2000")
     private String content;
 
-    @NotNull
-    private String updatedUser;
+    private Long referenceId;
 }

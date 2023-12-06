@@ -11,6 +11,31 @@
         <result property="dbModifyTime" column="db_modify_time"/>
     </resultMap>
 
+    <insert id="createComment" parameterType="com.connect.data.entity.Comment" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        INSERT INTO comment(postId, content, status, created_user, updated_user)
+        VALUES (#{postId,jdbcType=BIGINT},
+        #{content, jdbcType=VARCHAR},
+        #{status,jdbcType=TINYINT},
+        #{createdUser,jdbcType=VARCHAR},
+        #{updatedUser,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateComment" parameterType="com.connect.data.entity.Comment">
+        UPDATE comment
+        <trim prefix="set" suffixOverrides=",">
+            updated_user = #{updatedUser, jdbcType=VARCHAR},
+            <if test="content != null and content != ''">
+                content = #{content, jdbcType=VARCHAR},
+            </if>
+            <if test="status != null and status > 0">
+                status = #{status,jdbcType=TINYINT}
+            </if>
+        </trim>
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
     <delete id="deleteComment">
         UPDATE comment
         SET `status` = 0,
@@ -18,12 +43,10 @@
         WHERE id = #{id, jdbcType=BIGINT}
     </delete>
 
-    <insert id="createComment" parameterType="com.connect.data.entity.Comment" useGeneratedKeys="true"
-            keyProperty="id" keyColumn="id">
-        INSERT INTO comment(postId, content, created_user, updated_user)
-        VALUES (#{postId,jdbcType=BIGINT}, #{content, jdbcType=VARCHAR},
-        #{createdUser,jdbcType=VARCHAR}, #{updatedUser,jdbcType=VARCHAR})
-    </insert>
+    <select id="queryCommentById" resultMap="commentResultMap">
+        SELECT id, postId, status, content, created_user, updated_user, db_create_time, db_modify_time
+        FROM comment WHERE id = #{id}
+    </select>
 
     <select id="queryComment" resultMap="commentResultMap">
         SELECT id, postId, content, created_user, updated_user, db_create_time, db_modify_time
@@ -41,27 +64,11 @@
         </if>
     </select>
 
-    <select id="queryCommentById" resultMap="commentResultMap">
-        SELECT id, postId, content, created_user, updated_user, db_create_time, db_modify_time
-        FROM comment WHERE id = #{id}
-    </select>
-
     <select id="commentExisting" resultType="java.lang.Boolean">
         SELECT EXISTS(
         SELECT id
         FROM comment
-        WHERE id = #{id,jdbcType=BIGINT}
+        WHERE id = #{id,jdbcType=BIGINT} AND created_user = #{userId, jdbcType=VARCHAR}
         )
     </select>
-
-    <update id="updateComment" parameterType="com.connect.data.entity.Comment">
-        UPDATE comment
-        <trim prefix="set" suffixOverrides=",">
-            updated_user = #{updatedUser, jdbcType=VARCHAR},
-            <if test="content != null and content != ''">
-                content = #{content, jdbcType=VARCHAR},
-            </if>
-        </trim>
-        WHERE id = #{id, jdbcType=BIGINT}
-    </update>
 </mapper>

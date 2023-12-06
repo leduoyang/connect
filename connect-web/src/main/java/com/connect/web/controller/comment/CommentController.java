@@ -1,20 +1,27 @@
 package com.connect.web.controller.comment;
 
 import com.connect.api.comment.ICommentApi;
-import com.connect.api.comment.dto.CommentDto;
+import com.connect.api.comment.dto.CreateCommentDto;
+import com.connect.api.comment.dto.DeleteCommentDto;
+import com.connect.api.comment.dto.QueryCommentDto;
+import com.connect.api.comment.dto.UpdateCommentDto;
 import com.connect.api.comment.request.CreateCommentRequest;
 import com.connect.api.comment.request.QueryCommentRequest;
 import com.connect.api.comment.request.UpdateCommentRequest;
 import com.connect.api.comment.response.QueryCommentResponse;
 import com.connect.api.common.APIResponse;
+import com.connect.api.post.dto.CreatePostDto;
+import com.connect.api.post.dto.DeletePostDto;
+import com.connect.api.post.dto.UpdatePostDto;
 import com.connect.core.service.comment.ICommentService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +36,8 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<QueryCommentResponse> queryComment(Long commentId) {
-        CommentDto commentDto = commentService.queryCommentById(commentId);
-        List<CommentDto> commentDtoList = new ArrayList<>();
+        QueryCommentDto commentDto = commentService.queryCommentById(commentId);
+        List<QueryCommentDto> commentDtoList = new ArrayList<>();
         commentDtoList.add(commentDto);
 
         QueryCommentResponse response = new QueryCommentResponse().setItems(commentDtoList).setTotal(commentDtoList.size());
@@ -40,9 +47,9 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<QueryCommentResponse> queryCommentWithFilter(
-            @Validated QueryCommentRequest request
+            QueryCommentRequest request
     ) {
-        List<CommentDto> commentDtoList = commentService.queryComment(request);
+        List<QueryCommentDto> commentDtoList = commentService.queryComment(request);
 
         QueryCommentResponse response = new QueryCommentResponse()
                 .setItems(commentDtoList)
@@ -52,23 +59,46 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<Void> createComment(
-            @Validated @RequestBody CreateCommentRequest request
+            @RequestBody CreateCommentRequest request
     ) {
+        CreateCommentDto createCommentDto = new CreateCommentDto();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.map(request, createCommentDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        createCommentDto.setCreatedUser(authentication.getName());
+
+        commentService.createComment(createCommentDto);
+
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
     public APIResponse<Void> updateComment(
-            @Validated @NotNull @PathVariable Long commentId,
-            @Validated @RequestBody UpdateCommentRequest request
+            @PathVariable Long commentId,
+            @RequestBody UpdateCommentRequest request
     ) {
+        UpdateCommentDto updateCommentDto = new UpdateCommentDto();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.map(request, updateCommentDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        updateCommentDto.setUpdatedUser(authentication.getName());
+        updateCommentDto.setId(commentId);
+
+        commentService.updateComment(updateCommentDto);
+
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
     public APIResponse<Void> deleteComment(
-            @Validated @NotNull @PathVariable Long commentId
+            @PathVariable Long commentId
     ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        DeleteCommentDto deleteCommentDto = new DeleteCommentDto()
+                .setId(commentId)
+                .setUserId(authentication.getName());
+        commentService.deleteComment(deleteCommentDto);
+
         return APIResponse.getOKJsonResult(null);
     }
 }

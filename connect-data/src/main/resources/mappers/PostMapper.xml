@@ -11,6 +11,34 @@
         <result property="dbModifyTime" column="db_modify_time"/>
     </resultMap>
 
+    <insert id="createPost" parameterType="com.connect.data.entity.Post" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        INSERT INTO post(content, referenceId, status, created_user, updated_user)
+        VALUES (#{content, jdbcType=VARCHAR},
+        #{referenceId,jdbcType=BIGINT},
+        #{status,jdbcType=TINYINT},
+        #{createdUser,jdbcType=VARCHAR},
+        #{updatedUser,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updatePost" parameterType="com.connect.data.entity.Post">
+        UPDATE post
+        <trim prefix="set" suffixOverrides=",">
+            updated_user = #{updatedUser, jdbcType=VARCHAR},
+            <if test="content != null and content != ''">
+                content = #{content, jdbcType=VARCHAR},
+            </if>
+            <if test="referenceId != null and referenceId > 0">
+                referenceId = #{referenceId, jdbcType=BIGINT},
+            </if>
+            <if test="status != null and status > 0">
+                status = #{status,jdbcType=TINYINT}
+            </if>
+        </trim>
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
     <delete id="deletePost">
         UPDATE post
         SET `status` = 0,
@@ -18,12 +46,11 @@
         WHERE id = #{id, jdbcType=BIGINT}
     </delete>
 
-    <insert id="createPost" parameterType="com.connect.data.entity.Post" useGeneratedKeys="true"
-            keyProperty="id" keyColumn="id">
-        INSERT INTO post(content, referenceId, created_user, updated_user)
-        VALUES (#{content, jdbcType=VARCHAR}, #{referenceId,jdbcType=BIGINT},
-        #{createdUser,jdbcType=VARCHAR}, #{updatedUser,jdbcType=VARCHAR})
-    </insert>
+    <select id="queryPostById" resultMap="postResultMap">
+        SELECT id, content, referenceId, created_user, updated_user, db_create_time, db_modify_time
+
+        FROM post WHERE id = #{id}
+    </select>
 
     <select id="queryPost" resultMap="postResultMap">
         SELECT id, content, referenceId, created_user, updated_user, db_create_time, db_modify_time
@@ -41,31 +68,11 @@
         </if>
     </select>
 
-    <select id="queryPostById" resultMap="postResultMap">
-        SELECT id, content, referenceId, created_user, updated_user, db_create_time, db_modify_time
-
-        FROM post WHERE id = #{id}
-    </select>
-
     <select id="postExisting" resultType="java.lang.Boolean">
         SELECT EXISTS(
         SELECT id
         FROM post
-        WHERE id = #{id,jdbcType=BIGINT}
+        WHERE id = #{id,jdbcType=BIGINT} AND created_user = #{userId, jdbcType=VARCHAR}
         )
     </select>
-
-    <update id="updatePost" parameterType="com.connect.data.entity.Post">
-        UPDATE post
-        <trim prefix="set" suffixOverrides=",">
-            updated_user = #{updatedUser, jdbcType=VARCHAR},
-            <if test="content != null and content != ''">
-                content = #{content, jdbcType=VARCHAR},
-            </if>
-            <if test="referenceId != null and referenceId > 0">
-                referenceId = #{referenceId, jdbcType=BIGINT},
-            </if>
-        </trim>
-        WHERE id = #{id, jdbcType=BIGINT}
-    </update>
 </mapper>

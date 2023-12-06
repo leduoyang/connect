@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +68,7 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> signUp(
-            @Validated @RequestBody SignUpRequest request
+            @RequestBody SignUpRequest request
     ) {
         if (!userVerificationService.checkEmailComplete(request.getEmail())) {
             throw new ConnectDataException(
@@ -92,7 +91,8 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> editPersonalInfo(
-            @RequestHeader Map<String, String> header, @Validated @RequestBody EditUserRequest request
+            @RequestHeader Map<String, String> header,
+            @RequestBody EditUserRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -103,8 +103,8 @@ public class UserController implements IUserApi {
     @Override
     public APIResponse<Void> editProfile(
             @RequestHeader Map<String, String> header,
-            @Validated @NotNull @PathVariable String userId,
-            @Validated @RequestBody EditProfileRequest request
+            @PathVariable String userId,
+            @RequestBody EditProfileRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!authentication.getName().equals(userId) &&
@@ -124,7 +124,8 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> deleteUser(
-            @RequestHeader Map<String, String> header, @Validated @NotNull @PathVariable String userId
+            @RequestHeader Map<String, String> header,
+            @PathVariable String userId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!authentication.getName().equals(userId) &&

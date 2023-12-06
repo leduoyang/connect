@@ -1,21 +1,19 @@
 package com.connect.api.user.request;
 
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Accessors(chain = true)
 @Data
 public class EditProfileRequest {
-    @NotNull
-    @NotBlank
+    @NotNull(message = "userId must not be null")
+    @NotBlank(message = "userId must not be blank")
     private String userId;
 
-    @Size(max = 3)
-    private int status;
+    @Min(value = 1, message = "Status must be at least 1")
+    @Max(value = 3, message = "Status must be at most 3")
+    private Integer status;
 
     @Size(max = 200)
     private String description;

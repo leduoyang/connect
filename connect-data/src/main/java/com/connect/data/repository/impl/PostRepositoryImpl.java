@@ -56,28 +56,34 @@ public class PostRepositoryImpl implements IPostRepository {
     }
 
     public void updatePost(Post post) {
-        boolean existed = postDao.postExisting(post.getId());
+        long targetId = post.getId();
+        String userId = post.getUpdatedUser();
+        boolean existed = postDao.postExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
                     ConnectErrorCode.POST_NOT_EXISTED_EXCEPTION,
-                    String.format("Post %s not exited.", post.getId())
+                    String.format("Post %s not exited or user %s is not the creator", targetId, userId)
             );
         }
+
         int affected = postDao.updatePost(post);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
         }
     }
 
-    public void deletePost(Long id) {
-        boolean existed = postDao.postExisting(id);
+    public void deletePost(Post post) {
+        long targetId = post.getId();
+        String userId = post.getUpdatedUser();
+        boolean existed = postDao.postExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
                     ConnectErrorCode.POST_NOT_EXISTED_EXCEPTION,
-                    String.format("Post %s not exited.", id)
+                    String.format("Post %s not exited or user %s is not the creator", targetId, userId)
             );
         }
-        int affected = postDao.deletePost(id);
+
+        int affected = postDao.deletePost(targetId);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
         }

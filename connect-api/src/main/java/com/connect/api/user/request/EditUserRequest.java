@@ -1,11 +1,8 @@
 package com.connect.api.user.request;
 
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Accessors(chain = true)
 @Data
@@ -18,19 +15,15 @@ public class EditUserRequest {
     @NotBlank
     private String password;
 
-    @Size(max = 3)
-    private int status;
+    @Min(value = 1, message = "status must be at least 1")
+    @Max(value = 3, message = "status must be at most 3")
+    private Integer status;
 
-    @Size(max = 3)
-    private int role;
-
-    @Size(max = 200)
+    @Size(max = 200, message = "description must be at most 200")
     private String description;
 
-    @NotBlank
     private String email;
 
-    @NotBlank
     private String phone;
 
     private String profileImage;

@@ -1,9 +1,11 @@
 package com.connect.core.service.comment.impl;
 
-import com.connect.api.comment.dto.CommentDto;
-import com.connect.api.comment.request.CreateCommentRequest;
+import com.connect.api.comment.dto.CreateCommentDto;
+import com.connect.api.comment.dto.DeleteCommentDto;
+import com.connect.api.comment.dto.QueryCommentDto;
+import com.connect.api.comment.dto.UpdateCommentDto;
 import com.connect.api.comment.request.QueryCommentRequest;
-import com.connect.api.comment.request.UpdateCommentRequest;
+import com.connect.common.enums.CommentStatus;
 import com.connect.core.service.comment.ICommentService;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -26,10 +28,10 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public CommentDto queryCommentById(long id) {
+    public QueryCommentDto queryCommentById(long id) {
         Comment comment = commentRepository.queryCommentById(id);
 
-        CommentDto commentDto = new CommentDto()
+        QueryCommentDto commentDto = new QueryCommentDto()
                 .setId(comment.getId())
                 .setContent(comment.getContent())
                 .setUpdatedUser(comment.getUpdatedUser())
@@ -39,7 +41,7 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public List<CommentDto> queryComment(QueryCommentRequest request) {
+    public List<QueryCommentDto> queryComment(QueryCommentRequest request) {
         QueryCommentParam param = new QueryCommentParam()
                 .setPostId(request.getPostId())
                 .setUserId(request.getUserId())
@@ -49,7 +51,7 @@ public class CommentServiceImpl implements ICommentService {
 
         return commentList
                 .stream()
-                .map(x -> new CommentDto()
+                .map(x -> new QueryCommentDto()
                         .setId(x.getId())
                         .setContent(x.getContent())
                         .setUpdatedUser(x.getUpdatedUser())
@@ -58,10 +60,15 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public void createComment(CreateCommentRequest request) {
+    public void createComment(CreateCommentDto request) {
         Comment comment = new Comment()
-                .setCreatedUser(request.getUserId())
-                .setUpdatedUser(request.getUserId());
+                .setStatus(CommentStatus.PUBLIC.getCode())
+                .setPostId(request.getPostId())
+                .setCreatedUser(request.getCreatedUser())
+                .setUpdatedUser(request.getCreatedUser());
+        if(request.getStatus() != null ) {
+            comment.setStatus(request.getStatus());
+        }
         if (request.getContent() == null || request.getContent().equals("")) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -74,17 +81,31 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public void updateComment(Long commentId, UpdateCommentRequest request) {
+    public void updateComment(UpdateCommentDto request) {
         Comment comment = new Comment()
-                .setId(commentId)
-                .setContent(request.getContent())
+                .setId(request.getId())
                 .setUpdatedUser(request.getUpdatedUser());
+        if(request.getStatus() != null ) {
+            comment.setStatus(request.getStatus());
+        }
+        if (request.getContent() == null || request.getContent().equals("")) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "Invalid payload (content can not be empty)"
+            );
+        }
+        comment.setContent(request.getContent());
+
         commentRepository.updateComment(comment);
     }
 
     @Override
-    public void deleteComment(Long id) {
-        commentRepository.deleteComment(id);
+    public void deleteComment(DeleteCommentDto request) {
+        Comment comment = new Comment()
+                .setId(request.getId())
+                .setUpdatedUser(request.getUserId());
+
+        commentRepository.deleteComment(comment);
     }
 
 }

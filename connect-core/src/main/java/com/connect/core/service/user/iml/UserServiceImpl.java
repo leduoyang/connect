@@ -67,8 +67,6 @@ public class UserServiceImpl implements IUserService {
         User user = new User()
                 .setUserId(request.getUserId())
                 .setPassword(request.getPassword())
-                .setStatus(request.getStatus())
-                .setRole(request.getRole())
                 .setDescription(request.getDescription())
                 .setEmail(request.getEmail())
                 .setPhone(request.getPhone());
@@ -82,7 +80,6 @@ public class UserServiceImpl implements IUserService {
                 .setUserId(userId)
                 .setPassword(request.getPassword())
                 .setStatus(request.getStatus())
-                .setRole(request.getRole())
                 .setDescription(request.getDescription())
                 .setEmail(request.getEmail())
                 .setPhone(request.getPhone())
