@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class CreateCommentDto {
-    private Integer status;
+    private int status;
 
     private Long postId;
 

@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class CreatePostDto {
-    private Integer status;
+    private int status;
 
     private String content;
 

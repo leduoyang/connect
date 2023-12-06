@@ -7,9 +7,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class CreatePostRequest {
-    @Min(value = 1, message = "status must be at least 1")
-    @Max(value = 3, message = "status must be at most 3")
-    private Integer status = 1;
+    @Min(value = 0, message = "status must be at least 1 (0 - public, 1 - semi, 2 - private)")
+    @Max(value = 2, message = "status must be at most 2 (0 - public, 1 - semi, 2 - private)")
+    private int status;
 
     private Long referenceId;
 

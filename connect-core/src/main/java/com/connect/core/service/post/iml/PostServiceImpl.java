@@ -5,7 +5,6 @@ import com.connect.api.post.dto.DeletePostDto;
 import com.connect.api.post.dto.QueryPostDto;
 import com.connect.api.post.dto.UpdatePostDto;
 import com.connect.api.post.request.QueryPostRequest;
-import com.connect.common.enums.PostStatus;
 import com.connect.core.service.post.IPostService;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -67,12 +66,9 @@ public class PostServiceImpl implements IPostService {
     @Override
     public void createPost(CreatePostDto request) {
         Post post = new Post()
-                .setStatus(PostStatus.PUBLIC.getCode())
+                .setStatus(request.getStatus())
                 .setCreatedUser(request.getCreatedUser())
                 .setUpdatedUser(request.getCreatedUser());
-        if(request.getStatus() != null ) {
-            post.setStatus(request.getStatus());
-        }
         if (request.getContent() != null) {
             post.setContent(request.getContent());
         } else if (request.getReferenceId() != null) {
@@ -89,11 +85,17 @@ public class PostServiceImpl implements IPostService {
     @Override
     public void updatePost(UpdatePostDto request) {
         Post post = new Post()
-                .setStatus(request.getStatus())
                 .setId(request.getId())
-                .setReferenceId(request.getReferenceId())
-                .setContent(request.getContent())
                 .setUpdatedUser(request.getUpdatedUser());
+        if (request.getStatus() != null) {
+            post.setStatus(request.getStatus());
+        }
+        if (request.getReferenceId() != null) {
+            post.setReferenceId(request.getReferenceId());
+        }
+        if (request.getContent() != null) {
+            post.setContent(request.getContent());
+        }
 
         postRepository.updatePost(post);
     }

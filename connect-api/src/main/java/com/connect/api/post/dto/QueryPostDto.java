@@ -10,6 +10,8 @@ import java.util.Date;
 public class QueryPostDto {
     private Long id;
 
+    private Integer status;
+
     private String content;
 
     private Long referenceId;

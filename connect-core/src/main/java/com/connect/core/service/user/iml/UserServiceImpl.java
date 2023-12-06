@@ -3,6 +3,7 @@ package com.connect.core.service.user.iml;
 import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
+import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.user.IUserService;
@@ -65,6 +66,7 @@ public class UserServiceImpl implements IUserService {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
 
         User user = new User()
+                .setStatus(UserStatus.PUBLIC.getCode())
                 .setUserId(request.getUserId())
                 .setPassword(request.getPassword())
                 .setDescription(request.getDescription())

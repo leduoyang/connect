@@ -8,13 +8,11 @@ import lombok.experimental.Accessors;
 @Data
 public class SignUpRequest {
     @NotNull(message = "userId can not be null")
-    @Min(value = 8, message = "userId must be at least 8")
-    @Max(value = 20, message = "userId must be at most 20")
+    @Size(max = 20, message = "userId must be at most 20")
     private String userId;
 
     @NotNull(message = "password can not be null")
-    @Min(value = 8, message = "password must be at least 8")
-    @Max(value = 20, message = "password must be at most 20")
+    @Size(min = 8, max = 20, message = "password must be between 8 to 20")
     private String password;
 
     @Size(max = 200, message = "description must be at most 200")

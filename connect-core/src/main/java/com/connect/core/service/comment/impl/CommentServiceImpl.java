@@ -5,7 +5,6 @@ import com.connect.api.comment.dto.DeleteCommentDto;
 import com.connect.api.comment.dto.QueryCommentDto;
 import com.connect.api.comment.dto.UpdateCommentDto;
 import com.connect.api.comment.request.QueryCommentRequest;
-import com.connect.common.enums.CommentStatus;
 import com.connect.core.service.comment.ICommentService;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -62,13 +61,10 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public void createComment(CreateCommentDto request) {
         Comment comment = new Comment()
-                .setStatus(CommentStatus.PUBLIC.getCode())
+                .setStatus(request.getStatus())
                 .setPostId(request.getPostId())
                 .setCreatedUser(request.getCreatedUser())
                 .setUpdatedUser(request.getCreatedUser());
-        if(request.getStatus() != null ) {
-            comment.setStatus(request.getStatus());
-        }
         if (request.getContent() == null || request.getContent().equals("")) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -85,7 +81,7 @@ public class CommentServiceImpl implements ICommentService {
         Comment comment = new Comment()
                 .setId(request.getId())
                 .setUpdatedUser(request.getUpdatedUser());
-        if(request.getStatus() != null ) {
+        if (request.getStatus() != null) {
             comment.setStatus(request.getStatus());
         }
         if (request.getContent() == null || request.getContent().equals("")) {

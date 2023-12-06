@@ -11,8 +11,8 @@ public class EditProfileRequest {
     @NotBlank(message = "userId must not be blank")
     private String userId;
 
-    @Min(value = 1, message = "Status must be at least 1")
-    @Max(value = 3, message = "Status must be at most 3")
+    @Min(value = 0, message = "status must be at least 1 (0 - public, 1 - semi, 2 - private)")
+    @Max(value = 2, message = "status must be at most 2 (0 - public, 1 - semi, 2 - private)")
     private Integer status;
 
     @Size(max = 200)
