@@ -1,6 +1,7 @@
-package com.connect.web.config;
+package com.connect.web.auth;
 
-import com.connect.web.filter.JwtAuthenticationFilter;
+import com.connect.web.auth.JwtAuthenticationProvider;
+import com.connect.web.auth.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

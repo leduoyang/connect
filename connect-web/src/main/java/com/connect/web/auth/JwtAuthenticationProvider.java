@@ -1,9 +1,8 @@
-package com.connect.web.config;
+package com.connect.web.auth;
 
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.user.iml.UserSecurityServiceImpl;
-import com.connect.web.util.JwtAuthenticationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -19,9 +18,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private UserSecurityServiceImpl userSecurityService;
 
-    @Autowired
-    private JwtAuthenticationUtil jwtAuthenticationUtil;
-
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         UserDetails userDetails = userSecurityService.loadUserByUsername(authentication.getPrincipal().toString());
@@ -30,8 +26,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         }
 
         log.info("load user details for " + userDetails.getUsername());
-        if (!authentication.getPrincipal().equals(userDetails.getUsername())) {
-            throw new ConnectDataException(ConnectErrorCode.INTERNAL_SERVER_ERROR, "roles authenticate failed");
+        if (!userDetails.isAccountNonLocked()) {
+            throw new ConnectDataException(ConnectErrorCode.INTERNAL_SERVER_ERROR, "user has been DELETED and LOCKED");
         }
         if (!authentication.getAuthorities().toString().equals(userDetails.getAuthorities().toString())) {
             throw new ConnectDataException(ConnectErrorCode.INTERNAL_SERVER_ERROR, "roles authenticate failed");

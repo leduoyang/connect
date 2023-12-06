@@ -1,6 +1,7 @@
 package com.connect.data.entity;
 
 import com.connect.common.enums.UserRole;
+import com.connect.common.enums.UserStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,8 @@ public class UserSecurity implements UserDetails {
 
     private String password;
 
+    private int status;
+
     private int role;
 
     @Override
@@ -32,20 +35,23 @@ public class UserSecurity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        // You can implement logic here to check if the user account is non-expired
-        // For example, return true if the account is not expired, or false otherwise
+        if (status == UserStatus.DELETED.getCode()) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        // You can implement logic here to check if the user account is non-expired
-        // For example, return true if the account is not expired, or false otherwise
+        if (status == UserStatus.DELETED.getCode()) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
+        // This method checks whether the user's credentials (e.g., password) have expired.
         return false;
     }
 

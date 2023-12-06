@@ -5,12 +5,13 @@
         <id property="id" column="id"/>
         <result property="username" column="userId"/>
         <result property="password" column="password"/>
+        <result property="status" column="status"/>
         <result property="role" column="role"/>
     </resultMap>
 
 
     <select id="findByUsername" resultMap="userSecurityResultMap">
-        SELECT id, userId, password, role
+        SELECT id, userId, password, status, role
 
         FROM user
         WHERE userId = #{username,jdbcType=VARCHAR}
