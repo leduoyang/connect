@@ -56,7 +56,8 @@ public class UserServiceImpl implements IUserService {
 
         return new UserDto()
                 .setUserId(user.getUserId())
-                .setStatus(user.getStatus());
+                .setStatus(user.getStatus())
+                .setRole(user.getRole());
     }
 
     @Override

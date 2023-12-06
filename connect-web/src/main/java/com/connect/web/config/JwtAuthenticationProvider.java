@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -23,11 +24,17 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        log.info("load user details for " + authentication.getPrincipal().toString());
-        if (
-                userSecurityService.loadUserByUsername(authentication.getPrincipal().toString()) == null
-        ) {
+        UserDetails userDetails = userSecurityService.loadUserByUsername(authentication.getPrincipal().toString());
+        if (userDetails == null) {
             throw new ConnectDataException(ConnectErrorCode.INTERNAL_SERVER_ERROR, "jwt authenticate failed");
+        }
+
+        log.info("load user details for " + userDetails.getUsername());
+        if (!authentication.getPrincipal().equals(userDetails.getUsername())) {
+            throw new ConnectDataException(ConnectErrorCode.INTERNAL_SERVER_ERROR, "roles authenticate failed");
+        }
+        if (!authentication.getAuthorities().toString().equals(userDetails.getAuthorities().toString())) {
+            throw new ConnectDataException(ConnectErrorCode.INTERNAL_SERVER_ERROR, "roles authenticate failed");
         }
         return authentication;
     }
