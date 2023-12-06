@@ -13,6 +13,6 @@
         SELECT id, userId, password, role
 
         FROM user
-        WHERE userId = #{username,jdbcType=VARCHAR} AND password = #{password,jdbcType=VARCHAR}
+        WHERE userId = #{username,jdbcType=VARCHAR}
     </select>
 </mapper>

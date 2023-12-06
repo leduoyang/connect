@@ -25,6 +25,6 @@ public class JwtAuthenticationUtil {
                 )
         );
 
-        return new UsernamePasswordAuthenticationToken(username, token, authorities);
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
 }

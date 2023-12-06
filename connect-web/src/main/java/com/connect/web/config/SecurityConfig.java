@@ -4,6 +4,7 @@ import com.connect.web.filter.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -34,7 +35,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
                 .requestMatchers("/api/connect/v1/public/**")
-                .requestMatchers("/api/root/test/login");
+                .requestMatchers("/api/root/test/token");
     }
 
     @Bean
@@ -46,11 +47,12 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers(HttpMethod.GET).permitAll()
                         .requestMatchers("/api/connect/v1/**").authenticated()
                         .anyRequest().authenticated()
                 )
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(Customizer.withDefaults())
+                //.formLogin(AbstractHttpConfigurer::disable)
+                //.httpBasic(Customizer.withDefaults())
                 .addFilter(
                         jwtAuthenticationFilter(
                                 authenticationManager(http)

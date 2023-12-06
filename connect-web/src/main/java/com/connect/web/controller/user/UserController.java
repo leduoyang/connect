@@ -60,7 +60,10 @@ public class UserController implements IUserApi {
             );
         }
 
-        String token = jwtTokenUtil.generateToken(request.getUserId(), UserRole.getRole(userDto.getStatus()));
+        String token = jwtTokenUtil.generateToken(
+                request.getUserId(),
+                UserRole.getRole(userDto.getStatus())
+        );
         return APIResponse.getOKJsonResult(token);
     }
 
