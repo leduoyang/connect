@@ -5,8 +5,8 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `userId`            VARCHAR(256) UNIQUE NOT NULL,
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - semi, 3 - private',
-    `role`              TINYINT(4) DEFAULT '1' COMMENT '0 - admin, 1 - essential, 2 - plus, 3 - premium',
+    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `role`              TINYINT(4) DEFAULT '0' COMMENT '0 - essential, 1 - plus, 2 - premium, 3 - admin',
     `password`          VARCHAR(255) NOT NULL,
     `description`       VARCHAR(256),
     `phone`             VARCHAR(255),
@@ -23,7 +23,7 @@ CREATE TABLE `email_verification` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `email`             VARCHAR(256) NOT NULL,
     `code`              VARCHAR(256) NOT NULL,
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - pending, 2 - completed, 3 - expired',
+    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Email Verification Code';
 CREATE INDEX idx_email_code ON `email_verification` (email, code);
@@ -35,7 +35,7 @@ CREATE TABLE `project` (
     `title`             VARCHAR(255) NOT NULL,
     `description`       TEXT,
     `tags`              VARCHAR(255),
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - semi, 3 - private',
+    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `boosted`           TINYINT(2) DEFAULT '0' COMMENT '0 - default, 1 - boosted',
     `likesCount`        INT DEFAULT 0,
     `viewsCount`        INT DEFAULT 0,
@@ -53,7 +53,7 @@ CREATE TABLE `project_category` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `title`             VARCHAR(255) NOT NULL,
     `description`       TEXT,
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - semi, 3 - private',
+    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `viewsCount`        INT DEFAULT 0,
     `version`           INT DEFAULT 1,  -- Optimistic Locking: Version column
     `created_user`      VARCHAR(256) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE `post` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `content`           TEXT,
     `referenceId`       INT COMMENT 'null when it is an original post, reference id otherwise',
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - semi, 3 - private',
+    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `created_user`      VARCHAR(256) NOT NULL,
     `updated_user`      VARCHAR(256) DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
@@ -83,7 +83,7 @@ CREATE TABLE `comment` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `postId`            INT NOT NULL,
     `content`           TEXT NOT NULL,
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - semi, 3 - private',
+    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `created_user`      VARCHAR(256) NOT NULL,
     `updated_user`      VARCHAR(256) DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
@@ -283,7 +283,7 @@ VALUES
     ('和朋友一同參加了一場瑜珈課程，感受身心靈的平靜。🧘‍♂️🌺 #瑜珈課程 #身心靈平靜', NULL, 'sophie_irwin', 'sophie_irwin');
 
 -- Insert Mock Comment Data
-INSERT INTO `comment` (postId, content, created_user)
+INSERT INTO `comment` (postId, content, created_user, updated_user)
 VALUES
     (1, 'Great work on this project!', 'ryan_hall', 'ryan_hall'),
     (2, 'I love the design of your website!', 'sophie_irwin', 'sophie_irwin'),
