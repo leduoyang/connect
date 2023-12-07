@@ -37,7 +37,7 @@ public class RootController implements IRootApi {
         }
 
         String role = UserRole.getRole(UserRole.ADMIN.getCode());
-        String token = jwtTokenUtil.generateToken("TEST_" + role, role);
+        String token = jwtTokenUtil.generateToken(UserRole.ROOT.toString(), role);
 
         return APIResponse.getOKJsonResult(token);
     }

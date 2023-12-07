@@ -4,7 +4,8 @@ public enum UserRole {
     ESSENTIAL(0),
     PLUS(1),
     PREMIUM(2),
-    ADMIN(3);
+    ADMIN(3),
+    ROOT(4);
 
     final int code;
 
