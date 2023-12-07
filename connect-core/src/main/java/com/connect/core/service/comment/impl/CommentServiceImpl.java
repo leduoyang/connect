@@ -32,6 +32,7 @@ public class CommentServiceImpl implements ICommentService {
 
         QueryCommentDto commentDto = new QueryCommentDto()
                 .setId(comment.getId())
+                .setStatus(comment.getStatus())
                 .setContent(comment.getContent())
                 .setUpdatedUser(comment.getUpdatedUser())
                 .setDbModifyTime(comment.getDbModifyTime());
@@ -52,6 +53,7 @@ public class CommentServiceImpl implements ICommentService {
                 .stream()
                 .map(x -> new QueryCommentDto()
                         .setId(x.getId())
+                        .setStatus(x.getStatus())
                         .setContent(x.getContent())
                         .setUpdatedUser(x.getUpdatedUser())
                         .setDbModifyTime(x.getDbModifyTime()))

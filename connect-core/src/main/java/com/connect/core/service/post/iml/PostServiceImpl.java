@@ -32,6 +32,7 @@ public class PostServiceImpl implements IPostService {
 
         QueryPostDto postDto = new QueryPostDto()
                 .setId(post.getId())
+                .setStatus(post.getStatus())
                 .setUpdatedUser(post.getUpdatedUser())
                 .setDbModifyTime(post.getDbModifyTime());
         if (post.getContent() != null) {
@@ -56,6 +57,7 @@ public class PostServiceImpl implements IPostService {
                 .stream()
                 .map(x -> new QueryPostDto()
                         .setId(x.getId())
+                        .setStatus(x.getStatus())
                         .setContent(x.getContent())
                         .setUpdatedUser(x.getUpdatedUser())
                         .setDbModifyTime(x.getDbModifyTime())
