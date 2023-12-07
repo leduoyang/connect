@@ -91,7 +91,6 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> editPersonalInfo(
-            @RequestHeader Map<String, String> header,
             @RequestBody EditUserRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -102,7 +101,6 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> editProfile(
-            @RequestHeader Map<String, String> header,
             @PathVariable String userId,
             @RequestBody EditProfileRequest request
     ) {
@@ -124,7 +122,6 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> deleteUser(
-            @RequestHeader Map<String, String> header,
             @PathVariable String userId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

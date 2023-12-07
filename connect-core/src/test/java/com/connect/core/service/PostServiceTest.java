@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.connect.api.post.dto.CreatePostDto;
-import com.connect.api.post.dto.QueryPostDto;
 import com.connect.api.post.dto.UpdatePostDto;
 import com.connect.common.enums.PostStatus;
 import com.connect.common.exception.ConnectDataException;
@@ -17,9 +16,6 @@ import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootTest(classes = PostServiceImpl.class)
 public class PostServiceTest {

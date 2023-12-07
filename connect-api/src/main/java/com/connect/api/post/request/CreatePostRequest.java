@@ -13,6 +13,6 @@ public class CreatePostRequest {
 
     private Long referenceId;
 
-    @Size(max = 2000, message = "post must be at most 2000")
+    @Size(min = 1, max = 2000, message = "post must be at most 2000")
     private String content;
 }

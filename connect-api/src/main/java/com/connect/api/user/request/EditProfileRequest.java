@@ -7,8 +7,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class EditProfileRequest {
-    @NotNull(message = "userId must not be null")
-    @NotBlank(message = "userId must not be blank")
+    @Size(min = 1, max = 20, message = "userId can not be blank and must be at most 20")
     private String userId;
 
     @Min(value = 0, message = "status must be at least 1 (0 - public, 1 - semi, 2 - private)")

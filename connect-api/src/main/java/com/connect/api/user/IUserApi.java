@@ -24,20 +24,17 @@ public interface IUserApi {
 
     @PatchMapping(value = "/user/me/edit")
     APIResponse<Void> editPersonalInfo(
-            @RequestHeader Map<String, String> header,
             @Validated @RequestBody EditUserRequest request
     );
 
     @PatchMapping(value = "/user/{userId}")
     APIResponse<Void> editProfile(
-            @RequestHeader Map<String, String> header,
             @Validated @NotNull @PathVariable String userId,
             @Validated @RequestBody EditProfileRequest request
     );
 
     @DeleteMapping(value = "/user/{userId}")
     APIResponse<Void> deleteUser(
-            @RequestHeader Map<String, String> header,
             @Validated @NotNull @PathVariable String userId
     );
 
