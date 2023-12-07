@@ -99,13 +99,15 @@ public class CommentServiceImpl implements ICommentService {
             }
             comment.setStatus(request.getStatus());
         }
-        if (request.getContent() == null || request.getContent().equals("")) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.PARAM_EXCEPTION,
-                    "Invalid payload (content can not be empty)"
-            );
+        if (request.getContent() != null) {
+            if (request.getContent().equals("")) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (content can not be empty)"
+                );
+            }
+            comment.setContent(request.getContent());
         }
-        comment.setContent(request.getContent());
 
         commentRepository.updateComment(comment);
     }
