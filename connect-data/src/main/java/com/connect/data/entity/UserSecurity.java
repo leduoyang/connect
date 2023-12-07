@@ -20,9 +20,9 @@ public class UserSecurity implements UserDetails {
 
     private String password;
 
-    private int status;
+    private Integer status;
 
-    private int role;
+    private Integer role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

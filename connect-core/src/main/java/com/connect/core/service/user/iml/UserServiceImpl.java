@@ -81,11 +81,20 @@ public class UserServiceImpl implements IUserService {
         User user = new User()
                 .setUserId(userId)
                 .setPassword(request.getPassword())
-                .setStatus(request.getStatus())
                 .setDescription(request.getDescription())
                 .setEmail(request.getEmail())
                 .setPhone(request.getPhone())
                 .setProfileImage(request.getProfileImage());
+
+        if (request.getStatus() != null) {
+            if (request.getStatus() < 0 || request.getStatus() > 3) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (status should be between 0 and 3)"
+                );
+            }
+            user.setStatus(request.getStatus());
+        }
 
         userRepository.editUser(user);
     }
@@ -94,9 +103,18 @@ public class UserServiceImpl implements IUserService {
     public void editUserProfile(String userId, EditProfileRequest request) {
         Profile profile = new Profile()
                 .setUserId(userId)
-                .setStatus(request.getStatus())
                 .setDescription(request.getDescription())
                 .setProfileImage(request.getProfileImage());
+
+        if (request.getStatus() != null) {
+            if (request.getStatus() < 0 || request.getStatus() > 3) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (status should be between 0 and 3)"
+                );
+            }
+            profile.setStatus(request.getStatus());
+        }
 
         userRepository.editUserProfile(profile);
     }

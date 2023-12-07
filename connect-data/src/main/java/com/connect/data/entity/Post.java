@@ -10,7 +10,7 @@ import java.util.Date;
 public class Post {
     private Long id;
 
-    private int status;
+    private Integer status;
 
     private String content;
 

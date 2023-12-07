@@ -12,7 +12,7 @@ public class Comment {
 
     private Long postId;
 
-    private int status;
+    private Integer status;
 
     private String content;
 

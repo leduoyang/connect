@@ -14,9 +14,9 @@ public class User {
 
     private String password;
 
-    private int status;
+    private Integer status;
 
-    private int role;
+    private Integer role;
 
     private String description;
 

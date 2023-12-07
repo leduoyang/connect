@@ -12,7 +12,7 @@ public class Profile {
 
     private String userId;
 
-    private int status;
+    private Integer status;
 
     private String description;
 

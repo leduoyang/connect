@@ -5,8 +5,8 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `userId`            VARCHAR(256) UNIQUE NOT NULL,
-    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
-    `role`              TINYINT(4) DEFAULT '0' COMMENT '0 - essential, 1 - plus, 2 - premium, 3 - admin',
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `role`              TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - essential, 1 - plus, 2 - premium, 3 - admin',
     `password`          VARCHAR(255) NOT NULL,
     `description`       VARCHAR(256),
     `phone`             VARCHAR(255),
@@ -23,7 +23,7 @@ CREATE TABLE `email_verification` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `email`             VARCHAR(256) NOT NULL,
     `code`              VARCHAR(256) NOT NULL,
-    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Email Verification Code';
 CREATE INDEX idx_email_code ON `email_verification` (email, code);
@@ -35,11 +35,11 @@ CREATE TABLE `project` (
     `title`             VARCHAR(255) NOT NULL,
     `description`       TEXT,
     `tags`              VARCHAR(255),
-    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
-    `boosted`           TINYINT(2) DEFAULT '0' COMMENT '0 - default, 1 - boosted',
-    `likesCount`        INT DEFAULT 0,
-    `viewsCount`        INT DEFAULT 0,
-    `version`           INT DEFAULT 1,  -- Optimistic Locking: Version column
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `boosted`           TINYINT(2) NOT NULL DEFAULT '0' COMMENT '0 - default, 1 - boosted',
+    `likesCount`        INT NOT NULL DEFAULT 0,
+    `viewsCount`        INT NOT NULL DEFAULT 0,
+    `version`           INT NOT NULL DEFAULT 1,
     `created_user`      VARCHAR(256) NOT NULL,
     `updated_user`      VARCHAR(256) DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
@@ -53,7 +53,7 @@ CREATE TABLE `project_category` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `title`             VARCHAR(255) NOT NULL,
     `description`       TEXT,
-    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `viewsCount`        INT DEFAULT 0,
     `version`           INT DEFAULT 1,  -- Optimistic Locking: Version column
     `created_user`      VARCHAR(256) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE `post` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `content`           TEXT,
     `referenceId`       INT COMMENT 'null when it is an original post, reference id otherwise',
-    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `created_user`      VARCHAR(256) NOT NULL,
     `updated_user`      VARCHAR(256) DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
@@ -83,7 +83,7 @@ CREATE TABLE `comment` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `postId`            INT NOT NULL,
     `content`           TEXT NOT NULL,
-    `status`            TINYINT(4) DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `created_user`      VARCHAR(256) NOT NULL,
     `updated_user`      VARCHAR(256) DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
@@ -99,7 +99,7 @@ DROP TABLE IF EXISTS `star`;
 CREATE TABLE `star` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `userId`            VARCHAR(256) NOT NULl,
-    `targetId`          INT,
+    `targetId`          INT NOT NULL,
     `type`              TINYINT(4) NOT NULL COMMENT '0 - project, 1 - user, 2 - post, 3 - comment',
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
@@ -112,7 +112,7 @@ DROP TABLE IF EXISTS `subscribe`;
 CREATE TABLE `subscribe` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `userId`            VARCHAR(256) NOT NULl,
-    `targetId`          INT,
+    `targetId`          INT NOT NULL,
     `type`              TINYINT(4) NOT NULL COMMENT '0 - project, 1 - user, 2 - post, 3 - comment',
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE

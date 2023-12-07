@@ -67,6 +67,13 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public void createPost(CreatePostDto request) {
+        if (request.getStatus() < 0 || request.getStatus() > 3) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "Invalid payload (status should be between 0 and 3)"
+            );
+        }
+
         Post post = new Post()
                 .setStatus(request.getStatus())
                 .setCreatedUser(request.getCreatedUser())
@@ -81,6 +88,7 @@ public class PostServiceImpl implements IPostService {
                     "Invalid payload (content and referenceId can not both be absent)"
             );
         }
+
         postRepository.createPost(post);
     }
 
@@ -90,6 +98,12 @@ public class PostServiceImpl implements IPostService {
                 .setId(request.getId())
                 .setUpdatedUser(request.getUpdatedUser());
         if (request.getStatus() != null) {
+            if (request.getStatus() < 0 || request.getStatus() > 3) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (status should be between 0 and 3)"
+                );
+            }
             post.setStatus(request.getStatus());
         }
         if (request.getReferenceId() != null) {

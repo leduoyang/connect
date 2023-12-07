@@ -14,5 +14,5 @@ public class UserVerification {
 
     private String code;
 
-    private int status;
+    private Integer status;
 }

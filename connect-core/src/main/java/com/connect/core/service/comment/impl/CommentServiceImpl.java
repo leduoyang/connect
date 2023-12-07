@@ -62,6 +62,13 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public void createComment(CreateCommentDto request) {
+        if (request.getStatus() < 0 || request.getStatus() > 3) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "Invalid payload (status should be between 0 and 3)"
+            );
+        }
+
         Comment comment = new Comment()
                 .setStatus(request.getStatus())
                 .setPostId(request.getPostId())
@@ -84,6 +91,12 @@ public class CommentServiceImpl implements ICommentService {
                 .setId(request.getId())
                 .setUpdatedUser(request.getUpdatedUser());
         if (request.getStatus() != null) {
+            if (request.getStatus() < 0 || request.getStatus() > 3) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (status should be between 0 and 3)"
+                );
+            }
             comment.setStatus(request.getStatus());
         }
         if (request.getContent() == null || request.getContent().equals("")) {

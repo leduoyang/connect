@@ -12,7 +12,7 @@ public class ICommentRepositoryTest {
     private ICommentRepository commentRepository;
 
     @Test
-    void Get_Comment_By_Comment_Id_Should_Return_Target_Comment() {
+    void get_comment_by_comment_id_should_return_target_comment() {
         Long commentId = 1L;
         Comment comment = commentRepository.queryCommentById(commentId);
         System.out.println(comment.toString());
