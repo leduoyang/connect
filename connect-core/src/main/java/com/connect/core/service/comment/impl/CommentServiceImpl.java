@@ -77,7 +77,7 @@ public class CommentServiceImpl implements ICommentService {
         if (request.getContent() == null || request.getContent().equals("")) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
-                    "Invalid payload (content can not be empty)"
+                    "Invalid payload (comment content can not be empty)"
             );
         }
         comment.setContent(request.getContent());
@@ -103,7 +103,7 @@ public class CommentServiceImpl implements ICommentService {
             if (request.getContent().equals("")) {
                 throw new ConnectDataException(
                         ConnectErrorCode.PARAM_EXCEPTION,
-                        "Invalid payload (content can not be empty)"
+                        "Invalid payload (comment content can not be blank)"
                 );
             }
             comment.setContent(request.getContent());

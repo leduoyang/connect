@@ -79,13 +79,19 @@ public class PostServiceImpl implements IPostService {
                 .setCreatedUser(request.getCreatedUser())
                 .setUpdatedUser(request.getCreatedUser());
         if (request.getContent() != null) {
+            if (request.getContent().equals("")) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (post content can not be blank)"
+                );
+            }
             post.setContent(request.getContent());
         } else if (request.getReferenceId() != null) {
             post.setReferenceId(request.getReferenceId());
         } else {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
-                    "Invalid payload (content and referenceId can not both be absent)"
+                    "Invalid payload (post content and referenceId can not both be absent)"
             );
         }
 
@@ -110,6 +116,12 @@ public class PostServiceImpl implements IPostService {
             post.setReferenceId(request.getReferenceId());
         }
         if (request.getContent() != null) {
+            if (request.getContent().equals("")) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (post content can not be blank)"
+                );
+            }
             post.setContent(request.getContent());
         }
 
