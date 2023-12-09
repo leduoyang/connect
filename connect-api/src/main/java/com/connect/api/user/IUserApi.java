@@ -7,6 +7,7 @@ import com.connect.api.user.response.SignInResponse;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -36,6 +37,11 @@ public interface IUserApi {
     @DeleteMapping(value = "/user/{userId}")
     APIResponse<Void> deleteUser(
             @Validated @NotNull @PathVariable String userId
+    );
+
+    @PostMapping(value = {"/user/upload/profileImage"})
+    APIResponse<Void> uploadProfileImage(
+            @Validated @RequestParam("file") MultipartFile profileImage
     );
 
     @GetMapping(value = "/users/me")

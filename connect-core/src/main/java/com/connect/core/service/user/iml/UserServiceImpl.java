@@ -6,6 +6,7 @@ import com.connect.api.user.request.*;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
+import com.connect.common.util.ImageUploadUtil;
 import com.connect.core.service.user.IUserService;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
@@ -15,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +26,9 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements IUserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ImageUploadUtil imageUploadUtil;
 
     private IUserRepository userRepository;
 
@@ -79,7 +84,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void editUser(String userId, EditUserRequest request) {
         User user = new User()
-                .setUserId(userId)
+                .setUserId(request.getUserId())
                 .setPassword(request.getPassword())
                 .setDescription(request.getDescription())
                 .setEmail(request.getEmail())
@@ -96,13 +101,13 @@ public class UserServiceImpl implements IUserService {
             user.setStatus(request.getStatus());
         }
 
-        userRepository.editUser(user);
+        userRepository.editUser(userId, user);
     }
 
     @Override
     public void editUserProfile(String userId, EditProfileRequest request) {
         Profile profile = new Profile()
-                .setUserId(userId)
+                .setUserId(request.getUserId())
                 .setDescription(request.getDescription())
                 .setProfileImage(request.getProfileImage());
 
@@ -116,7 +121,21 @@ public class UserServiceImpl implements IUserService {
             profile.setStatus(request.getStatus());
         }
 
-        userRepository.editUserProfile(profile);
+        userRepository.editUserProfile(userId, profile);
+    }
+
+    @Override
+    public void editProfileImage(String userId, MultipartFile image) {
+        User user = userRepository.queryUserByUserId(userId);
+        String profileImage = user.getId() + "." + imageUploadUtil.getExtension(image);
+        imageUploadUtil.profileImage(
+                profileImage,
+                image
+        );
+
+        EditProfileRequest editProfileRequest = new EditProfileRequest()
+                .setProfileImage(profileImage);
+        editUserProfile(userId, editProfileRequest);
     }
 
     @Override

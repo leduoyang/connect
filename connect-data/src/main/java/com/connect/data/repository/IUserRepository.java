@@ -13,9 +13,9 @@ public interface IUserRepository {
 
     void signUp(User user);
 
-    void editUser(User user);
+    void editUser(String userId, User user);
 
-    void editUserProfile(Profile profile);
+    void editUserProfile(String userId, Profile profile);
 
     void deleteUser(String userId);
 

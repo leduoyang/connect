@@ -3,6 +3,7 @@ package com.connect.core.service.user;
 import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface IUserService {
     void editUser(String userId, EditUserRequest request);
 
     void editUserProfile(String userId, EditProfileRequest request);
+
+    void editProfileImage(String userId, MultipartFile image);
 
     void deleteUser(String userId);
 

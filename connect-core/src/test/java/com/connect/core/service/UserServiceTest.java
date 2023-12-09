@@ -16,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -50,7 +51,7 @@ public class UserServiceTest {
 
         userService.editUser("userId", editUserRequest);
 
-        verify(userRepository, times(1)).editUser(postCaptor.capture());
+        verify(userRepository, times(1)).editUser(any(), postCaptor.capture());
         User capturedUser = postCaptor.getValue();
         assertNull(capturedUser.getStatus());
     }
@@ -63,7 +64,7 @@ public class UserServiceTest {
 
         userService.editUser("userId", editUserRequest);
 
-        verify(userRepository, times(1)).editUser(postCaptor.capture());
+        verify(userRepository, times(1)).editUser(any(), postCaptor.capture());
         User capturedUser = postCaptor.getValue();
         assertEquals(targetStatus, capturedUser.getStatus());
     }

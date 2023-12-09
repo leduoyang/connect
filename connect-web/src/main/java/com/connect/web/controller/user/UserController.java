@@ -9,6 +9,7 @@ import com.connect.common.enums.RedisPrefix;
 import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
+import com.connect.common.util.ImageUploadUtil;
 import com.connect.common.util.RedisUtil;
 import com.connect.core.service.user.IUserService;
 import com.connect.core.service.user.IUserVerificationService;
@@ -19,14 +20,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -137,6 +135,14 @@ public class UserController implements IUserApi {
         }
 
         userService.deleteUser(userId);
+        return APIResponse.getOKJsonResult(null);
+    }
+
+    @Override
+    public APIResponse<Void> uploadProfileImage(@RequestParam("file") MultipartFile profileImage) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        userService.editProfileImage(authentication.getName(), profileImage);
+
         return APIResponse.getOKJsonResult(null);
     }
 

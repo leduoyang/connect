@@ -85,7 +85,7 @@
                 description = #{description, jdbcType=VARCHAR},
             </if>
             <if test="profileImage != null and profileImage != ''">
-                profileImage = #{phone, jdbcType=VARCHAR},
+                profileImage = #{profileImage, jdbcType=VARCHAR},
             </if>
         </trim>
         WHERE id = #{id, jdbcType=BIGINT}

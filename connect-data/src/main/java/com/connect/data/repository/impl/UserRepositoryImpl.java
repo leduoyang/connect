@@ -57,13 +57,13 @@ public class UserRepositoryImpl implements IUserRepository {
         }
     }
 
-    public void editUser(User user) {
-        User targetUser = userDao.queryUserByUserId(user.getUserId());
+    public void editUser(String userId, User user) {
+        User targetUser = userDao.queryUserByUserId(userId);
         log.info("targetUser for updating - " + targetUser);
         if (targetUser == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
-                    String.format("User %s not exited.", user.getId())
+                    String.format("User %s not exited.", userId)
             );
         }
         user.setId(targetUser.getId());
@@ -75,13 +75,13 @@ public class UserRepositoryImpl implements IUserRepository {
         }
     }
 
-    public void editUserProfile(Profile profile) {
-        User targetUser = userDao.queryUserByUserId(profile.getUserId());
+    public void editUserProfile(String userId, Profile profile) {
+        User targetUser = userDao.queryUserByUserId(userId);
         log.info("targetUser for updating - " + targetUser);
         if (targetUser == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
-                    String.format("User %s not exited.", profile.getId())
+                    String.format("User %s not exited.", userId)
             );
         }
         profile.setId(targetUser.getId());
