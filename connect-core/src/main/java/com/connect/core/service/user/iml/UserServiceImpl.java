@@ -127,9 +127,9 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void editProfileImage(String userId, MultipartFile image) {
         User user = userRepository.queryUserByUserId(userId);
-        String profileImage = user.getId() + "." + imageUploadUtil.getExtension(image);
+        String profileImage =
         imageUploadUtil.profileImage(
-                profileImage,
+                user.getId() + "." + imageUploadUtil.getExtension(image),
                 image
         );
 
