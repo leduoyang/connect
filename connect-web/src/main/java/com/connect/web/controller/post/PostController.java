@@ -98,7 +98,7 @@ public class PostController implements IPostApi {
 
         DeletePostDto deletePostDto = new DeletePostDto()
                 .setId(postId)
-                .setUserId(authentication.getName());
+                .setUpdatedUser(authentication.getName());
         postService.deletePost(deletePostDto);
 
         return APIResponse.getOKJsonResult(null);

@@ -41,7 +41,7 @@
 
     <delete id="deletePost">
         UPDATE post
-        SET `status` = 0,
+        SET `status` = 3,
         updated_user = #{updatedUser, jdbcType=VARCHAR}
         WHERE id = #{id, jdbcType=BIGINT}
     </delete>
@@ -49,7 +49,7 @@
     <select id="queryPostById" resultMap="postResultMap">
         SELECT id, content, referenceId, created_user, updated_user, db_create_time, db_modify_time
 
-        FROM post WHERE id = #{id}
+        FROM post WHERE id = #{id} AND status != 3
     </select>
 
     <select id="queryPost" resultMap="postResultMap">
@@ -66,13 +66,15 @@
         <if test="keyword != null and keyword != ''">
             AND content LIKE CONCAT('%', #{keyword}, '%')
         </if>
+        AND status != 3
+        ORDER BY db_modify_time DESC, db_create_time DESC
     </select>
 
     <select id="postExisting" resultType="java.lang.Boolean">
         SELECT EXISTS(
         SELECT id
         FROM post
-        WHERE id = #{id,jdbcType=BIGINT} AND created_user = #{userId, jdbcType=VARCHAR}
+        WHERE id = #{id, jdbcType=BIGINT} AND created_user = #{userId, jdbcType=VARCHAR} AND status != 3
         )
     </select>
 </mapper>

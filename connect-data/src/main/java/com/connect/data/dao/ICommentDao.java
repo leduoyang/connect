@@ -9,7 +9,7 @@ public interface ICommentDao {
 
     int updateComment(Comment comment);
 
-    int deleteComment(Long id);
+    int deleteComment(Long id, String userId);
 
     Comment queryCommentById(Long id);
 

@@ -9,7 +9,7 @@ public interface IPostDao {
 
     int updatePost(Post post);
 
-    int deletePost(Long id);
+    int deletePost(Long id, String userId);
 
     Post queryPostById(Long id);
 

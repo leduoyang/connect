@@ -83,7 +83,7 @@ public class PostRepositoryImpl implements IPostRepository {
             );
         }
 
-        int affected = postDao.deletePost(targetId);
+        int affected = postDao.deletePost(targetId, userId);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
         }

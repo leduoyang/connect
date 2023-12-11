@@ -73,7 +73,7 @@ public class CommentRepositoryImpl implements ICommentRepository {
             );
         }
 
-        int affected = commentDao.deleteComment(targetId);
+        int affected = commentDao.deleteComment(targetId, userId);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
         }

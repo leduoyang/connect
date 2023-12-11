@@ -96,7 +96,7 @@ public class CommentController implements ICommentApi {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         DeleteCommentDto deleteCommentDto = new DeleteCommentDto()
                 .setId(commentId)
-                .setUserId(authentication.getName());
+                .setUpdatedUser(authentication.getName());
         commentService.deleteComment(deleteCommentDto);
 
         return APIResponse.getOKJsonResult(null);

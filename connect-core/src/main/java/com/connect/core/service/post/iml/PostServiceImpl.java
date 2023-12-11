@@ -67,10 +67,10 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public void createPost(CreatePostDto request) {
-        if (request.getStatus() < 0 || request.getStatus() > 3) {
+        if (request.getStatus() < 0 || request.getStatus() > 2) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
-                    "Invalid payload (status should be between 0 and 3)"
+                    "Invalid payload (status should be between 0 and 2)"
             );
         }
 
@@ -104,10 +104,10 @@ public class PostServiceImpl implements IPostService {
                 .setId(request.getId())
                 .setUpdatedUser(request.getUpdatedUser());
         if (request.getStatus() != null) {
-            if (request.getStatus() < 0 || request.getStatus() > 3) {
+            if (request.getStatus() < 0 || request.getStatus() > 2) {
                 throw new ConnectDataException(
                         ConnectErrorCode.PARAM_EXCEPTION,
-                        "Invalid payload (status should be between 0 and 3)"
+                        "Invalid payload (status should be between 0 and 2)"
                 );
             }
             post.setStatus(request.getStatus());
@@ -132,7 +132,7 @@ public class PostServiceImpl implements IPostService {
     public void deletePost(DeletePostDto request) {
         Post post = new Post()
                 .setId(request.getId())
-                .setUpdatedUser(request.getUserId());
+                .setUpdatedUser(request.getUpdatedUser());
 
         postRepository.deletePost(post);
     }
