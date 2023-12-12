@@ -20,5 +20,7 @@ public class QueryCommentDto {
 
     private String updatedUser;
 
+    private Date dbCreateTime;
+
     private Date dbModifyTime;
 }

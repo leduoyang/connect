@@ -13,4 +13,7 @@ public class UpdateCommentRequest {
 
     @Size(min = 1, max = 500, message = "comment must be at most 500")
     private String content;
+
+    @Size(max = 200, message = "tags must be at most 200")
+    private String tags;
 }

@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class UpdatePostRequest {
-    @Min(value = 0, message = "status must be at least 1 (0 - public, 1 - semi, 2 - private)")
+    @Min(value = 0, message = "status must be at least 0 (0 - public, 1 - semi, 2 - private)")
     @Max(value = 2, message = "status must be at most 2 (0 - public, 1 - semi, 2 - private)")
     private Integer status;
 
@@ -16,4 +16,7 @@ public class UpdatePostRequest {
     private String content;
 
     private Long referenceId;
+
+    @Size(max = 200, message = "tags must be at most 200")
+    private String tags;
 }

@@ -1,15 +1,14 @@
-package com.connect.api.post.request;
+package com.connect.api.project.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @Data
-public class QueryPostRequest {
-    private Long postId;
+public class QueryProjectRequest {
+    private Long projectId;
 
     private String userId;
 

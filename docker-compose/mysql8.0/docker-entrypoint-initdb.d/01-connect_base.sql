@@ -7,11 +7,11 @@ CREATE TABLE `user` (
     `userId`            VARCHAR(256) UNIQUE NOT NULL,
     `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `role`              TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - essential, 1 - plus, 2 - premium, 3 - admin',
-    `password`          VARCHAR(255) NOT NULL,
+    `password`          VARCHAR(256) NOT NULL,
     `description`       VARCHAR(256),
-    `phone`             VARCHAR(255),
-    `email`             VARCHAR(255) UNIQUE NOT NULL,
-    `profileImage`      VARCHAR(255),
+    `phone`             VARCHAR(256),
+    `email`             VARCHAR(256) UNIQUE NOT NULL,
+    `profileImage`      VARCHAR(256),
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='User';
@@ -32,7 +32,7 @@ CREATE INDEX idx_email_code ON `email_verification` (email, code);
 DROP TABLE IF EXISTS `project`;
 CREATE TABLE `project` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
-    `title`             VARCHAR(255) NOT NULL,
+    `title`             VARCHAR(256) NOT NULL,
     `description`       TEXT,
     `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `tags`              VARCHAR(256) DEFAULT NULL,
@@ -51,7 +51,7 @@ CREATE INDEX idx_userid ON `project` (created_user);
 DROP TABLE IF EXISTS `project_category`;
 CREATE TABLE `project_category` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
-    `title`             VARCHAR(255) NOT NULL,
+    `title`             VARCHAR(256) NOT NULL,
     `description`       TEXT,
     `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `viewsCount`        INT DEFAULT 0,
