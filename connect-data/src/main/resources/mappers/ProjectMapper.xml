@@ -19,16 +19,13 @@
 
     <insert id="createProject" parameterType="com.connect.data.entity.Project" useGeneratedKeys="true"
             keyProperty="id" keyColumn="id">
-        INSERT INTO project(title, description, status, tags, boosted, likesCount, viewsCount, version, created_user,
-        updated_user)
+        INSERT INTO project(title, description, status, tags, boosted, created_user, updated_user)
         VALUES (
         #{title, jdbcType=VARCHAR},
         #{description, jdbcType=VARCHAR},
         #{status,jdbcType=TINYINT},
         #{tags,jdbcType=VARCHAR},
-        #{likesCount, jdbcType=BIGINT}
-        #{viewsCount, jdbcType=BIGINT}
-        #{version, jdbcType=BIGINT}
+        #{boosted, jdbcType=TINYINT}
         #{createdUser,jdbcType=VARCHAR},
         #{updatedUser,jdbcType=VARCHAR}
         )
