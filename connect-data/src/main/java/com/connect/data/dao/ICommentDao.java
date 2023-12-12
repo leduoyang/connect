@@ -13,7 +13,7 @@ public interface ICommentDao {
 
     Comment queryCommentById(Long id);
 
-    List<Comment> queryComment(Long postId, String userId, String keyword);
+    List<Comment> queryComment(Long postId, String userId, String keyword, String tags);
 
     boolean commentExisting(Long id, String userId);
 }

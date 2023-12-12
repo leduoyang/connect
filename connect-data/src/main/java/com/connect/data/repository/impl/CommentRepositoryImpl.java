@@ -34,7 +34,8 @@ public class CommentRepositoryImpl implements ICommentRepository {
         return commentDao.queryComment(
                 param.getPostId(),
                 param.getUserId(),
-                param.getKeyword()
+                param.getKeyword(),
+                param.getTags()
         );
     }
 

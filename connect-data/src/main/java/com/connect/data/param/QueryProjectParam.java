@@ -5,8 +5,8 @@ import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @Data
-public class QueryPostParam {
-    private Long postId;
+public class QueryProjectParam {
+    private Long projectId;
 
     private String userId;
 
