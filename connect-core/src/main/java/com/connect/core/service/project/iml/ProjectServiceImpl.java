@@ -45,7 +45,8 @@ public class ProjectServiceImpl implements IProjectService {
         QueryProjectParam param = new QueryProjectParam()
                 .setProjectId(request.getProjectId())
                 .setKeyword(request.getKeyword())
-                .setUserId(request.getUserId());
+                .setUserId(request.getUserId())
+                .setTags(request.getTags());
 
         List<Project> projectList = projectRepository.queryProject(param);
 

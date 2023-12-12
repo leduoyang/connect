@@ -49,7 +49,8 @@ public class PostServiceImpl implements IPostService {
         QueryPostParam param = new QueryPostParam()
                 .setPostId(request.getPostId())
                 .setKeyword(request.getKeyword())
-                .setUserId(request.getUserId());
+                .setUserId(request.getUserId())
+                .setTags(request.getTags());
 
         List<Post> postList = postRepository.queryPost(param);
 

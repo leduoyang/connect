@@ -16,6 +16,8 @@ public class QueryCommentRequest {
 
     private String keyword;
 
+    private String tags;
+
     @Min(value = 1, message = "pageIndex must be at least 1")
     @Max(value = 2000, message = "pageIndex must be at most 200")
     private Integer pageIndex = 1;

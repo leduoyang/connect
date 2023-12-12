@@ -45,7 +45,8 @@ public class CommentServiceImpl implements ICommentService {
         QueryCommentParam param = new QueryCommentParam()
                 .setPostId(request.getPostId())
                 .setUserId(request.getUserId())
-                .setKeyword(request.getKeyword());
+                .setKeyword(request.getKeyword())
+                .setTags(request.getTags());
 
         List<Comment> commentList = commentRepository.queryComment(param);
 
