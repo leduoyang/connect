@@ -34,7 +34,6 @@ CREATE TABLE `project` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `title`             VARCHAR(255) NOT NULL,
     `description`       TEXT,
-    `tags`              VARCHAR(255),
     `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `tags`              VARCHAR(256) DEFAULT NULL,
     `boosted`           TINYINT(2) NOT NULL DEFAULT '0' COMMENT '0 - default, 1 - boosted',
