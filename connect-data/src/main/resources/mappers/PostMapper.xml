@@ -5,6 +5,7 @@
         <id property="id" column="id"/>
         <result property="content" column="content"/>
         <result property="referenceId" column="referenceId"/>
+        <result property="tags" column="tag"/>
         <result property="createdUser" column="created_user"/>
         <result property="updatedUser" column="updated_user"/>
         <result property="dbCreateTime" column="db_create_time"/>
@@ -13,9 +14,10 @@
 
     <insert id="createPost" parameterType="com.connect.data.entity.Post" useGeneratedKeys="true"
             keyProperty="id" keyColumn="id">
-        INSERT INTO post(content, referenceId, status, created_user, updated_user)
+        INSERT INTO post(content, referenceId, tags, status, created_user, updated_user)
         VALUES (#{content, jdbcType=VARCHAR},
         #{referenceId,jdbcType=BIGINT},
+        #{tags,jdbcType=VARCHAR},
         #{status,jdbcType=TINYINT},
         #{createdUser,jdbcType=VARCHAR},
         #{updatedUser,jdbcType=VARCHAR}
@@ -32,7 +34,10 @@
             <if test="referenceId != null and referenceId > 0">
                 referenceId = #{referenceId, jdbcType=BIGINT},
             </if>
-            <if test="status != null and status > 0">
+            <if test="tags != null and tags != ''">
+                tags = #{tags, jdbcType=VARCHAR},
+            </if>
+            <if test="status != null and status >= 0">
                 status = #{status,jdbcType=TINYINT}
             </if>
         </trim>
@@ -47,13 +52,13 @@
     </delete>
 
     <select id="queryPostById" resultMap="postResultMap">
-        SELECT id, content, referenceId, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, content, referenceId, tags, created_user, updated_user, db_create_time, db_modify_time
 
         FROM post WHERE id = #{id} AND status != 3
     </select>
 
     <select id="queryPost" resultMap="postResultMap">
-        SELECT id, content, referenceId, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, content, referenceId, tags, created_user, updated_user, db_create_time, db_modify_time
 
         FROM post
         WHERE 1=1
@@ -65,6 +70,9 @@
         </if>
         <if test="keyword != null and keyword != ''">
             AND content LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="tags != null and tags != ''">
+            AND find_in_set(#{tags}, tags) &gt; 0
         </if>
         AND status != 3
         ORDER BY db_modify_time DESC, db_create_time DESC
