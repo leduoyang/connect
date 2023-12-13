@@ -15,7 +15,7 @@ public interface ICommentDao {
 
     Comment queryCommentById(long id);
 
-    List<Comment> queryComment(long postId, String userId, String keyword, String tags);
+    List<Comment> queryComment(Long postId, String userId, String keyword, String tags);
 
     boolean commentExisting(long id, String userId);
 }
