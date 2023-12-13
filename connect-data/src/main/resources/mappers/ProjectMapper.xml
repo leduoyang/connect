@@ -25,7 +25,7 @@
         #{description, jdbcType=VARCHAR},
         #{status,jdbcType=TINYINT},
         #{tags,jdbcType=VARCHAR},
-        #{boosted, jdbcType=TINYINT}
+        #{boosted, jdbcType=TINYINT},
         #{createdUser,jdbcType=VARCHAR},
         #{updatedUser,jdbcType=VARCHAR}
         )
@@ -42,13 +42,19 @@
                 description = #{description, jdbcType=VARCHAR},
             </if>
             <if test="status != null and status >= 0">
-                status = #{status,jdbcType=TINYINT}
+                status = #{status,jdbcType=TINYINT},
             </if>
-            <if test="tags != null and tag != ''">
+            <if test="tags != null and tags != ''">
                 tags = #{tags, jdbcType=VARCHAR},
             </if>
             <if test="boosted != null and boosted >= 0">
-                tags = #{tags, jdbcType=TINYINT},
+                boosted = #{boosted, jdbcType=TINYINT},
+            </if>
+            <if test="viewsCount != null and viewsCount > 0">
+                viewsCount = #{viewsCount, jdbcType=BIGINT},
+            </if>
+            <if test="likesCount != null and likesCount > 0">
+                likesCount = #{likesCount, jdbcType=BIGINT},
             </if>
         </trim>
         WHERE id = #{id, jdbcType=BIGINT}

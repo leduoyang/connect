@@ -2,6 +2,7 @@ package com.connect.data.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.data.annotation.Version;
 
 import java.util.Date;
 
@@ -24,6 +25,7 @@ public class Project {
 
     private Integer viewsCount;
 
+    @Version
     private Integer version;
 
     private String createdUser;
