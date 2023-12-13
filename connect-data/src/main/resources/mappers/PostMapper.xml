@@ -59,13 +59,13 @@
     </delete>
 
     <select id="queryPostById" resultMap="postResultMap">
-        SELECT id, content, referenceId, tags, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, content, referenceId, tags, likesCount, viewsCount, version, created_user, updated_user, db_create_time, db_modify_time
 
         FROM post WHERE id = #{id} AND status != 3
     </select>
 
     <select id="queryPost" resultMap="postResultMap">
-        SELECT id, content, referenceId, tags, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, content, referenceId, tags, likesCount, viewsCount, version, created_user, updated_user, db_create_time, db_modify_time
 
         FROM post
         WHERE 1=1

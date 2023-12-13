@@ -57,12 +57,12 @@
     </delete>
 
     <select id="queryCommentById" resultMap="commentResultMap">
-        SELECT id, postId, content, tags, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, postId, content, tags, likesCount, viewsCount, version, created_user, updated_user, db_create_time, db_modify_time
         FROM comment WHERE id = #{id} AND status != 3
     </select>
 
     <select id="queryComment" resultMap="commentResultMap">
-        SELECT id, postId, content, tags, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, postId, content, tags, likesCount, viewsCount, version, created_user, updated_user, db_create_time, db_modify_time
 
         FROM comment
         WHERE 1=1

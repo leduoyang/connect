@@ -105,7 +105,7 @@
     </delete>
 
     <select id="queryUser" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage
+        SELECT id, userId, status, role, description, email, phone, profileImage, likesCount, viewsCount, version, db_create_time, db_modify_time
 
         FROM user
         WHERE (userId LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
@@ -113,7 +113,7 @@
     </select>
 
     <select id="queryUserByUserId" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage
+        SELECT id, userId, status, role, description, email, phone, profileImage, likesCount, viewsCount, version, db_create_time, db_modify_time
 
         FROM user WHERE userId = #{userId} AND status != 3
     </select>
