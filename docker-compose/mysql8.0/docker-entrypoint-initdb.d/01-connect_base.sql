@@ -112,12 +112,13 @@ CREATE TABLE `star` (
     `userId`            VARCHAR(256) NOT NULl,
     `targetId`          INT NOT NULL,
     `targetType`        TINYINT(4) NOT NULL COMMENT '0 - project, 1 - post, 2 - comment, 3 - user',
-    `active`            BOOLEAN NOT NULL DEFAULT TRUE,
+    `isActive`            BOOLEAN NOT NULL DEFAULT TRUE,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Star';
 CREATE INDEX idx_userId_star ON `star` (userId);
-CREATE INDEX idx_type_targetId_star ON `star` (type, targetId);
+CREATE INDEX idx_type_targetId_star ON `star` (targetType, targetId);
+CREATE INDEX idx_type_targetId_active_star ON `star` (targetType, targetId, isActive);
 
 -- subscribe table
 DROP TABLE IF EXISTS `subscribe`;
@@ -125,12 +126,14 @@ CREATE TABLE `subscribe` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `userId`            VARCHAR(256) NOT NULl,
     `targetId`          INT NOT NULL,
-    `type`              TINYINT(4) NOT NULL COMMENT '0 - project, 1 - user, 2 - post, 3 - comment',
+    `targetType`        TINYINT(4) NOT NULL COMMENT '0 - project, 1 - post, 2 - comment, 3 - user',
+    `isActive`            BOOLEAN NOT NULL DEFAULT TRUE,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Subscribe';
 CREATE INDEX idx_userId_subscribe ON `subscribe` (userId);
-CREATE INDEX idx_type_targetId_subscribe ON `subscribe` (type, targetId);
+CREATE INDEX idx_type_targetId_subscribe ON `subscribe` (targetType, targetId);
+CREATE INDEX idx_type_targetId_active_subscribe ON `subscribe` (targetType, targetId, isActive);
 
 -- Insert Mock User Data
 INSERT INTO `user` (userId, status, password, email, db_create_time)
@@ -341,44 +344,44 @@ VALUES
 
 -- Insert Mock Star Data
 -- likedType 0: Project (targetId 1-20)
-INSERT INTO `star` (userId, targetId, type)
+INSERT INTO `star` (userId, targetId, targetType)
 SELECT userId, ROUND(RAND() * 19 + 1), 0
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- likedType 1: User (targetId 1-20)
-INSERT INTO `star` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 19 + 1), 0
+INSERT INTO `star` (userId, targetId, targetType, isActive)
+SELECT userId, ROUND(RAND() * 19 + 1), 3, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- likedType 2: Post (targetId 1-40, after the first 20 entries)
-INSERT INTO `star` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 39 + 1), 2
+INSERT INTO `star` (userId, targetId, targetType, isActive)
+SELECT userId, ROUND(RAND() * 39 + 1), 1, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- likedType 3: Comment (targetId 1-20)
-INSERT INTO `star` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 19 + 1), 3
+INSERT INTO `star` (userId, targetId, targetType, isActive)
+SELECT userId, ROUND(RAND() * 19 + 1), 2, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- Insert Mock Subscribe Data
 -- likedType 0: Project (targetId 1-20)
-INSERT INTO `subscribe` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 19 + 1), 0
+INSERT INTO `subscribe` (userId, targetId, targetType, isActive)
+SELECT userId, ROUND(RAND() * 19 + 1), 0, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 20;
 
 -- likedType 1: User (targetId 1-20)
-INSERT INTO `subscribe` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 19 + 1), 1
+INSERT INTO `subscribe` (userId, targetId, targetType, isActive)
+SELECT userId, ROUND(RAND() * 19 + 1), 3, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 20;
