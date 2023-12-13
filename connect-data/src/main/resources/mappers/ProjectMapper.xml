@@ -60,6 +60,13 @@
         WHERE id = #{id, jdbcType=BIGINT}
     </update>
 
+    <update id="incrementViewCount">
+        UPDATE project
+        SET version = version + 1,
+        viewsCount = viewsCount + 1
+        WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
+    </update>
+
     <delete id="deleteProject">
         UPDATE project
         SET `status` = 3,

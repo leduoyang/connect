@@ -9,11 +9,13 @@ public interface IProjectDao {
 
     int updateProject(Project project);
 
-    int deleteProject(Long id, String userId);
+    int incrementViewCount(long id, int version);
 
-    Project queryProjectById(Long id);
+    int deleteProject(long id, String userId);
 
-    List<Project> queryProject(Long projectId, String userId, String keyword, String tags);
+    Project queryProjectById(long id);
 
-    boolean projectExisting(Long id, String userId);
+    List<Project> queryProject(long projectId, String userId, String keyword, String tags);
+
+    boolean projectExisting(long id, String userId);
 }

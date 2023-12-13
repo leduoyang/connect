@@ -8,11 +8,13 @@ import java.util.List;
 public interface IProjectRepository {
     void createProject(Project project);
 
-    void deleteProject(Project project);
+    void updateProject(Project project);
 
-    List<Project> queryProject(QueryProjectParam param);
+    void incrementViewCount(long id, int version);
+
+    void deleteProject(Project project);
 
     Project queryProjectById(long id);
 
-    void updateProject(Project project);
+    List<Project> queryProject(QueryProjectParam param);
 }

@@ -9,11 +9,11 @@ public interface ICommentDao {
 
     int updateComment(Comment comment);
 
-    int deleteComment(Long id, String userId);
+    int deleteComment(long id, String userId);
 
-    Comment queryCommentById(Long id);
+    Comment queryCommentById(long id);
 
-    List<Comment> queryComment(Long postId, String userId, String keyword, String tags);
+    List<Comment> queryComment(long postId, String userId, String keyword, String tags);
 
-    boolean commentExisting(Long id, String userId);
+    boolean commentExisting(long id, String userId);
 }

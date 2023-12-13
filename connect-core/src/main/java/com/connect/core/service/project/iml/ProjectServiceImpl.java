@@ -31,14 +31,24 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public QueryProjectDto queryProjectById(long id) {
         Project project = projectRepository.queryProjectById(id);
-        this.incrementViewCount(project);
+        projectRepository.incrementViewCount(
+                project.getId(),
+                project.getVersion()
+        );
 
         QueryProjectDto projectDto = new QueryProjectDto()
                 .setId(project.getId())
                 .setTitle(project.getTitle())
                 .setDescription(project.getDescription())
                 .setStatus(project.getStatus())
+                .setTags(project.getTags())
+                .setBoosted(project.getBoosted())
+                .setLikesCount(project.getLikesCount())
+                .setViewsCount(project.getViewsCount())
+                .setVersion(project.getVersion())
+                .setCreatedUser(project.getCreatedUser())
                 .setUpdatedUser(project.getUpdatedUser())
+                .setDbCreateTime(project.getDbCreateTime())
                 .setDbModifyTime(project.getDbModifyTime());
         return projectDto;
     }
@@ -60,8 +70,14 @@ public class ProjectServiceImpl implements IProjectService {
                         .setTitle(x.getTitle())
                         .setDescription(x.getDescription())
                         .setStatus(x.getStatus())
+                        .setTags(x.getTags())
                         .setBoosted(x.getBoosted())
+                        .setLikesCount(x.getLikesCount())
+                        .setViewsCount(x.getViewsCount())
+                        .setVersion(x.getVersion())
+                        .setCreatedUser(x.getCreatedUser())
                         .setUpdatedUser(x.getUpdatedUser())
+                        .setDbCreateTime(x.getDbCreateTime())
                         .setDbModifyTime(x.getDbModifyTime())
                 )
                 .collect(Collectors.toList());
@@ -131,11 +147,5 @@ public class ProjectServiceImpl implements IProjectService {
                 .setUpdatedUser(request.getUpdatedUser());
 
         projectRepository.deleteProject(project);
-    }
-
-    @Transactional
-    private void incrementViewCount(Project project) {
-        project.setViewsCount(project.getViewsCount() + 1);
-        projectRepository.updateProject(project);
     }
 }

@@ -60,6 +60,13 @@ public class ProjectRepositoryImpl implements IProjectRepository {
         }
     }
 
+    public void incrementViewCount(long id, int version) {
+        int affected = projectDao.incrementViewCount(id, version);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.PROJECT_UPDATE_EXCEPTION, "update viewCounts failed");
+        }
+    }
+
     public void deleteProject(Project project) {
         long targetId = project.getId();
         String userId = project.getUpdatedUser();

@@ -9,11 +9,11 @@ public interface IPostDao {
 
     int updatePost(Post post);
 
-    int deletePost(Long id, String userId);
+    int deletePost(long id, String userId);
 
-    Post queryPostById(Long id);
+    Post queryPostById(long id);
 
-    List<Post> queryPost(Long postId, String userId, String keyword, String tags);
+    List<Post> queryPost(long postId, String userId, String keyword, String tags);
 
-    boolean postExisting(Long id, String userId);
+    boolean postExisting(long id, String userId);
 }
