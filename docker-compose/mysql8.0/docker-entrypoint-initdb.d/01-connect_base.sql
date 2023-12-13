@@ -344,8 +344,8 @@ VALUES
 
 -- Insert Mock Star Data
 -- likedType 0: Project (targetId 1-20)
-INSERT INTO `star` (userId, targetId, targetType)
-SELECT userId, ROUND(RAND() * 19 + 1), 0
+INSERT INTO `star` (userId, targetId, targetType, isActive)
+SELECT userId, ROUND(RAND() * 19 + 1), 0, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
