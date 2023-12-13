@@ -36,6 +36,7 @@ public class CommentServiceImpl implements ICommentService {
 
         QueryCommentDto commentDto = new QueryCommentDto()
                 .setId(comment.getId())
+                .setPostId(comment.getPostId())
                 .setStatus(comment.getStatus())
                 .setContent(comment.getContent())
                 .setLikesCount(comment.getLikesCount())
@@ -62,6 +63,7 @@ public class CommentServiceImpl implements ICommentService {
                 .stream()
                 .map(x -> new QueryCommentDto()
                         .setId(x.getId())
+                        .setPostId(x.getPostId())
                         .setStatus(x.getStatus())
                         .setContent(x.getContent())
                         .setLikesCount(x.getLikesCount())
