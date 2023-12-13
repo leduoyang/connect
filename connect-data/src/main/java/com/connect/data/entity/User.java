@@ -26,6 +26,12 @@ public class User {
 
     private String profileImage;
 
+    private Integer likesCount;
+
+    private Integer viewsCount;
+
+    private Integer version;
+
     private Date dbCreateTime;
 
     private Date dbModifyTime;

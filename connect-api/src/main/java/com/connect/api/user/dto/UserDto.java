@@ -16,11 +16,13 @@ public class UserDto {
 
     private Integer role;
 
-    private String email;
-
-    private String phone;
-
     private String profileImage;
+
+    private Integer likesCount;
+
+    private Integer viewsCount;
+
+    private Date dbCreateTime;
 
     private Date dbModifyTime;
 }

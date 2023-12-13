@@ -9,6 +9,8 @@ public interface ICommentDao {
 
     int updateComment(Comment comment);
 
+    int incrementViewCount(long id, int version);
+
     int deleteComment(long id, String userId);
 
     Comment queryCommentById(long id);

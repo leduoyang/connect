@@ -16,6 +16,10 @@ public class QueryPostDto {
 
     private Long referenceId;
 
+    private Integer likesCount;
+
+    private Integer viewsCount;
+
     private String createdUser;
 
     private String updatedUser;

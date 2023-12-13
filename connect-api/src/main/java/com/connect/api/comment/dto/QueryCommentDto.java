@@ -16,6 +16,10 @@ public class QueryCommentDto {
 
     private String content;
 
+    private Integer likesCount;
+
+    private Integer viewsCount;
+
     private String createdUser;
 
     private String updatedUser;

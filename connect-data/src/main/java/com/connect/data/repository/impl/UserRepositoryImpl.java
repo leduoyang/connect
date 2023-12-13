@@ -93,6 +93,13 @@ public class UserRepositoryImpl implements IUserRepository {
         }
     }
 
+    public void incrementViewCount(long id, int version) {
+        int affected = userDao.incrementViewCount(id, version);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.USER_EDIT_EXCEPTION, "update viewCounts failed");
+        }
+    }
+
     public void deleteUser(String userId) {
         boolean existed = userDao.userExisting(userId);
         if (!existed) {

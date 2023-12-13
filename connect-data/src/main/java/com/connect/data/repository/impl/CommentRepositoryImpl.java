@@ -42,7 +42,7 @@ public class CommentRepositoryImpl implements ICommentRepository {
     public void createComment(Comment comment) {
         int affected = commentDao.createComment(comment);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_CREATE_EXCEPTION);
+            throw new ConnectDataException(ConnectErrorCode.COMMENT_CREATE_EXCEPTION);
         }
     }
 
@@ -52,14 +52,21 @@ public class CommentRepositoryImpl implements ICommentRepository {
         boolean existed = commentDao.commentExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
-                    ConnectErrorCode.POST_NOT_EXISTED_EXCEPTION,
+                    ConnectErrorCode.COMMENT_NOT_EXISTED_EXCEPTION,
                     String.format("Post %s not exited or user %s is not the creator", targetId, userId)
             );
         }
 
         int affected = commentDao.updateComment(comment);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
+            throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION);
+        }
+    }
+
+    public void incrementViewCount(long id, int version) {
+        int affected = commentDao.incrementViewCount(id, version);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION, "update viewCounts failed");
         }
     }
 
@@ -69,14 +76,14 @@ public class CommentRepositoryImpl implements ICommentRepository {
         boolean existed = commentDao.commentExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
-                    ConnectErrorCode.POST_NOT_EXISTED_EXCEPTION,
+                    ConnectErrorCode.COMMENT_NOT_EXISTED_EXCEPTION,
                     String.format("Post %s not exited or user %s is not the creator", targetId, userId)
             );
         }
 
         int affected = commentDao.deleteComment(targetId, userId);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
+            throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION);
         }
     }
 }

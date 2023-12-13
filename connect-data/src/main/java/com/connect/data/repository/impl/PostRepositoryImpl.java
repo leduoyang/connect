@@ -73,6 +73,13 @@ public class PostRepositoryImpl implements IPostRepository {
         }
     }
 
+    public void incrementViewCount(long id, int version) {
+        int affected = postDao.incrementViewCount(id, version);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "update viewCounts failed");
+        }
+    }
+
     public void deletePost(Post post) {
         long targetId = post.getId();
         String userId = post.getUpdatedUser();

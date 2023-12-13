@@ -16,6 +16,12 @@ public class Post {
 
     private Long referenceId;
 
+    private Integer likesCount;
+
+    private Integer viewsCount;
+
+    private Integer version;
+
     private String createdUser;
 
     private String updatedUser;

@@ -29,11 +29,19 @@ public class PostServiceImpl implements IPostService {
     @Override
     public QueryPostDto queryPostById(long id) {
         Post post = postRepository.queryPostById(id);
+        postRepository.incrementViewCount(
+                post.getId(),
+                post.getVersion()
+        );
 
         QueryPostDto postDto = new QueryPostDto()
                 .setId(post.getId())
                 .setStatus(post.getStatus())
+                .setLikesCount(post.getLikesCount())
+                .setViewsCount(post.getViewsCount())
+                .setCreatedUser(post.getCreatedUser())
                 .setUpdatedUser(post.getUpdatedUser())
+                .setDbCreateTime(post.getDbCreateTime())
                 .setDbModifyTime(post.getDbModifyTime());
         if (post.getContent() != null) {
             postDto.setContent(post.getContent());
@@ -60,9 +68,12 @@ public class PostServiceImpl implements IPostService {
                         .setId(x.getId())
                         .setStatus(x.getStatus())
                         .setContent(x.getContent())
+                        .setLikesCount(x.getLikesCount())
+                        .setViewsCount(x.getViewsCount())
+                        .setCreatedUser(x.getCreatedUser())
                         .setUpdatedUser(x.getUpdatedUser())
-                        .setDbModifyTime(x.getDbModifyTime())
-                        .setReferencePost(checkReferencePost(x)))
+                        .setDbCreateTime(x.getDbCreateTime())
+                        .setDbModifyTime(x.getDbModifyTime()))
                 .collect(Collectors.toList());
     }
 

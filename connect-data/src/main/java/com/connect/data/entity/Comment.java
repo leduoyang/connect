@@ -16,6 +16,12 @@ public class Comment {
 
     private String content;
 
+    private Integer likesCount;
+
+    private Integer viewsCount;
+
+    private Integer version;
+
     private String createdUser;
 
     private String updatedUser;

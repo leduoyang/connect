@@ -9,6 +9,8 @@ public interface IPostDao {
 
     int updatePost(Post post);
 
+    int incrementViewCount(long id, int version);
+
     int deletePost(long id, String userId);
 
     Post queryPostById(long id);

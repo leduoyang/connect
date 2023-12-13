@@ -128,10 +128,10 @@ public class UserServiceImpl implements IUserService {
     public void editProfileImage(String userId, MultipartFile image) {
         User user = userRepository.queryUserByUserId(userId);
         String profileImage =
-        imageUploadUtil.profileImage(
-                user.getId() + "." + imageUploadUtil.getExtension(image),
-                image
-        );
+                imageUploadUtil.profileImage(
+                        user.getId() + "." + imageUploadUtil.getExtension(image),
+                        image
+                );
 
         EditProfileRequest editProfileRequest = new EditProfileRequest()
                 .setProfileImage(profileImage);
@@ -146,12 +146,19 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserDto queryUserByUserId(String userId) {
         User user = userRepository.queryUserByUserId(userId);
+        userRepository.incrementViewCount(
+                user.getId(),
+                user.getVersion()
+        );
 
         UserDto userDto = new UserDto()
                 .setUserId(user.getUserId())
                 .setStatus(user.getStatus())
                 .setDescription(user.getDescription())
                 .setProfileImage(user.getProfileImage())
+                .setLikesCount(user.getLikesCount())
+                .setViewsCount(user.getViewsCount())
+                .setDbCreateTime(user.getDbCreateTime())
                 .setDbModifyTime(user.getDbModifyTime());
         return userDto;
     }
@@ -168,6 +175,9 @@ public class UserServiceImpl implements IUserService {
                         .setStatus(x.getStatus())
                         .setDescription(x.getDescription())
                         .setProfileImage(x.getProfileImage())
+                        .setLikesCount(x.getLikesCount())
+                        .setViewsCount(x.getViewsCount())
+                        .setDbCreateTime(x.getDbCreateTime())
                         .setDbModifyTime(x.getDbModifyTime())
                 )
                 .collect(Collectors.toList());

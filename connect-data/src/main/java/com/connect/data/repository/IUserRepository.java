@@ -17,6 +17,8 @@ public interface IUserRepository {
 
     void editUserProfile(String userId, Profile profile);
 
+    void incrementViewCount(long id, int version);
+
     void deleteUser(String userId);
 
     List<User> queryUser(QueryUserParam param);

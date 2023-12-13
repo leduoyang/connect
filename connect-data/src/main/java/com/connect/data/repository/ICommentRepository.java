@@ -8,11 +8,13 @@ import java.util.List;
 public interface ICommentRepository {
     void createComment(Comment comment);
 
-    void deleteComment(Comment comment);
+    void updateComment(Comment comment);
 
-    List<Comment> queryComment(QueryCommentParam param);
+    void incrementViewCount(long id, int version);
+
+    void deleteComment(Comment comment);
 
     Comment queryCommentById(long id);
 
-    void updateComment(Comment comment);
+    List<Comment> queryComment(QueryCommentParam param);
 }
