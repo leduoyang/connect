@@ -111,7 +111,8 @@ CREATE TABLE `star` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `userId`            VARCHAR(256) NOT NULl,
     `targetId`          INT NOT NULL,
-    `type`              TINYINT(4) NOT NULL COMMENT '0 - project, 1 - user, 2 - post, 3 - comment',
+    `targetType`        TINYINT(4) NOT NULL COMMENT '0 - project, 1 - post, 2 - comment, 3 - user',
+    `active`            BOOLEAN NOT NULL DEFAULT TRUE,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Star';
