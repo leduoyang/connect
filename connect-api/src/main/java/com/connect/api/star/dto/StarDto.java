@@ -1,22 +1,17 @@
-package com.connect.data.entity;
+package com.connect.api.star.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
-
 @Accessors(chain = true)
 @Data
-public class Star {
-    private Long id;
-
+public class StarDto {
     private String userId;
 
     private Long targetId;
 
     private Integer targetType;
 
-    private Boolean isActive;
-
-    private Date dbCreateTime;
+    private final boolean isActive = true;
 }

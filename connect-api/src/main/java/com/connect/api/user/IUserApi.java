@@ -9,8 +9,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
-
 @RequestMapping(value = "/api/connect/v1")
 public interface IUserApi {
     @PostMapping(value = {"/user/signin", "/public/user/signin"})

@@ -1,7 +1,7 @@
 package com.connect.web.controller.root;
 
-import com.connect.api.root.IRootApi;
 import com.connect.api.common.APIResponse;
+import com.connect.api.root.IRootApi;
 import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;

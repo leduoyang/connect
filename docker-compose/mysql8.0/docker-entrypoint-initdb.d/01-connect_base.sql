@@ -112,8 +112,9 @@ CREATE TABLE `star` (
     `userId`            VARCHAR(256) NOT NULl,
     `targetId`          INT NOT NULL,
     `targetType`        TINYINT(4) NOT NULL COMMENT '0 - project, 1 - post, 2 - comment, 3 - user',
-    `isActive`            BOOLEAN NOT NULL DEFAULT TRUE,
+    `isActive`          BOOLEAN NOT NULL DEFAULT TRUE,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
+    `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
     FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Star';
 CREATE INDEX idx_userId_star ON `star` (userId);

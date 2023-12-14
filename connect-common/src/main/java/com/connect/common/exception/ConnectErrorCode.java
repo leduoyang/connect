@@ -50,7 +50,16 @@ public enum ConnectErrorCode {
     POST_CREATE_EXCEPTION("300001", "Create post failed"),
     POST_UPDATE_EXCEPTION("300002", "Update post failed"),
     POST_DELETE_EXCEPTION("300003", "Delete post failed"),
-    POST_NOT_EXISTED_EXCEPTION("300004", "Post not existed.");
+    POST_NOT_EXISTED_EXCEPTION("300004", "Post not existed."),
+
+    /**
+     * Star
+     */
+    STAR_CREATE_EXCEPTION("300001", "Create star failed"),
+    STAR_UPDATE_EXCEPTION("300002", "Update star failed"),
+    STAR_DELETE_EXCEPTION("300003", "Delete star failed"),
+    STAR_NOT_EXISTED_EXCEPTION("300004", "Star not existed."),
+    STAR_EXISTED_EXCEPTION("300005", "Star already existed.");
 
     final String code;
     final String msg;

@@ -9,7 +9,6 @@ import com.connect.common.enums.RedisPrefix;
 import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
-import com.connect.common.util.ImageUploadUtil;
 import com.connect.common.util.RedisUtil;
 import com.connect.core.service.user.IUserService;
 import com.connect.core.service.user.IUserVerificationService;
