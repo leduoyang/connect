@@ -91,35 +91,35 @@ public class StarServiceImpl implements IStarService {
     }
 
     private void updateLikesCountForTarget(long targetId, int targetType) {
-        int counts = starRepository.countStars(targetId, targetType);
+        int stars = starRepository.countStars(targetId, targetType);
 
         StarTargetType target = StarTargetType.getType(targetType);
         switch (target) {
             case PROJECT:
                 Project project = projectRepository.queryProjectById(targetId);
-                project.setLikesCount(counts);
-                projectRepository.refreshLikeCount(
+                project.setStars(stars);
+                projectRepository.refreshStars(
                         project.getId(),
                         project.getVersion(),
-                        project.getLikesCount()
+                        project.getStars()
                 );
                 break;
             case POST:
                 Post post = postRepository.queryPostById(targetId);
-                post.setLikesCount(counts);
-                postRepository.refreshLikeCount(
+                post.setStars(stars);
+                postRepository.refreshStars(
                         post.getId(),
                         post.getVersion(),
-                        post.getLikesCount()
+                        post.getStars()
                 );
                 break;
             case COMMENT:
                 Comment comment = commentRepository.queryCommentById(targetId);
-                comment.setLikesCount(counts);
-                commentRepository.refreshLikeCount(
+                comment.setStars(stars);
+                commentRepository.refreshStars(
                         comment.getId(),
                         comment.getVersion(),
-                        comment.getLikesCount()
+                        comment.getStars()
                 );
                 break;
             default:

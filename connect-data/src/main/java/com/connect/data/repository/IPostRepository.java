@@ -10,9 +10,9 @@ public interface IPostRepository {
 
     void updatePost(Post post);
 
-    void incrementViewCount(long id, int version);
+    void incrementViews(long id, int version);
 
-    void refreshLikeCount(long id, int version, int likesCount);
+    void refreshStars(long id, int version, int stars);
 
     void deletePost(Post post);
 

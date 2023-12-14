@@ -73,15 +73,15 @@ public class PostRepositoryImpl implements IPostRepository {
         }
     }
 
-    public void incrementViewCount(long id, int version) {
-        int affected = postDao.incrementViewCount(id, version);
+    public void incrementViews(long id, int version) {
+        int affected = postDao.incrementViews(id, version);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "update viewCounts failed");
         }
     }
 
-    public void refreshLikeCount(long id, int version, int likesCount) {
-        int affected = postDao.refreshLikeCount(id, version, likesCount);
+    public void refreshStars(long id, int version, int stars) {
+        int affected = postDao.refreshStars(id, version, stars);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "update likesCount failed");
         }

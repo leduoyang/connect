@@ -9,9 +9,9 @@ public interface IPostDao {
 
     int updatePost(Post post);
 
-    int incrementViewCount(long id, int version);
+    int incrementViews(long id, int version);
 
-    int refreshLikeCount(long id, int version, int likesCount);
+    int refreshStars(long id, int version, int stars);
 
     int deletePost(long id, String userId);
 

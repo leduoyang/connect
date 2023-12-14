@@ -146,7 +146,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserDto queryUserByUserId(String userId) {
         User user = userRepository.queryUserByUserId(userId);
-        userRepository.incrementViewCount(
+        userRepository.incrementViews(
                 user.getId(),
                 user.getVersion()
         );
@@ -156,8 +156,7 @@ public class UserServiceImpl implements IUserService {
                 .setStatus(user.getStatus())
                 .setDescription(user.getDescription())
                 .setProfileImage(user.getProfileImage())
-                .setLikesCount(user.getLikesCount())
-                .setViewsCount(user.getViewsCount())
+                .setViews(user.getViews())
                 .setDbCreateTime(user.getDbCreateTime())
                 .setDbModifyTime(user.getDbModifyTime());
         return userDto;
@@ -175,8 +174,7 @@ public class UserServiceImpl implements IUserService {
                         .setStatus(x.getStatus())
                         .setDescription(x.getDescription())
                         .setProfileImage(x.getProfileImage())
-                        .setLikesCount(x.getLikesCount())
-                        .setViewsCount(x.getViewsCount())
+                        .setViews(x.getViews())
                         .setDbCreateTime(x.getDbCreateTime())
                         .setDbModifyTime(x.getDbModifyTime())
                 )

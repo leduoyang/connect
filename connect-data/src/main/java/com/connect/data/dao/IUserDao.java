@@ -17,7 +17,7 @@ public interface IUserDao {
 
     int editUserProfile(Profile profile);
 
-    int incrementViewCount(long id, int version);
+    int incrementViews(long id, int version);
 
     int deleteUser(String userId);
 

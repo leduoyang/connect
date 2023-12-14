@@ -44,17 +44,17 @@
         WHERE id = #{id, jdbcType=BIGINT}
     </update>
 
-    <update id="incrementViewCount">
+    <update id="incrementViews">
         UPDATE post
         SET version = version + 1,
-        viewsCount = viewsCount + 1
+        views = views + 1
         WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
     </update>
 
-    <update id="refreshLikeCount">
+    <update id="refreshStars">
         UPDATE post
         SET version = version + 1,
-        likesCount = #{likesCount, jdbcType=BIGINT}
+        stars = #{stars, jdbcType=BIGINT}
         WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
     </update>
 
@@ -66,13 +66,13 @@
     </delete>
 
     <select id="queryPostById" resultMap="postResultMap">
-        SELECT id, content, referenceId, tags, likesCount, viewsCount, version, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time, db_modify_time
 
         FROM post WHERE id = #{id} AND status != 3
     </select>
 
     <select id="queryPost" resultMap="postResultMap">
-        SELECT id, content, referenceId, tags, likesCount, viewsCount, version, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time, db_modify_time
 
         FROM post
         WHERE 1=1

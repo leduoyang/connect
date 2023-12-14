@@ -26,9 +26,9 @@ public class User {
 
     private String profileImage;
 
-    private Integer likesCount;
+    private Integer stars;
 
-    private Integer viewsCount;
+    private Integer views;
 
     private Integer version;
 

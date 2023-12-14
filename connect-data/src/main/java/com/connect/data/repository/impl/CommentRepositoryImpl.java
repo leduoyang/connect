@@ -63,15 +63,15 @@ public class CommentRepositoryImpl implements ICommentRepository {
         }
     }
 
-    public void incrementViewCount(long id, int version) {
-        int affected = commentDao.incrementViewCount(id, version);
+    public void incrementViews(long id, int version) {
+        int affected = commentDao.incrementViews(id, version);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION, "update viewCounts failed");
         }
     }
 
-    public void refreshLikeCount(long id, int version, int likesCount) {
-        int affected = commentDao.refreshLikeCount(id, version, likesCount);
+    public void refreshStars(long id, int version, int stars) {
+        int affected = commentDao.refreshStars(id, version, stars);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION, "update likesCount failed");
         }

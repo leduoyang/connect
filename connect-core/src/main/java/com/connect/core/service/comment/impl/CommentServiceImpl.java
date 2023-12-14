@@ -29,7 +29,7 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public QueryCommentDto queryCommentById(long id) {
         Comment comment = commentRepository.queryCommentById(id);
-        commentRepository.incrementViewCount(
+        commentRepository.incrementViews(
                 comment.getId(),
                 comment.getVersion()
         );
@@ -39,8 +39,8 @@ public class CommentServiceImpl implements ICommentService {
                 .setPostId(comment.getPostId())
                 .setStatus(comment.getStatus())
                 .setContent(comment.getContent())
-                .setLikesCount(comment.getLikesCount())
-                .setViewsCount(comment.getViewsCount())
+                .setStars(comment.getStars())
+                .setViews(comment.getViews())
                 .setCreatedUser(comment.getCreatedUser())
                 .setUpdatedUser(comment.getUpdatedUser())
                 .setDbCreateTime(comment.getDbCreateTime())
@@ -66,8 +66,8 @@ public class CommentServiceImpl implements ICommentService {
                         .setPostId(x.getPostId())
                         .setStatus(x.getStatus())
                         .setContent(x.getContent())
-                        .setLikesCount(x.getLikesCount())
-                        .setViewsCount(x.getViewsCount())
+                        .setStars(x.getStars())
+                        .setViews(x.getViews())
                         .setCreatedUser(x.getCreatedUser())
                         .setUpdatedUser(x.getUpdatedUser())
                         .setDbCreateTime(x.getDbCreateTime())

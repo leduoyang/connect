@@ -16,9 +16,9 @@ public class QueryCommentDto {
 
     private String content;
 
-    private Integer likesCount;
+    private Integer stars;
 
-    private Integer viewsCount;
+    private Integer views;
 
     private String createdUser;
 

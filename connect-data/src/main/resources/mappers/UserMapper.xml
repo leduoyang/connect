@@ -91,10 +91,10 @@
         WHERE id = #{id, jdbcType=BIGINT}
     </update>
 
-    <update id="incrementViewCount">
+    <update id="incrementViews">
         UPDATE user
         SET version = version + 1,
-        viewsCount = viewsCount + 1
+        views = views + 1
         WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
     </update>
 
@@ -105,7 +105,7 @@
     </delete>
 
     <select id="queryUser" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage, likesCount, viewsCount, version, db_create_time, db_modify_time
+        SELECT id, userId, status, role, description, email, phone, profileImage, stars, views, version, db_create_time, db_modify_time
 
         FROM user
         WHERE (userId LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
@@ -113,7 +113,7 @@
     </select>
 
     <select id="queryUserByUserId" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage, likesCount, viewsCount, version, db_create_time, db_modify_time
+        SELECT id, userId, status, role, description, email, phone, profileImage, stars, views, version, db_create_time, db_modify_time
 
         FROM user WHERE userId = #{userId} AND status != 3
     </select>

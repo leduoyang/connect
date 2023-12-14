@@ -60,17 +60,17 @@
         WHERE id = #{id, jdbcType=BIGINT}
     </update>
 
-    <update id="incrementViewCount">
+    <update id="incrementViews">
         UPDATE project
         SET version = version + 1,
-        viewsCount = viewsCount + 1
+        views = views + 1
         WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
     </update>
 
-    <update id="refreshLikeCount">
+    <update id="refreshStars">
         UPDATE project
         SET version = version + 1,
-        likesCount = #{likesCount, jdbcType=BIGINT}
+        stars = #{stars, jdbcType=BIGINT}
         WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
     </update>
 
@@ -82,14 +82,14 @@
     </delete>
 
     <select id="queryProjectById" resultMap="projectResultMap">
-        SELECT id, title, description, status, tags, boosted, likesCount, viewsCount, version, created_user,
+        SELECT id, title, description, status, tags, boosted, stars, views, version, created_user,
         updated_user, db_create_time, db_modify_time
 
         FROM project WHERE id = #{id} AND status != 3
     </select>
 
     <select id="queryProject" resultMap="projectResultMap">
-        SELECT id, title, description, status, tags, boosted, likesCount, viewsCount, version, created_user,
+        SELECT id, title, description, status, tags, boosted, stars, views, version, created_user,
         updated_user, db_create_time, db_modify_time
 
         FROM project

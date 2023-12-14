@@ -29,7 +29,7 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public QueryProjectDto queryProjectById(long id) {
         Project project = projectRepository.queryProjectById(id);
-        projectRepository.incrementViewCount(
+        projectRepository.incrementViews(
                 project.getId(),
                 project.getVersion()
         );
@@ -41,9 +41,8 @@ public class ProjectServiceImpl implements IProjectService {
                 .setStatus(project.getStatus())
                 .setTags(project.getTags())
                 .setBoosted(project.getBoosted())
-                .setLikesCount(project.getLikesCount())
-                .setViewsCount(project.getViewsCount())
-                .setVersion(project.getVersion())
+                .setStars(project.getStars())
+                .setViews(project.getViews())
                 .setCreatedUser(project.getCreatedUser())
                 .setUpdatedUser(project.getUpdatedUser())
                 .setDbCreateTime(project.getDbCreateTime())
@@ -70,9 +69,8 @@ public class ProjectServiceImpl implements IProjectService {
                         .setStatus(x.getStatus())
                         .setTags(x.getTags())
                         .setBoosted(x.getBoosted())
-                        .setLikesCount(x.getLikesCount())
-                        .setViewsCount(x.getViewsCount())
-                        .setVersion(x.getVersion())
+                        .setStars(x.getStars())
+                        .setViews(x.getViews())
                         .setCreatedUser(x.getCreatedUser())
                         .setUpdatedUser(x.getUpdatedUser())
                         .setDbCreateTime(x.getDbCreateTime())

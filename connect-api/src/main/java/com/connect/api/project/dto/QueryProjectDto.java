@@ -20,11 +20,9 @@ public class QueryProjectDto {
 
     private Integer boosted;
 
-    private Integer likesCount;
+    private Integer stars;
 
-    private Integer viewsCount;
-
-    private Integer version;
+    private Integer views;
 
     private String createdUser;
 

@@ -20,9 +20,9 @@ public class Project {
 
     private Integer boosted;
 
-    private Integer likesCount;
+    private Integer stars;
 
-    private Integer viewsCount;
+    private Integer views;
 
     private Integer version;
 

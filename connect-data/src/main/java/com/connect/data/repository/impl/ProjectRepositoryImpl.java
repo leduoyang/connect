@@ -60,15 +60,15 @@ public class ProjectRepositoryImpl implements IProjectRepository {
         }
     }
 
-    public void incrementViewCount(long id, int version) {
-        int affected = projectDao.incrementViewCount(id, version);
+    public void incrementViews(long id, int version) {
+        int affected = projectDao.incrementViews(id, version);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.PROJECT_UPDATE_EXCEPTION, "update viewCounts failed");
         }
     }
 
-    public void refreshLikeCount(long id, int version, int likesCount) {
-        int affected = projectDao.refreshLikeCount(id, version, likesCount);
+    public void refreshStars(long id, int version, int stars) {
+        int affected = projectDao.refreshStars(id, version, stars);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.PROJECT_UPDATE_EXCEPTION, "update likesCount failed");
         }

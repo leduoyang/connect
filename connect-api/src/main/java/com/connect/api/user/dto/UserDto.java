@@ -18,9 +18,7 @@ public class UserDto {
 
     private String profileImage;
 
-    private Integer likesCount;
-
-    private Integer viewsCount;
+    private Integer views;
 
     private Date dbCreateTime;
 
