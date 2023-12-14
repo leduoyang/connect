@@ -10,4 +10,6 @@ public interface IStarDao {
     boolean starExisting(String userId, long targetId, int targetType);
 
     boolean starExistingWithTargetStatus(String userId, long targetId, int targetType, Boolean isActive);
+
+    int countStars(long targetId, int targetType);
 }

@@ -67,6 +67,13 @@ public class ProjectRepositoryImpl implements IProjectRepository {
         }
     }
 
+    public void refreshLikeCount(long id, int version, int likesCount) {
+        int affected = projectDao.refreshLikeCount(id, version, likesCount);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.PROJECT_UPDATE_EXCEPTION, "update likesCount failed");
+        }
+    }
+
     public void deleteProject(Project project) {
         long targetId = project.getId();
         String userId = project.getUpdatedUser();

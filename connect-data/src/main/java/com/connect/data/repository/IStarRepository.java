@@ -7,7 +7,9 @@ public interface IStarRepository {
 
     void updateStar(Star star);
 
-    boolean starExisting(String userId, Long targetId, Integer targetType);
+    boolean starExisting(String userId, long targetId, int targetType);
 
-    boolean starExisting(String userId, Long targetId, Integer targetType, Boolean isActive);
+    boolean starExisting(String userId, long targetId, int targetType, Boolean isActive);
+
+    int countStars(long targetId, int targetType);
 }

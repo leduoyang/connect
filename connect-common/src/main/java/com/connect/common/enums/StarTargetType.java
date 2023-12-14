@@ -16,10 +16,10 @@ public enum StarTargetType {
         return code;
     }
 
-    public static String getType(int code) {
+    public static StarTargetType getType(int code) {
         for (StarTargetType type : values()) {
             if (type.getCode() == code) {
-                return type.name();
+                return type;
             }
         }
         return null;

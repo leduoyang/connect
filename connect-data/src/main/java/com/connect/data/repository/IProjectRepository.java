@@ -12,6 +12,8 @@ public interface IProjectRepository {
 
     void incrementViewCount(long id, int version);
 
+    void refreshLikeCount(long id, int version, int likesCount);
+
     void deleteProject(Project project);
 
     Project queryProjectById(long id);

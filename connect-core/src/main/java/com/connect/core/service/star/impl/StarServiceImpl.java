@@ -6,8 +6,8 @@ import com.connect.common.enums.StarTargetType;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.star.IStarService;
-import com.connect.data.entity.Star;
-import com.connect.data.repository.IStarRepository;
+import com.connect.data.entity.*;
+import com.connect.data.repository.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +16,22 @@ import org.springframework.stereotype.Service;
 public class StarServiceImpl implements IStarService {
     private IStarRepository starRepository;
 
-    public StarServiceImpl(IStarRepository starRepository) {
+    private IProjectRepository projectRepository;
+
+    private IPostRepository postRepository;
+
+    private ICommentRepository commentRepository;
+
+    public StarServiceImpl(
+            IStarRepository starRepository,
+            IProjectRepository projectRepository,
+            IPostRepository postRepository,
+            ICommentRepository commentRepository
+    ) {
         this.starRepository = starRepository;
+        this.projectRepository = projectRepository;
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -40,6 +54,7 @@ public class StarServiceImpl implements IStarService {
         } else {
             starRepository.createStar(star);
         }
+        updateLikesCountForTarget(star.getTargetId(), star.getTargetType());
     }
 
     @Override
@@ -62,6 +77,7 @@ public class StarServiceImpl implements IStarService {
         } else {
             starRepository.createStar(star);
         }
+        updateLikesCountForTarget(star.getTargetId(), star.getTargetType());
     }
 
     @Override
@@ -72,5 +88,45 @@ public class StarServiceImpl implements IStarService {
                 targetType,
                 isActive
         );
+    }
+
+    private void updateLikesCountForTarget(long targetId, int targetType) {
+        int counts = starRepository.countStars(targetId, targetType);
+
+        StarTargetType target = StarTargetType.getType(targetType);
+        switch (target) {
+            case PROJECT:
+                Project project = projectRepository.queryProjectById(targetId);
+                project.setLikesCount(counts);
+                projectRepository.refreshLikeCount(
+                        project.getId(),
+                        project.getVersion(),
+                        project.getLikesCount()
+                );
+                break;
+            case POST:
+                Post post = postRepository.queryPostById(targetId);
+                post.setLikesCount(counts);
+                postRepository.refreshLikeCount(
+                        post.getId(),
+                        post.getVersion(),
+                        post.getLikesCount()
+                );
+                break;
+            case COMMENT:
+                Comment comment = commentRepository.queryCommentById(targetId);
+                comment.setLikesCount(counts);
+                commentRepository.refreshLikeCount(
+                        comment.getId(),
+                        comment.getVersion(),
+                        comment.getLikesCount()
+                );
+                break;
+            default:
+                throw new ConnectDataException(
+                        ConnectErrorCode.INTERNAL_SERVER_ERROR,
+                        "Invalid payload updating like counts for target entity"
+                );
+        }
     }
 }

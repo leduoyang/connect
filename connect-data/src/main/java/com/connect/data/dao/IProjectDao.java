@@ -11,6 +11,8 @@ public interface IProjectDao {
 
     int incrementViewCount(long id, int version);
 
+    int refreshLikeCount(long id, int version, int likesCount);
+
     int deleteProject(long id, String userId);
 
     Project queryProjectById(long id);

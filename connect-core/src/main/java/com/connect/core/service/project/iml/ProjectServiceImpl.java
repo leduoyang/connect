@@ -8,13 +8,11 @@ import com.connect.api.project.request.QueryProjectRequest;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.project.IProjectService;
-import com.connect.data.entity.Post;
 import com.connect.data.entity.Project;
 import com.connect.data.param.QueryProjectParam;
 import com.connect.data.repository.IProjectRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;

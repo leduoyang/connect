@@ -11,6 +11,8 @@ public interface IPostDao {
 
     int incrementViewCount(long id, int version);
 
+    int refreshLikeCount(long id, int version, int likesCount);
+
     int deletePost(long id, String userId);
 
     Post queryPostById(long id);

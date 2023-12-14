@@ -11,6 +11,8 @@ public interface ICommentDao {
 
     int incrementViewCount(long id, int version);
 
+    int refreshLikeCount(long id, int version, int likesCount);
+
     int deleteComment(long id, String userId);
 
     Comment queryCommentById(long id);

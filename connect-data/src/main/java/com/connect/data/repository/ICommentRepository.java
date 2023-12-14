@@ -12,6 +12,8 @@ public interface ICommentRepository {
 
     void incrementViewCount(long id, int version);
 
+    void refreshLikeCount(long id, int version, int likesCount);
+
     void deleteComment(Comment comment);
 
     Comment queryCommentById(long id);

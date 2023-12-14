@@ -12,6 +12,8 @@ public interface IPostRepository {
 
     void incrementViewCount(long id, int version);
 
+    void refreshLikeCount(long id, int version, int likesCount);
+
     void deletePost(Post post);
 
     Post queryPostById(long id);

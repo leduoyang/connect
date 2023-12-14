@@ -70,6 +70,13 @@ public class CommentRepositoryImpl implements ICommentRepository {
         }
     }
 
+    public void refreshLikeCount(long id, int version, int likesCount) {
+        int affected = commentDao.refreshLikeCount(id, version, likesCount);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION, "update likesCount failed");
+        }
+    }
+
     public void deleteComment(Comment comment) {
         long targetId = comment.getId();
         String userId = comment.getUpdatedUser();

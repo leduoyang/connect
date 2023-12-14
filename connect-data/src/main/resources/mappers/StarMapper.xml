@@ -54,4 +54,12 @@
         AND isActive = #{isActive, jdbcType=BOOLEAN}
         )
     </select>
+
+    <select id="countStars" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM Star
+        WHERE targetId = #{targetId, jdbcType=BIGINT}
+        AND targetType = #{targetType, jdbcType=TINYINT}
+        AND isActive = TRUE
+    </select>
 </mapper>

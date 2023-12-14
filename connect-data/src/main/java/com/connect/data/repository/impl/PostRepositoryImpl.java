@@ -80,6 +80,13 @@ public class PostRepositoryImpl implements IPostRepository {
         }
     }
 
+    public void refreshLikeCount(long id, int version, int likesCount) {
+        int affected = postDao.refreshLikeCount(id, version, likesCount);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "update likesCount failed");
+        }
+    }
+
     public void deletePost(Post post) {
         long targetId = post.getId();
         String userId = post.getUpdatedUser();

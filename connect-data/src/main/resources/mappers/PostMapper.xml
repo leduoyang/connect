@@ -51,6 +51,13 @@
         WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
     </update>
 
+    <update id="refreshLikeCount">
+        UPDATE post
+        SET version = version + 1,
+        likesCount = #{likesCount, jdbcType=BIGINT}
+        WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
+    </update>
+
     <delete id="deletePost">
         UPDATE post
         SET `status` = 3,
