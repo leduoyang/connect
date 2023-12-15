@@ -2,6 +2,7 @@ package com.connect.web.controller.root;
 
 import com.connect.api.common.APIResponse;
 import com.connect.api.root.IRootApi;
+import com.connect.api.user.dto.UserDto;
 import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -29,7 +30,7 @@ public class RootController implements IRootApi {
     }
 
     @Override
-    public APIResponse queryTestToken(@RequestHeader String isRoot) {
+    public APIResponse queryTestToken(@RequestHeader String isRoot, @RequestHeader String mockId) {
         if (isRoot == null || !Boolean.parseBoolean(isRoot)) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION
@@ -37,7 +38,17 @@ public class RootController implements IRootApi {
         }
 
         String role = UserRole.getRole(UserRole.ADMIN.getCode());
-        String token = jwtTokenUtil.generateToken(UserRole.ROOT.toString(), role);
+        String userId = UserRole.ROOT.toString();
+        if (mockId != null) {
+            if (userService.queryUserByUserId(mockId) == null) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                        "mockId not found"
+                );
+            }
+            userId = mockId;
+        }
+        String token = jwtTokenUtil.generateToken(userId, role);
 
         return APIResponse.getOKJsonResult(token);
     }

@@ -7,5 +7,5 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/root")
 public interface IRootApi {
     @PostMapping("/test/token")
-    APIResponse queryTestToken(@RequestHeader(required = false) String isRoot);
+    APIResponse queryTestToken(@RequestHeader String isRoot, @RequestHeader String mockId);
 }
