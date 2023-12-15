@@ -44,13 +44,13 @@ public interface IUserApi {
             @Validated @RequestParam("file") MultipartFile profileImage
     );
 
-    @GetMapping(value = "/users/me")
+    @GetMapping(value = "/user/me")
     APIResponse<QueryUserResponse> queryPersonalInfo();
 
-    @GetMapping(value = "/users/me/starList")
+    @GetMapping(value = "/user/me/starList")
     APIResponse<QueryStarListResponse> queryPersonalStarList();
 
-    @GetMapping(value = "/users/me/subscribeList")
+    @GetMapping(value = "/user/me/subscribeList")
     APIResponse<QuerySubscribeListResponse> queryPersonalSubscribeList();
 
     @GetMapping(value = "/user/{userId}")
