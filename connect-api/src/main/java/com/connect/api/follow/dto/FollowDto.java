@@ -9,6 +9,4 @@ public class FollowDto {
     private String followerId;
 
     private String followingId;
-
-    private final boolean isActive = true;
 }

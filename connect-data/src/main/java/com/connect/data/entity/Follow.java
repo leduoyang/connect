@@ -14,7 +14,7 @@ public class Follow {
 
     private String followerId;
 
-    private Boolean isActive;
+    private Integer status;
 
     private Date dbCreateTime;
 

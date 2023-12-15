@@ -11,7 +11,7 @@ public interface IFollowRepository {
 
     boolean followExisting(String followerId, String followingId);
 
-    boolean followExisting(String followerId, String followingId, Boolean isActive);
+    boolean followExisting(String followerId, String followingId, Integer status);
 
     int countFollower(String followingId);
 

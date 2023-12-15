@@ -2,6 +2,7 @@ package com.connect.core.service.follow.iml;
 
 import com.connect.api.follow.dto.FollowDto;
 import com.connect.api.follow.dto.UnFollowDto;
+import com.connect.common.enums.FollowStatus;
 import com.connect.core.service.follow.IFollowService;
 import com.connect.data.entity.*;
 import com.connect.data.repository.*;
@@ -28,7 +29,7 @@ public class FollowServiceImpl implements IFollowService {
         Follow follow = new Follow()
                 .setFollowerId(request.getFollowerId())
                 .setFollowingId(request.getFollowingId())
-                .setIsActive(request.isActive());
+                .setStatus(FollowStatus.APPROVED.getCode());
 
         if (followRepository.followExisting(follow.getFollowerId(), follow.getFollowingId())) {
             followRepository.updateFollow(follow);
@@ -45,7 +46,7 @@ public class FollowServiceImpl implements IFollowService {
         Follow follow = new Follow()
                 .setFollowerId(request.getFollowerId())
                 .setFollowingId(request.getFollowingId())
-                .setIsActive(request.isActive());
+                .setStatus(FollowStatus.UNFOLLOW.getCode());
 
         if (followRepository.followExisting(follow.getFollowerId(), follow.getFollowingId())) {
             followRepository.updateFollow(follow);
@@ -58,11 +59,11 @@ public class FollowServiceImpl implements IFollowService {
     }
 
     @Override
-    public boolean followExisting(String followerId, String followingId, Boolean isActive) {
+    public boolean followExisting(String followerId, String followingId, FollowStatus status) {
         return followRepository.followExisting(
                 followerId,
                 followingId,
-                isActive
+                status.getCode()
         );
     }
 

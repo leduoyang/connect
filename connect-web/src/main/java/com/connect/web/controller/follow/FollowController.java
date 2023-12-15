@@ -4,6 +4,7 @@ import com.connect.api.common.APIResponse;
 import com.connect.api.follow.IFollowApi;
 import com.connect.api.follow.dto.FollowDto;
 import com.connect.api.follow.dto.UnFollowDto;
+import com.connect.common.enums.FollowStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.follow.IFollowService;
@@ -66,7 +67,7 @@ public class FollowController implements IFollowApi {
         boolean existed = followService.followExisting(
                 authentication.getName(),
                 followingId,
-                true
+                FollowStatus.APPROVED
         );
 
         Map<String, Boolean> result = new HashMap<>();

@@ -11,6 +11,4 @@ public class UnFollowDto {
     private String followerId;
 
     private String followingId;
-
-    private final boolean isActive = false;
 }

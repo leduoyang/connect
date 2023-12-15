@@ -5,28 +5,24 @@
         <id property="id" column="id"/>
         <result property="followerId" column="followerId"/>
         <result property="followingId" column="followingId"/>
-        <result property="isActive" column="isActive"/>
+        <result property="status" column="status"/>
         <result property="dbCreateTime" column="db_create_time"/>
         <result property="dbModifyTime" column="db_modify_time"/>
     </resultMap>
 
     <insert id="createFollow" parameterType="com.connect.data.entity.Follow" useGeneratedKeys="true"
             keyProperty="id" keyColumn="id">
-        INSERT INTO follow(followerId, followingId, isActive)
+        INSERT INTO follow(followerId, followingId, status)
         VALUES (
         #{followerId, jdbcType=VARCHAR},
         #{followingId, jdbcType=VARCHAR},
-        #{isActive,jdbcType=BOOLEAN}
+        #{status,jdbcType=TINYINT}
         )
     </insert>
 
     <update id="updateFollow" parameterType="com.connect.data.entity.Follow">
         UPDATE follow
-        <trim prefix="set" suffixOverrides=",">
-            <if test="isActive != null">
-                isActive = #{isActive, jdbcType=BOOLEAN}
-            </if>
-        </trim>
+        status = #{status, jdbcType=TINYINT}
         WHERE followerId = #{followerId, jdbcType=VARCHAR}
         AND followingId = #{followingId, jdbcType=VARCHAR}
     </update>
@@ -46,7 +42,7 @@
         FROM follow
         WHERE followerId = #{followerId, jdbcType=VARCHAR}
         AND followingId = #{followingId, jdbcType=VARCHAR}
-        AND isActive = #{isActive, jdbcType=BOOLEAN}
+        AND status = #{status, jdbcType=TINYINT}
         )
     </select>
 
@@ -54,14 +50,14 @@
         SELECT COUNT(followerId)
         FROM follow
         WHERE followingId = #{followingId, jdbcType=VARCHAR}
-        AND isActive = TRUE
+        AND status = 2
     </select>
 
     <select id="countFollowing" resultType="java.lang.Integer">
         SELECT COUNT(followingId)
         FROM follow
         WHERE followerId = #{followerId, jdbcType=VARCHAR}
-        AND isActive = TRUE
+        AND status = 2
     </select>
 
     <select id="queryFollowerIdList" resultType="java.lang.String">
@@ -69,7 +65,7 @@
 
         FROM follow
         WHERE followingId = #{followingId, jdbcType=VARCHAR}
-        AND isActive = TRUE
+        AND status = 2
     </select>
 
     <select id="queryFollowingIdList" resultType="java.lang.String">
@@ -77,6 +73,6 @@
 
         FROM follow
         WHERE followerId = #{followerId, jdbcType=VARCHAR}
-        AND isActive = TRUE
+        AND status = 2
     </select>
 </mapper>

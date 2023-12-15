@@ -27,7 +27,7 @@ CREATE TABLE `email_verification` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `email`             VARCHAR(256) NOT NULL,
     `code`              VARCHAR(256) NOT NULL,
-    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - DELETED, 1 - PENDING, 2 - COMPLETED, 3 - EXPIRED',
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Email Verification Code';
 CREATE INDEX idx_email_code ON `email_verification` (email, code);
@@ -129,7 +129,7 @@ CREATE TABLE `follow` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `followerId`        VARCHAR(256) NOT NULl,
     `followingId`       VARCHAR(256) NOT NULl,
-    `isActive`          BOOLEAN NOT NULL DEFAULT TRUE,
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - UNFOLLOW, 1 - PENDING, 2 - APPROVED, 3 - REJECTED',
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
     FOREIGN KEY (`followerId`) REFERENCES `user`(`userId`) ON DELETE CASCADE,
@@ -137,7 +137,7 @@ CREATE TABLE `follow` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Follow';
 CREATE INDEX idx_followerId_follow ON `follow` (followerId);
 CREATE INDEX idx_followerId_followingId_follow ON `follow` (followerId, followingId);
-CREATE INDEX idx_followerId_followingId_active_follow ON `follow` (followerId, followingId, isActive);
+CREATE INDEX idx_followerId_followingId_status_follow ON `follow` (followerId, followingId, status);
 
 -- Insert Mock User Data
 INSERT INTO `user` (userId, status, password, email, db_create_time)
