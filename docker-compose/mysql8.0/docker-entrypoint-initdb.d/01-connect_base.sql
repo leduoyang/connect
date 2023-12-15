@@ -118,7 +118,7 @@ CREATE TABLE `star` (
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
     FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Star';
-CREATE INDEX idx_userId_star ON `star` (userId);
+CREATE INDEX idx_type_userId_star ON `star` (targetType, userId);
 CREATE INDEX idx_type_targetId_star ON `star` (targetType, targetId);
 CREATE INDEX idx_type_targetId_active_star ON `star` (targetType, targetId, isActive);
 

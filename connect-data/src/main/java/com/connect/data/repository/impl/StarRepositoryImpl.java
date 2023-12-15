@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Slf4j
 @Repository
 public class StarRepositoryImpl implements IStarRepository {
@@ -53,5 +55,9 @@ public class StarRepositoryImpl implements IStarRepository {
 
     public int countStars(long targetId, int targetType) {
         return starDao.countStars(targetId, targetType);
+    }
+
+    public List<Integer> queryTargetIdList(int targetType, String userId) {
+        return starDao.queryTargetIdList(targetType, userId);
     }
 }

@@ -2,6 +2,8 @@ package com.connect.api.user;
 
 import com.connect.api.common.APIResponse;
 import com.connect.api.user.request.*;
+import com.connect.api.user.response.QueryStarListResponse;
+import com.connect.api.user.response.QuerySubscribeListResponse;
 import com.connect.api.user.response.QueryUserResponse;
 import com.connect.api.user.response.SignInResponse;
 import jakarta.validation.constraints.NotNull;
@@ -44,6 +46,12 @@ public interface IUserApi {
 
     @GetMapping(value = "/users/me")
     APIResponse<QueryUserResponse> queryPersonalInfo();
+
+    @GetMapping(value = "/users/me/starList")
+    APIResponse<QueryStarListResponse> queryPersonalStarList();
+
+    @GetMapping(value = "/users/me/subscribeList")
+    APIResponse<QuerySubscribeListResponse> queryPersonalSubscribeList();
 
     @GetMapping(value = "/user/{userId}")
     APIResponse<QueryUserResponse> queryUser(@NotNull @PathVariable String userId);

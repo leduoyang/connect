@@ -29,18 +29,18 @@
                 isActive = #{isActive, jdbcType=BOOLEAN}
             </if>
         </trim>
-        WHERE targetId = #{targetId, jdbcType=BIGINT}
+        WHERE targetType = #{targetType, jdbcType=TINYINT}
+        AND targetId = #{targetId, jdbcType=BIGINT}
         AND userId = #{userId, jdbcType=VARCHAR}
-        AND targetType = #{targetType, jdbcType=TINYINT}
     </update>
 
     <select id="starExisting" resultType="java.lang.Boolean">
         SELECT EXISTS(
         SELECT id
         FROM star
-        WHERE targetId = #{targetId, jdbcType=BIGINT}
+        WHERE targetType = #{targetType, jdbcType=TINYINT}
+        AND targetId = #{targetId, jdbcType=BIGINT}
         AND userId = #{userId, jdbcType=VARCHAR}
-        AND targetType = #{targetType, jdbcType=TINYINT}
         )
     </select>
 
@@ -48,18 +48,27 @@
         SELECT EXISTS(
         SELECT id
         FROM star
-        WHERE targetId = #{targetId, jdbcType=BIGINT}
-        AND userId = #{userId, jdbcType=VARCHAR}
-        AND targetType = #{targetType, jdbcType=TINYINT}
+        WHERE targetType = #{targetType, jdbcType=TINYINT}
+        AND targetId = #{targetId, jdbcType=BIGINT}
         AND isActive = #{isActive, jdbcType=BOOLEAN}
+        AND userId = #{userId, jdbcType=VARCHAR}
         )
     </select>
 
     <select id="countStars" resultType="java.lang.Integer">
         SELECT COUNT(id)
         FROM Star
-        WHERE targetId = #{targetId, jdbcType=BIGINT}
-        AND targetType = #{targetType, jdbcType=TINYINT}
+        WHERE targetType = #{targetType, jdbcType=TINYINT}
+        AND targetId = #{targetId, jdbcType=BIGINT}
+        AND isActive = TRUE
+    </select>
+
+    <select id="queryTargetIdByTypeAndUserId" resultType="java.lang.Integer">
+        SELECT targetId
+
+        FROM Star
+        WHERE targetType = #{targetType, jdbcType=TINYINT}
+        AND userId = #{userId, jdbcType=VARCHAR}
         AND isActive = TRUE
     </select>
 </mapper>

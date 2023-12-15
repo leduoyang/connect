@@ -1,15 +1,22 @@
 package com.connect.web.controller.user;
 
+import com.connect.api.comment.dto.QueryCommentDto;
 import com.connect.api.common.APIResponse;
+import com.connect.api.post.dto.QueryPostDto;
+import com.connect.api.project.dto.QueryProjectDto;
 import com.connect.api.user.IUserApi;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
+import com.connect.api.user.response.QueryStarListResponse;
+import com.connect.api.user.response.QuerySubscribeListResponse;
 import com.connect.api.user.response.QueryUserResponse;
 import com.connect.common.enums.RedisPrefix;
+import com.connect.common.enums.StarTargetType;
 import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.common.util.RedisUtil;
+import com.connect.core.service.star.IStarService;
 import com.connect.core.service.user.IUserService;
 import com.connect.core.service.user.IUserVerificationService;
 import com.connect.web.util.JwtTokenUtil;
@@ -38,12 +45,20 @@ public class UserController implements IUserApi {
 
     private final IUserService userService;
 
+    private final IStarService starService;
+
     private final IUserVerificationService userVerificationService;
 
-    public UserController(IUserService userService, IUserVerificationService userVerificationService, RedisUtil redisUtil) {
+    public UserController(
+            IUserService userService,
+            IUserVerificationService userVerificationService,
+            RedisUtil redisUtil,
+            IStarService starService
+    ) {
         this.userService = userService;
         this.userVerificationService = userVerificationService;
         this.redisUtil = redisUtil;
+        this.starService = starService;
     }
 
     @Override
@@ -146,6 +161,20 @@ public class UserController implements IUserApi {
     }
 
     @Override
+    public APIResponse<QueryUserResponse> queryPersonalInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDto userDto = userService.queryUserByUserId(authentication.getName());
+        List<UserDto> userDtoList = new ArrayList<>();
+        userDtoList.add(userDto);
+
+        QueryUserResponse response = new QueryUserResponse()
+                .setItems(userDtoList)
+                .setTotal(userDtoList.size());
+
+        return APIResponse.getOKJsonResult(response);
+    }
+
+    @Override
     public APIResponse<QueryUserResponse> queryUser(String userId) {
         UserDto userDto = userService.queryUserByUserId(userId);
         List<UserDto> userDtoList = new ArrayList<>();
@@ -171,17 +200,31 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QueryUserResponse> queryPersonalInfo() {
+    public APIResponse<QueryStarListResponse> queryPersonalStarList() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName();
+        List<QueryProjectDto> projectDtoList =
+                starService.queryTargetIdList(StarTargetType.PROJECT, userId, QueryProjectDto.class);
+        List<QueryPostDto> postDtoList =
+                starService.queryTargetIdList(StarTargetType.POST, userId, QueryPostDto.class);
+        List<QueryCommentDto> commentDtoList =
+                starService.queryTargetIdList(StarTargetType.COMMENT, userId, QueryCommentDto.class);
+
+        QueryStarListResponse response = new QueryStarListResponse()
+                .setProjects(projectDtoList)
+                .setTotalProjects(projectDtoList.size())
+                .setPosts(postDtoList)
+                .setTotalPosts(postDtoList.size())
+                .setComments(commentDtoList)
+                .setTotalComments(commentDtoList.size());
+        return APIResponse.getOKJsonResult(response);
+    }
+
+    @Override
+    public APIResponse<QuerySubscribeListResponse> queryPersonalSubscribeList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        UserDto userDto = userService.queryUserByUserId(authentication.getName());
-        List<UserDto> userDtoList = new ArrayList<>();
-        userDtoList.add(userDto);
-
-        QueryUserResponse response = new QueryUserResponse()
-                .setItems(userDtoList)
-                .setTotal(userDtoList.size());
-
+        QuerySubscribeListResponse response = new QuerySubscribeListResponse();
         return APIResponse.getOKJsonResult(response);
     }
 }

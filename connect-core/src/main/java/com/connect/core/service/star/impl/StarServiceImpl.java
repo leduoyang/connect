@@ -1,5 +1,8 @@
 package com.connect.core.service.star.impl;
 
+import com.connect.api.comment.dto.QueryCommentDto;
+import com.connect.api.post.dto.QueryPostDto;
+import com.connect.api.project.dto.QueryProjectDto;
 import com.connect.api.star.dto.StarDto;
 import com.connect.api.star.dto.UnStarDto;
 import com.connect.common.enums.StarTargetType;
@@ -10,6 +13,11 @@ import com.connect.data.entity.*;
 import com.connect.data.repository.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -88,6 +96,66 @@ public class StarServiceImpl implements IStarService {
                 targetType,
                 isActive
         );
+    }
+
+    @Override
+    public <T> List<T> queryTargetIdList(StarTargetType targetType, String userId, Class<T> returnClass) {
+        List<Integer> idList = starRepository.queryTargetIdList(targetType.getCode(), userId);
+        switch (Objects.requireNonNull(targetType)) {
+            case PROJECT:
+                List<QueryProjectDto> projectDtoList = idList.stream().map(x -> {
+                    Project project = projectRepository.queryProjectById(x);
+                    return new QueryProjectDto()
+                            .setId(project.getId())
+                            .setTitle(project.getTitle())
+                            .setDescription(project.getDescription())
+                            .setStatus(project.getStatus())
+                            .setTags(project.getTags())
+                            .setBoosted(project.getBoosted())
+                            .setStars(project.getStars())
+                            .setViews(project.getViews())
+                            .setCreatedUser(project.getCreatedUser())
+                            .setUpdatedUser(project.getUpdatedUser())
+                            .setDbCreateTime(project.getDbCreateTime())
+                            .setDbModifyTime(project.getDbModifyTime());
+                }).collect(Collectors.toList());
+                return (List<T>) projectDtoList;
+            case POST:
+                List<QueryPostDto> postDtoList = idList.stream().map(x -> {
+                    Post post = postRepository.queryPostById(x);
+                    return new QueryPostDto()
+                            .setId(post.getId())
+                            .setStatus(post.getStatus())
+                            .setStars(post.getStars())
+                            .setViews(post.getViews())
+                            .setCreatedUser(post.getCreatedUser())
+                            .setUpdatedUser(post.getUpdatedUser())
+                            .setDbCreateTime(post.getDbCreateTime())
+                            .setDbModifyTime(post.getDbModifyTime());
+                }).collect(Collectors.toList());
+                return (List<T>) postDtoList;
+            case COMMENT:
+                List<QueryCommentDto> commentDtoList = idList.stream().map(x -> {
+                    Comment comment = commentRepository.queryCommentById(x);
+                    return new QueryCommentDto()
+                            .setId(comment.getId())
+                            .setPostId(comment.getPostId())
+                            .setStatus(comment.getStatus())
+                            .setContent(comment.getContent())
+                            .setStars(comment.getStars())
+                            .setViews(comment.getViews())
+                            .setCreatedUser(comment.getCreatedUser())
+                            .setUpdatedUser(comment.getUpdatedUser())
+                            .setDbCreateTime(comment.getDbCreateTime())
+                            .setDbModifyTime(comment.getDbModifyTime());
+                }).collect(Collectors.toList());
+                return (List<T>) commentDtoList;
+            default:
+                throw new ConnectDataException(
+                        ConnectErrorCode.INTERNAL_SERVER_ERROR,
+                        "Invalid payload updating like counts for target entity"
+                );
+        }
     }
 
     private void updateLikesCountForTarget(long targetId, int targetType) {
