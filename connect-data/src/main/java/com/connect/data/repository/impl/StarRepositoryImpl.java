@@ -1,10 +1,8 @@
 package com.connect.data.repository.impl;
 
-import com.connect.common.enums.StarTargetType;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.data.dao.IStarDao;
-import com.connect.data.entity.Project;
 import com.connect.data.entity.Star;
 import com.connect.data.repository.IStarRepository;
 import lombok.extern.slf4j.Slf4j;

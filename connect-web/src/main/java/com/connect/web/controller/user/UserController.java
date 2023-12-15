@@ -45,8 +45,6 @@ public class UserController implements IUserApi {
 
     private final IUserService userService;
 
-    private final IStarService starService;
-
     private final IUserVerificationService userVerificationService;
 
     public UserController(
@@ -58,7 +56,6 @@ public class UserController implements IUserApi {
         this.userService = userService;
         this.userVerificationService = userVerificationService;
         this.redisUtil = redisUtil;
-        this.starService = starService;
     }
 
     @Override
@@ -204,11 +201,11 @@ public class UserController implements IUserApi {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication.getName();
         List<QueryProjectDto> projectDtoList =
-                starService.queryTargetIdList(StarTargetType.PROJECT, userId, QueryProjectDto.class);
+                userService.queryUserStarList(userId, StarTargetType.PROJECT, QueryProjectDto.class);
         List<QueryPostDto> postDtoList =
-                starService.queryTargetIdList(StarTargetType.POST, userId, QueryPostDto.class);
+                userService.queryUserStarList(userId, StarTargetType.POST, QueryPostDto.class);
         List<QueryCommentDto> commentDtoList =
-                starService.queryTargetIdList(StarTargetType.COMMENT, userId, QueryCommentDto.class);
+                userService.queryUserStarList(userId, StarTargetType.COMMENT, QueryCommentDto.class);
 
         QueryStarListResponse response = new QueryStarListResponse()
                 .setProjects(projectDtoList)

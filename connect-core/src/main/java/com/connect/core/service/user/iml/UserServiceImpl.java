@@ -1,16 +1,24 @@
 package com.connect.core.service.user.iml;
 
+import com.connect.api.comment.dto.QueryCommentDto;
+import com.connect.api.post.dto.QueryPostDto;
+import com.connect.api.project.dto.QueryProjectDto;
 import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
+import com.connect.common.enums.StarTargetType;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.common.util.ImageUploadUtil;
+import com.connect.core.service.comment.ICommentService;
+import com.connect.core.service.post.IPostService;
+import com.connect.core.service.project.IProjectService;
 import com.connect.core.service.user.IUserService;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
 import com.connect.data.param.QueryUserParam;
+import com.connect.data.repository.IStarRepository;
 import com.connect.data.repository.IUserRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -32,8 +41,26 @@ public class UserServiceImpl implements IUserService {
 
     private IUserRepository userRepository;
 
-    public UserServiceImpl(IUserRepository userRepository) {
+    private IStarRepository starRepository;
+
+    private IProjectService projectService;
+
+    private IPostService postService;
+
+    private ICommentService commentService;
+
+    public UserServiceImpl(
+            IUserRepository userRepository,
+            IStarRepository starRepository,
+            IProjectService projectService,
+            IPostService postService,
+            ICommentService commentService
+    ) {
         this.userRepository = userRepository;
+        this.starRepository = starRepository;
+        this.projectService = projectService;
+        this.postService = postService;
+        this.commentService = commentService;
     }
 
     @Override
@@ -179,5 +206,34 @@ public class UserServiceImpl implements IUserService {
                         .setDbModifyTime(x.getDbModifyTime())
                 )
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public <T> List<T> queryUserStarList(String userId, StarTargetType targetType, Class<T> returnClass) {
+        List<Integer> idList = starRepository.queryTargetIdList(targetType.getCode(), userId);
+        switch (Objects.requireNonNull(targetType)) {
+            case PROJECT:
+                List<QueryProjectDto> projectDtoList =
+                        idList.stream().map(
+                                x -> projectService.queryProjectById(x)
+                        ).collect(Collectors.toList());
+                return (List<T>) projectDtoList;
+            case POST:
+                List<QueryPostDto> postDtoList =
+                        idList.stream().map(
+                                x -> postService.queryPostById(x)
+                        ).collect(Collectors.toList());
+                return (List<T>) postDtoList;
+            case COMMENT:
+                List<QueryCommentDto> commentDtoList = idList.stream().map(
+                        x -> commentService.queryCommentById(x)
+                ).collect(Collectors.toList());
+                return (List<T>) commentDtoList;
+            default:
+                throw new ConnectDataException(
+                        ConnectErrorCode.INTERNAL_SERVER_ERROR,
+                        "Invalid payload updating like counts for target entity"
+                );
+        }
     }
 }

@@ -63,7 +63,7 @@
         AND isActive = TRUE
     </select>
 
-    <select id="queryTargetIdByTypeAndUserId" resultType="java.lang.Integer">
+    <select id="queryTargetIdList" resultType="java.lang.Integer">
         SELECT targetId
 
         FROM Star

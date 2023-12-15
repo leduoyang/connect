@@ -3,6 +3,7 @@ package com.connect.core.service.user;
 import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
+import com.connect.common.enums.StarTargetType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface IUserService {
     List<UserDto> queryUser(QueryUserRequest request);
 
     UserDto queryUserByUserId(String userId);
+
+    <T> List<T> queryUserStarList(String userId, StarTargetType targetType, Class<T> returnClass);
 }
