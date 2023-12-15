@@ -12,7 +12,7 @@ public interface IFollowDao {
 
     boolean followExisting(String followerId, String followingId);
 
-    boolean followExistingWithTargetStatus(String followerId, String followingId, Boolean isActive);
+    boolean followExistingWithTargetStatus(String followerId, String followingId, int status);
 
     int countFollower(String followingId);
 
@@ -21,4 +21,14 @@ public interface IFollowDao {
     List<String> queryFollowerIdList(String followingId);
 
     List<String> queryFollowingIdList(String followerId);
+
+    List<String> queryPendingIdList(String followerId);
+
+    int approve(String followingId, String followerId);
+
+    int reject(String followingId, String followerId);
+
+    int remove(String followingId, String followerId);
+
+    int approveAll(String followingId);
 }

@@ -10,4 +10,12 @@ public interface IFollowService {
     void unfollow(UnFollowDto request);
 
     boolean followExisting(String followerId, String followingId, FollowStatus status);
+
+    void approve(String followingId, String followerId);
+
+    void reject(String followingId, String followerId);
+
+    void remove(String followingId, String followerId);
+
+    void approveAll(String followingId);
 }

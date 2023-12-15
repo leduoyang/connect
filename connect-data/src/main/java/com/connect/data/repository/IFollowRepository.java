@@ -11,7 +11,7 @@ public interface IFollowRepository {
 
     boolean followExisting(String followerId, String followingId);
 
-    boolean followExisting(String followerId, String followingId, Integer status);
+    boolean followExisting(String followerId, String followingId, int status);
 
     int countFollower(String followingId);
 
@@ -20,4 +20,14 @@ public interface IFollowRepository {
     List<String> queryFollowerIdList(String followingId);
 
     List<String> queryFollowingIdList(String followerId);
+
+    List<String> queryPendingIdList(String followerId);
+
+    void approve(String followingId, String followerId);
+
+    void reject(String followingId, String followerId);
+
+    void remove(String followingId, String followerId);
+
+    void approveAll(String followingId);
 }

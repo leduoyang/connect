@@ -97,6 +97,26 @@ public class FollowServiceImpl implements IFollowService {
         );
     }
 
+    @Override
+    public void approve(String followingId, String followerId) {
+        followRepository.approve(followingId, followerId);
+    }
+
+    @Override
+    public void reject(String followingId, String followerId) {
+        followRepository.reject(followingId, followerId);
+    }
+
+    @Override
+    public void remove(String followingId, String followerId) {
+        followRepository.remove(followingId, followerId);
+    }
+
+    @Override
+    public void approveAll(String followingId) {
+        followRepository.approveAll(followingId);
+    }
+
     private void updateFollowingCount(String followerId) {
         int followings = followRepository.countFollowing(followerId);
         User user = userRepository.queryUserByUserId(followerId);

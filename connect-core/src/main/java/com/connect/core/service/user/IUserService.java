@@ -32,4 +32,6 @@ public interface IUserService {
     List<UserDto> queryFollowerList(String userId);
 
     List<UserDto> queryFollowingList(String userId);
+
+    List<UserDto> queryPendingList(String userId);
 }

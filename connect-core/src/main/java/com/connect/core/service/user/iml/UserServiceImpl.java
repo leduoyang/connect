@@ -257,4 +257,10 @@ public class UserServiceImpl implements IUserService {
         List<String> userIdList = followRepository.queryFollowingIdList(userId);
         return userIdList.stream().map(this::queryUserByUserId).toList();
     }
+
+    @Override
+    public List<UserDto> queryPendingList(String userId) {
+        List<String> userIdList = followRepository.queryPendingIdList(userId);
+        return userIdList.stream().map(this::queryUserByUserId).toList();
+    }
 }

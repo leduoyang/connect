@@ -4,10 +4,13 @@ import com.connect.api.common.APIResponse;
 import com.connect.api.follow.IFollowApi;
 import com.connect.api.follow.dto.FollowDto;
 import com.connect.api.follow.dto.UnFollowDto;
+import com.connect.api.user.dto.UserDto;
 import com.connect.common.enums.FollowStatus;
+import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.follow.IFollowService;
+import com.connect.core.service.user.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,8 +24,11 @@ import java.util.Map;
 public class FollowController implements IFollowApi {
     private final IFollowService followService;
 
-    public FollowController(IFollowService followService) {
+    private final IUserService userService;
+
+    public FollowController(IFollowService followService, IUserService userService) {
         this.followService = followService;
+        this.userService = userService;
     }
 
     @Override
@@ -73,5 +79,57 @@ public class FollowController implements IFollowApi {
         Map<String, Boolean> result = new HashMap<>();
         result.put("existed", existed);
         return APIResponse.getOKJsonResult(result);
+    }
+
+    @Override
+    public APIResponse<Void> approve(String followerId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDto userDto = userService.queryUserByUserId(authentication.getName());
+        if (userDto.getStatus() != UserStatus.SEMI.getCode()) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    "follower pending list is not available for target user: " + authentication.getName()
+            );
+        }
+
+        followService.approve(authentication.getName(), followerId);
+        return APIResponse.getOKJsonResult(null);
+    }
+
+    @Override
+    public APIResponse<Void> reject(String followerId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDto userDto = userService.queryUserByUserId(authentication.getName());
+        if (userDto.getStatus() != UserStatus.SEMI.getCode()) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    "follower pending list is not available for target user: " + authentication.getName()
+            );
+        }
+
+        followService.reject(authentication.getName(), followerId);
+        return APIResponse.getOKJsonResult(null);
+    }
+
+    @Override
+    public APIResponse<Void> remove(String followerId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        followService.remove(authentication.getName(), followerId);
+        return APIResponse.getOKJsonResult(null);
+    }
+
+    @Override
+    public APIResponse<Void> approveAll() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDto userDto = userService.queryUserByUserId(authentication.getName());
+        if (userDto.getStatus() != UserStatus.SEMI.getCode()) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    "follower pending list is not available for target user: " + authentication.getName()
+            );
+        }
+
+        followService.approveAll(authentication.getName());
+        return APIResponse.getOKJsonResult(null);
     }
 }

@@ -14,6 +14,7 @@ import com.connect.api.user.response.QueryUserResponse;
 import com.connect.common.enums.RedisPrefix;
 import com.connect.common.enums.StarTargetType;
 import com.connect.common.enums.UserRole;
+import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.common.util.RedisUtil;
@@ -235,6 +236,25 @@ public class UserController implements IUserApi {
         List<UserDto> userDtoList = userService.queryFollowingList(authentication.getName());
 
         QueryFollowingListResponse response = new QueryFollowingListResponse()
+                .setUsers(userDtoList)
+                .setTotal(userDtoList.size());
+        return APIResponse.getOKJsonResult(response);
+    }
+
+    @Override
+    public APIResponse<QueryFollowerListResponse> queryPersonalPendingList() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDto userDto = userService.queryUserByUserId(authentication.getName());
+        if (userDto.getStatus() != UserStatus.SEMI.getCode()) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    "follower pending list is not available for target user: " + authentication.getName()
+            );
+        }
+
+        List<UserDto> userDtoList = userService.queryPendingList(authentication.getName());
+
+        QueryFollowerListResponse response = new QueryFollowerListResponse()
                 .setUsers(userDtoList)
                 .setTotal(userDtoList.size());
         return APIResponse.getOKJsonResult(response);

@@ -23,4 +23,22 @@ public interface IFollowApi {
     APIResponse<Map<String, Boolean>> followExisting(
             @NotNull @PathVariable String followingId
     );
+
+    @PostMapping(value = "/follow/approve/{followerId}")
+    APIResponse<Void> approve(
+            @NotNull @PathVariable String followerId
+    );
+
+    @PostMapping(value = "/follow/reject/{followerId}")
+    APIResponse<Void> reject(
+            @NotNull @PathVariable String followerId
+    );
+
+    @PostMapping(value = "/follow/remove/{followerId}")
+    APIResponse<Void> remove(
+            @NotNull @PathVariable String followerId
+    );
+
+    @PostMapping(value = "/follow/approveAll")
+    APIResponse<Void> approveAll();
 }

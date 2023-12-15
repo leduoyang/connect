@@ -47,6 +47,9 @@ public interface IUserApi {
     @GetMapping(value = "/user/me/starList")
     APIResponse<QueryStarListResponse> queryPersonalStarList();
 
+    @GetMapping(value = "/user/me/pendingList")
+    APIResponse<QueryFollowerListResponse> queryPersonalPendingList();
+
     @GetMapping(value = "/user/me/followerList")
     APIResponse<QueryFollowerListResponse> queryPersonalFollowerList();
 

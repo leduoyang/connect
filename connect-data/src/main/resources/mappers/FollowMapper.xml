@@ -22,7 +22,7 @@
 
     <update id="updateFollow" parameterType="com.connect.data.entity.Follow">
         UPDATE follow
-        status = #{status, jdbcType=TINYINT}
+        SET status = #{status, jdbcType=TINYINT}
         WHERE followerId = #{followerId, jdbcType=VARCHAR}
         AND followingId = #{followingId, jdbcType=VARCHAR}
     </update>
@@ -68,6 +68,14 @@
         AND status = 2
     </select>
 
+    <select id="queryPendingIdList" resultType="java.lang.String">
+        SELECT followerId
+
+        FROM follow
+        WHERE followerId = #{followerId, jdbcType=VARCHAR}
+        AND status = 1
+    </select>
+
     <select id="queryFollowingIdList" resultType="java.lang.String">
         SELECT followingId
 
@@ -75,4 +83,34 @@
         WHERE followerId = #{followerId, jdbcType=VARCHAR}
         AND status = 2
     </select>
+
+    <update id="approve" parameterType="java.lang.String">
+        UPDATE follow
+        SET status = 2
+        WHERE followerId = #{followerId, jdbcType=VARCHAR}
+        AND followingId = #{followingId, jdbcType=VARCHAR}
+        AND status = 1
+    </update>
+
+    <update id="reject" parameterType="java.lang.String">
+        UPDATE follow
+        SET status = 3
+        WHERE followerId = #{followerId, jdbcType=VARCHAR}
+        AND followingId = #{followingId, jdbcType=VARCHAR}
+        AND status = 1
+    </update>
+
+    <update id="reject" parameterType="java.lang.String">
+        UPDATE follow
+        SET status = 0
+        WHERE followerId = #{followerId, jdbcType=VARCHAR}
+        AND followingId = #{followingId, jdbcType=VARCHAR}
+        AND status = 1
+    </update>
+
+    <update id="approveAll" parameterType="java.lang.String">
+        UPDATE follow
+        SET status = 2
+        WHERE followingId = #{followingId, jdbcType=VARCHAR} AND status = 1
+    </update>
 </mapper>
