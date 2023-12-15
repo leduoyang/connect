@@ -20,6 +20,10 @@ public class UserDto {
 
     private Integer views;
 
+    private Integer followers;
+
+    private Integer followings;
+
     private Date dbCreateTime;
 
     private Date dbModifyTime;

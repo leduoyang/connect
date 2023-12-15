@@ -17,7 +17,11 @@ public interface IUserRepository {
 
     void editUserProfile(String userId, Profile profile);
 
-    void incrementViews(long id, int version);
+    void incrementViews(String userId, int version);
+
+    void refreshFollowers(String userId, int version, int followers);
+
+    void refreshFollowings(String userId, int version, int followings);
 
     void deleteUser(String userId);
 

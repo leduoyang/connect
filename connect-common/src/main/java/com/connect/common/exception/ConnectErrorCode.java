@@ -53,6 +53,15 @@ public enum ConnectErrorCode {
     POST_NOT_EXISTED_EXCEPTION("300004", "Post not existed."),
 
     /**
+     * Follow
+     */
+    FOLLOW_CREATE_EXCEPTION("300001", "Create follow failed"),
+    FOLLOW_UPDATE_EXCEPTION("300002", "Update follow failed"),
+    FOLLOW_DELETE_EXCEPTION("300003", "Delete follow failed"),
+    FOLLOW_NOT_EXISTED_EXCEPTION("300004", "Follow not existed."),
+    FOLLOW_EXISTED_EXCEPTION("300005", "Follow already existed."),
+
+    /**
      * Star
      */
     STAR_CREATE_EXCEPTION("300001", "Create star failed"),

@@ -93,10 +93,24 @@ public class UserRepositoryImpl implements IUserRepository {
         }
     }
 
-    public void incrementViews(long id, int version) {
-        int affected = userDao.incrementViews(id, version);
+    public void incrementViews(String userId, int version) {
+        int affected = userDao.incrementViews(userId, version);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.USER_EDIT_EXCEPTION, "update viewCounts failed");
+        }
+    }
+
+    public void refreshFollowers(String userId, int version, int followers) {
+        int affected = userDao.refreshFollowers(userId, version, followers);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.USER_EDIT_EXCEPTION, "update followers failed");
+        }
+    }
+
+    public void refreshFollowings(String userId, int version, int followings) {
+        int affected = userDao.refreshFollowings(userId, version, followings);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.USER_EDIT_EXCEPTION, "update followings failed");
         }
     }
 

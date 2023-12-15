@@ -7,14 +7,12 @@ import java.util.Date;
 
 @Accessors(chain = true)
 @Data
-public class Star {
+public class Follow {
     private Long id;
 
-    private String userId;
+    private String followingId;
 
-    private Long targetId;
-
-    private Integer targetType;
+    private String followerId;
 
     private Boolean isActive;
 

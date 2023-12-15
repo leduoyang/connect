@@ -26,7 +26,9 @@ public class User {
 
     private String profileImage;
 
-    private Integer stars;
+    private Integer followers;
+
+    private Integer followings;
 
     private Integer views;
 

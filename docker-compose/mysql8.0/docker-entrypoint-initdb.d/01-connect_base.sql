@@ -12,8 +12,9 @@ CREATE TABLE `user` (
     `phone`             VARCHAR(256),
     `email`             VARCHAR(256) UNIQUE NOT NULL,
     `profileImage`      VARCHAR(256),
-    `stars`             INT NOT NULL DEFAULT 0,
     `views`             INT NOT NULL DEFAULT 0,
+    `followers`         INT NOT NULL DEFAULT 0,
+    `followings`        INT NOT NULL DEFAULT 0,
     `version`           INT NOT NULL DEFAULT 1,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3)
@@ -122,20 +123,21 @@ CREATE INDEX idx_type_userId_star ON `star` (targetType, userId);
 CREATE INDEX idx_type_targetId_star ON `star` (targetType, targetId);
 CREATE INDEX idx_type_targetId_active_star ON `star` (targetType, targetId, isActive);
 
--- subscribe table
-DROP TABLE IF EXISTS `subscribe`;
-CREATE TABLE `subscribe` (
+-- follow table
+DROP TABLE IF EXISTS `follow`;
+CREATE TABLE `follow` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
-    `userId`            VARCHAR(256) NOT NULl,
-    `targetId`          INT NOT NULL,
-    `targetType`        TINYINT(4) NOT NULL COMMENT '0 - project, 1 - post, 2 - comment, 3 - user',
-    `isActive`            BOOLEAN NOT NULL DEFAULT TRUE,
+    `followerId`        VARCHAR(256) NOT NULl,
+    `followingId`       VARCHAR(256) NOT NULl,
+    `isActive`          BOOLEAN NOT NULL DEFAULT TRUE,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
-    FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Subscribe';
-CREATE INDEX idx_userId_subscribe ON `subscribe` (userId);
-CREATE INDEX idx_type_targetId_subscribe ON `subscribe` (targetType, targetId);
-CREATE INDEX idx_type_targetId_active_subscribe ON `subscribe` (targetType, targetId, isActive);
+    `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
+    FOREIGN KEY (`followerId`) REFERENCES `user`(`userId`) ON DELETE CASCADE,
+    FOREIGN KEY (`followingId`) REFERENCES `user`(`userId`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Follow';
+CREATE INDEX idx_followerId_follow ON `follow` (followerId);
+CREATE INDEX idx_followerId_followingId_follow ON `follow` (followerId, followingId);
+CREATE INDEX idx_followerId_followingId_active_follow ON `follow` (followerId, followingId, isActive);
 
 -- Insert Mock User Data
 INSERT INTO `user` (userId, status, password, email, db_create_time)
@@ -372,20 +374,5 @@ SELECT userId, ROUND(RAND() * 19 + 1), 2, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
-
--- Insert Mock Subscribe Data
--- likedType 0: Project (targetId 1-20)
-INSERT INTO `subscribe` (userId, targetId, targetType, isActive)
-SELECT userId, ROUND(RAND() * 19 + 1), 0, TRUE
-FROM User
-ORDER BY RAND()
-LIMIT 20;
-
--- likedType 1: User (targetId 1-20)
-INSERT INTO `subscribe` (userId, targetId, targetType, isActive)
-SELECT userId, ROUND(RAND() * 19 + 1), 3, TRUE
-FROM User
-ORDER BY RAND()
-LIMIT 20;
 
 

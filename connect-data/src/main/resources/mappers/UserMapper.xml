@@ -10,6 +10,9 @@
         <result property="description" column="description"/>
         <result property="email" column="email"/>
         <result property="phone" column="phone"/>
+        <result property="views" column="views"/>
+        <result property="followers" column="followers"/>
+        <result property="followings" column="followings"/>
         <result property="profileImage" column="profileImage"/>
         <result property="dbCreateTime" column="db_create_time"/>
         <result property="dbModifyTime" column="db_modify_time"/>
@@ -91,13 +94,6 @@
         WHERE id = #{id, jdbcType=BIGINT}
     </update>
 
-    <update id="incrementViews">
-        UPDATE user
-        SET version = version + 1,
-        views = views + 1
-        WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
-    </update>
-
     <delete id="deleteUser">
         UPDATE user
         SET `status` = 3,
@@ -105,7 +101,7 @@
     </delete>
 
     <select id="queryUser" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage, stars, views, version, db_create_time, db_modify_time
+        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version, db_create_time, db_modify_time
 
         FROM user
         WHERE (userId LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
@@ -113,7 +109,7 @@
     </select>
 
     <select id="queryUserByUserId" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage, stars, views, version, db_create_time, db_modify_time
+        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version, db_create_time, db_modify_time
 
         FROM user WHERE userId = #{userId} AND status != 3
     </select>
@@ -133,4 +129,25 @@
         WHERE userId = #{userId,jdbcType=VARCHAR} OR email = #{email,jdbcType=VARCHAR} AND status != 3
         )
     </select>
+
+    <update id="incrementViews">
+        UPDATE user
+        SET version = version + 1,
+        views = views + 1
+        WHERE userId = #{userId,jdbcType=VARCHAR} AND version = #{version, jdbcType=BIGINT}
+    </update>
+
+    <update id="refreshFollowers">
+        UPDATE user
+        SET version = version + 1,
+        followers = #{followers, jdbcType=BIGINT}
+        WHERE userId = #{userId,jdbcType=VARCHAR} AND version = #{version, jdbcType=BIGINT}
+    </update>
+
+    <update id="refreshFollowings">
+        UPDATE user
+        SET version = version + 1,
+        followings = #{followings, jdbcType=BIGINT}
+        WHERE userId = #{userId,jdbcType=VARCHAR} AND version = #{version, jdbcType=BIGINT}
+    </update>
 </mapper>
