@@ -15,4 +15,13 @@ public enum UserStatus {
     public int getCode() {
         return code;
     }
+
+    public static UserStatus getStatus(int code) {
+        for (UserStatus status : values()) {
+            if (status.getCode() == code) {
+                return status;
+            }
+        }
+        return null;
+    }
 }

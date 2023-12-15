@@ -3,6 +3,9 @@ package com.connect.core.service.follow.iml;
 import com.connect.api.follow.dto.FollowDto;
 import com.connect.api.follow.dto.UnFollowDto;
 import com.connect.common.enums.FollowStatus;
+import com.connect.common.enums.UserStatus;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.follow.IFollowService;
 import com.connect.data.entity.*;
 import com.connect.data.repository.*;
@@ -26,10 +29,37 @@ public class FollowServiceImpl implements IFollowService {
 
     @Override
     public void follow(FollowDto request) {
+        if (userRepository.queryUserByUserId(request.getFollowerId()) == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "follower not existed: " + request.getFollowingId()
+            );
+        }
+        User targetUser = userRepository.queryUserByUserId(request.getFollowingId());
+        if (targetUser == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "following userId not existed: " + request.getFollowingId()
+            );
+        }
+        UserStatus status = UserStatus.getStatus(targetUser.getStatus());
+        if (status.equals(UserStatus.PRIVATE)
+                || status.equals(UserStatus.DELETED)
+        ) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.ILLEGAL_REQUESTER_ERROR,
+                    "target userId not available for following: " + request.getFollowingId()
+            );
+        }
+
         Follow follow = new Follow()
                 .setFollowerId(request.getFollowerId())
-                .setFollowingId(request.getFollowingId())
-                .setStatus(FollowStatus.APPROVED.getCode());
+                .setFollowingId(request.getFollowingId());
+        if (status.equals(UserStatus.SEMI)) {
+            follow.setStatus(FollowStatus.PENDING.getCode());
+        } else {
+            follow.setStatus(FollowStatus.APPROVED.getCode());
+        }
 
         if (followRepository.followExisting(follow.getFollowerId(), follow.getFollowingId())) {
             followRepository.updateFollow(follow);
