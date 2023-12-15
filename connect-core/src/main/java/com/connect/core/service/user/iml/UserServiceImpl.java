@@ -18,6 +18,7 @@ import com.connect.core.service.user.IUserService;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
 import com.connect.data.param.QueryUserParam;
+import com.connect.data.repository.IFollowRepository;
 import com.connect.data.repository.IStarRepository;
 import com.connect.data.repository.IUserRepository;
 import lombok.extern.log4j.Log4j2;
@@ -43,6 +44,8 @@ public class UserServiceImpl implements IUserService {
 
     private IStarRepository starRepository;
 
+    private IFollowRepository followRepository;
+
     private IProjectService projectService;
 
     private IPostService postService;
@@ -52,12 +55,14 @@ public class UserServiceImpl implements IUserService {
     public UserServiceImpl(
             IUserRepository userRepository,
             IStarRepository starRepository,
+            IFollowRepository followRepository,
             IProjectService projectService,
             IPostService postService,
             ICommentService commentService
     ) {
         this.userRepository = userRepository;
         this.starRepository = starRepository;
+        this.followRepository = followRepository;
         this.projectService = projectService;
         this.postService = postService;
         this.commentService = commentService;
@@ -239,5 +244,17 @@ public class UserServiceImpl implements IUserService {
                         "Invalid payload updating like counts for target entity"
                 );
         }
+    }
+
+    @Override
+    public List<UserDto> queryFollowerList(String userId) {
+        List<String> userIdList = followRepository.queryFollowerIdList(userId);
+        return userIdList.stream().map(this::queryUserByUserId).toList();
+    }
+
+    @Override
+    public List<UserDto> queryFollowingList(String userId) {
+        List<String> userIdList = followRepository.queryFollowingIdList(userId);
+        return userIdList.stream().map(this::queryUserByUserId).toList();
     }
 }

@@ -18,7 +18,7 @@ public interface IFollowDao {
 
     int countFollowing(String followerId);
 
-    List<Integer> queryFollowerIdList(String followingId);
+    List<String> queryFollowerIdList(String followingId);
 
-    List<Integer> queryFollowingIdList(String followerId);
+    List<String> queryFollowingIdList(String followerId);
 }

@@ -64,7 +64,7 @@
         AND isActive = TRUE
     </select>
 
-    <select id="queryFollowerIdList" resultType="java.lang.Integer">
+    <select id="queryFollowerIdList" resultType="java.lang.String">
         SELECT followerId
 
         FROM follow
@@ -72,7 +72,7 @@
         AND isActive = TRUE
     </select>
 
-    <select id="queryFollowingIdList" resultType="java.lang.Integer">
+    <select id="queryFollowingIdList" resultType="java.lang.String">
         SELECT followingId
 
         FROM follow

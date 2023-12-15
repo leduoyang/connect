@@ -59,11 +59,11 @@ public class FollowRepositoryImpl implements IFollowRepository {
         return followDao.countFollowing(followerId);
     }
 
-    public List<Integer> queryFollowerIdList(String followingId) {
+    public List<String> queryFollowerIdList(String followingId) {
         return followDao.queryFollowerIdList(followingId);
     }
 
-    public List<Integer> queryFollowingIdList(String followerId) {
+    public List<String> queryFollowingIdList(String followerId) {
         return followDao.queryFollowingIdList(followerId);
     }
 }

@@ -7,8 +7,9 @@ import com.connect.api.project.dto.QueryProjectDto;
 import com.connect.api.user.IUserApi;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
+import com.connect.api.user.response.QueryFollowingListResponse;
 import com.connect.api.user.response.QueryStarListResponse;
-import com.connect.api.user.response.QuerySubscribeListResponse;
+import com.connect.api.user.response.QueryFollowerListResponse;
 import com.connect.api.user.response.QueryUserResponse;
 import com.connect.common.enums.RedisPrefix;
 import com.connect.common.enums.StarTargetType;
@@ -218,10 +219,24 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QuerySubscribeListResponse> queryPersonalSubscribeList() {
+    public APIResponse<QueryFollowerListResponse> queryPersonalFollowerList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<UserDto> userDtoList = userService.queryFollowerList(authentication.getName());
 
-        QuerySubscribeListResponse response = new QuerySubscribeListResponse();
+        QueryFollowerListResponse response = new QueryFollowerListResponse()
+                .setUsers(userDtoList)
+                .setTotal(userDtoList.size());
+        return APIResponse.getOKJsonResult(response);
+    }
+
+    @Override
+    public APIResponse<QueryFollowingListResponse> queryPersonalFollowingList() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<UserDto> userDtoList = userService.queryFollowingList(authentication.getName());
+
+        QueryFollowingListResponse response = new QueryFollowingListResponse()
+                .setUsers(userDtoList)
+                .setTotal(userDtoList.size());
         return APIResponse.getOKJsonResult(response);
     }
 }

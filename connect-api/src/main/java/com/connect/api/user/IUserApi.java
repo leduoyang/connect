@@ -2,10 +2,7 @@ package com.connect.api.user;
 
 import com.connect.api.common.APIResponse;
 import com.connect.api.user.request.*;
-import com.connect.api.user.response.QueryStarListResponse;
-import com.connect.api.user.response.QuerySubscribeListResponse;
-import com.connect.api.user.response.QueryUserResponse;
-import com.connect.api.user.response.SignInResponse;
+import com.connect.api.user.response.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,8 +47,11 @@ public interface IUserApi {
     @GetMapping(value = "/user/me/starList")
     APIResponse<QueryStarListResponse> queryPersonalStarList();
 
-    @GetMapping(value = "/user/me/subscribeList")
-    APIResponse<QuerySubscribeListResponse> queryPersonalSubscribeList();
+    @GetMapping(value = "/user/me/followerList")
+    APIResponse<QueryFollowerListResponse> queryPersonalFollowerList();
+
+    @GetMapping(value = "/user/me/followingList")
+    APIResponse<QueryFollowingListResponse> queryPersonalFollowingList();
 
     @GetMapping(value = "/user/{userId}")
     APIResponse<QueryUserResponse> queryUser(@NotNull @PathVariable String userId);

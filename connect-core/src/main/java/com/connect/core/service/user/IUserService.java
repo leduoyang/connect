@@ -28,4 +28,8 @@ public interface IUserService {
     UserDto queryUserByUserId(String userId);
 
     <T> List<T> queryUserStarList(String userId, StarTargetType targetType, Class<T> returnClass);
+
+    List<UserDto> queryFollowerList(String userId);
+
+    List<UserDto> queryFollowingList(String userId);
 }
