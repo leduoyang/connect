@@ -142,7 +142,7 @@ CREATE INDEX idx_followerId_followingId_status_follow ON `follow` (followerId, f
 -- Insert Mock User Data
 INSERT INTO `user` (userId, status, password, email, db_create_time)
 VALUES
-    ('ROOT', 0, 'thisisrootpassword', 'connect.sideproject@gmail.com', CURRENT_TIMESTAMP),
+    ('ROOT', 1, 'thisisrootpassword', 'connect.sideproject@gmail.com', CURRENT_TIMESTAMP),
     ('john_doe', ROUND(RAND() * 1), 'john123', 'john.doe@email.com', CURRENT_TIMESTAMP),
     ('alice_smith', ROUND(RAND() * 1), 'alice456', 'alice.smith@email.com', CURRENT_TIMESTAMP),
     ('bob_jones', ROUND(RAND() * 1), 'bob789', 'bob.jones@email.com', CURRENT_TIMESTAMP),
@@ -374,5 +374,21 @@ SELECT userId, ROUND(RAND() * 19 + 1), 2, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
+
+-- Follow
+INSERT INTO `follow` (followerId, followingId, status)
+    ('ryan_hall', 'ROOT', 1),
+    ('emily_parker', 'ROOT', 1),
+    ('wanglei', 'ROOT', 1),
+    ('fanyu', 'ROOT', 1),
+    ('taro', 'ROOT', 2),
+    ('miho', 'ROOT', 2),
+    ('sakura', 'ROOT', 2),
+    ('olivia_clark', 'ROOT', 2),
+    ('ryota', 'ROOT', 3),
+    ('quinn_fisher', 'ROOT', 3),
+    ('wangying', 'ROOT', 3),
+    ('michael_taylor', 'ROOT', 3);
+
 
 

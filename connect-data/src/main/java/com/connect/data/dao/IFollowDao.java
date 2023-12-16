@@ -22,7 +22,7 @@ public interface IFollowDao {
 
     List<String> queryFollowingIdList(String followerId);
 
-    List<String> queryPendingIdList(String followerId);
+    List<String> queryPendingIdList(String followingId);
 
     int approve(String followingId, String followerId);
 

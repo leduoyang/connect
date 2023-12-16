@@ -72,7 +72,7 @@
         SELECT followerId
 
         FROM follow
-        WHERE followerId = #{followerId, jdbcType=VARCHAR}
+        WHERE followingId = #{followingId, jdbcType=VARCHAR}
         AND status = 1
     </select>
 
@@ -94,15 +94,15 @@
 
     <update id="remove" parameterType="java.lang.String">
         UPDATE follow
-        SET status = 3
+        SET status = 0
         WHERE followerId = #{followerId, jdbcType=VARCHAR}
         AND followingId = #{followingId, jdbcType=VARCHAR}
-        AND status = 1
+        AND status = 2
     </update>
 
     <update id="reject" parameterType="java.lang.String">
         UPDATE follow
-        SET status = 0
+        SET status = 3
         WHERE followerId = #{followerId, jdbcType=VARCHAR}
         AND followingId = #{followingId, jdbcType=VARCHAR}
         AND status = 1

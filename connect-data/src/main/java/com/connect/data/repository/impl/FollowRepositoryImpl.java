@@ -68,12 +68,12 @@ public class FollowRepositoryImpl implements IFollowRepository {
         return followDao.queryFollowingIdList(followerId);
     }
 
-    public List<String> queryPendingIdList(String followerId) {
-        return followDao.queryPendingIdList(followerId);
+    public List<String> queryPendingIdList(String followingId) {
+        return followDao.queryPendingIdList(followingId);
     }
 
     public void approve(String followingId, String followerId) {
-        if (!followDao.isFollowingWithTargetStatus(followingId, followerId, FollowStatus.PENDING.getCode())) {
+        if (!followDao.isFollowingWithTargetStatus(followerId, followingId, FollowStatus.PENDING.getCode())) {
             throw new ConnectDataException(
                     ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
                     String.format("PENDING status not found for %s following %s", followerId, followingId)
@@ -87,7 +87,7 @@ public class FollowRepositoryImpl implements IFollowRepository {
     }
 
     public void reject(String followingId, String followerId) {
-        if (!followDao.isFollowingWithTargetStatus(followingId, followerId, FollowStatus.PENDING.getCode())) {
+        if (!followDao.isFollowingWithTargetStatus(followerId, followingId, FollowStatus.PENDING.getCode())) {
             throw new ConnectDataException(
                     ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
                     String.format("PENDING status not found for %s following %s", followerId, followingId)
@@ -101,10 +101,10 @@ public class FollowRepositoryImpl implements IFollowRepository {
     }
 
     public void remove(String followingId, String followerId) {
-        if (!followDao.isFollowingWithTargetStatus(followingId, followerId, FollowStatus.APPROVED.getCode())) {
+        if (!followDao.isFollowingWithTargetStatus(followerId, followingId, FollowStatus.APPROVED.getCode())) {
             throw new ConnectDataException(
                     ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
-                    String.format("APPROVED status not found for %s following %s", followerId, followingId)
+                    String.format("PENDING status not found for %s following %s", followerId, followingId)
             );
         }
 

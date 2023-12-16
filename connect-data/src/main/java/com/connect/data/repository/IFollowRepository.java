@@ -21,7 +21,7 @@ public interface IFollowRepository {
 
     List<String> queryFollowingIdList(String followerId);
 
-    List<String> queryPendingIdList(String followerId);
+    List<String> queryPendingIdList(String followingId);
 
     void approve(String followingId, String followerId);
 

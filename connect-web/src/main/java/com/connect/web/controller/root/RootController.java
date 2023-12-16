@@ -2,6 +2,7 @@ package com.connect.web.controller.root;
 
 import com.connect.api.common.APIResponse;
 import com.connect.api.root.IRootApi;
+import com.connect.api.user.dto.UserDto;
 import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -37,16 +38,18 @@ public class RootController implements IRootApi {
             );
         }
 
-        String role = UserRole.getRole(UserRole.ADMIN.getCode());
+        String role = UserRole.ADMIN.toString();
         String userId = UserRole.ROOT.toString();
         if (mockId != null) {
-            if (userService.queryUserByUserId(mockId) == null) {
+            UserDto mockUser = userService.queryUserByUserId(mockId);
+            if (mockUser == null) {
                 throw new ConnectDataException(
                         ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
                         "mockId not found"
                 );
             }
-            userId = mockId;
+            userId = mockUser.getUserId();
+            role = UserRole.getRole(mockUser.getRole());
         }
         String token = jwtTokenUtil.generateToken(userId, role);
 
