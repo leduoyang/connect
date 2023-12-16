@@ -46,15 +46,8 @@ public class UserVerificationRepositoryImpl implements IUserVerificationReposito
 
     @Override
     public void createUserVerification(UserVerification userVerification) {
-        int affected = userVerificationDao.expireCodeByEmail(userVerification.getEmail());
-        if (affected <= 0) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.USER_VERIFICATION_CREATE_EXCEPTION,
-                    "expire previous code by email failed"
-            );
-        }
-
-        affected = userVerificationDao.createUserVerification(userVerification);
+        userVerificationDao.expireCodeByEmail(userVerification.getEmail());
+        int affected = userVerificationDao.createUserVerification(userVerification);
         if (affected <= 0) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_VERIFICATION_CREATE_EXCEPTION,

@@ -1,6 +1,5 @@
 package com.connect.api.user.dto;
 
-import com.connect.api.post.dto.PostDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,15 +12,19 @@ public class UserDto {
 
     private String description;
 
-    private int status;
+    private Integer status;
 
-    private int role;
-
-    private String email;
-
-    private String phone;
+    private Integer role;
 
     private String profileImage;
+
+    private Integer views;
+
+    private Integer followers;
+
+    private Integer followings;
+
+    private Date dbCreateTime;
 
     private Date dbModifyTime;
 }

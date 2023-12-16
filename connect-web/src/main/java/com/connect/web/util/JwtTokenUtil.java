@@ -17,20 +17,22 @@ import java.util.function.Function;
 @Slf4j
 @Component
 public class JwtTokenUtil {
+    public final String PREFIX = "Bearer ";
+
     private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     @Value("${jwt.expiration:864000000}")
     private long EXPIRATION_TIME; // 10 days in milliseconds
 
-    public String generateToken(String userId, String roles) {
+    public String generateToken(String userId, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", userId);
-        claims.put("roles", roles);
+        claims.put("role", role);
         claims.put("created", new Date());
 
         log.info("generating token for " + claims);
         log.info("expiration time : " + EXPIRATION_TIME);
-        return Jwts.builder()
+        return PREFIX + Jwts.builder()
                 .setSubject(userId)
                 .setClaims(claims)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
@@ -42,8 +44,8 @@ public class JwtTokenUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String getRolesFromToken(String token) {
-        return (String) extractAllClaims(token).get("roles");
+    public String getRoleFromToken(String token) {
+        return (String) extractAllClaims(token).get("role");
     }
 
     public Date extractExpirationDate(String token) {
@@ -51,12 +53,15 @@ public class JwtTokenUtil {
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
+        final Claims claims = extractAllClaims(token.replaceFirst("^" + PREFIX, ""));
         return claimsResolver.apply(claims);
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token.replaceFirst("^" + PREFIX, ""))
+                .getBody();
     }
 
     public boolean isTokenExpired(String token) {

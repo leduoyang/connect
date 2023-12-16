@@ -14,9 +14,9 @@ public class User {
 
     private String password;
 
-    private int status;
+    private Integer status;
 
-    private int role;
+    private Integer role;
 
     private String description;
 
@@ -25,6 +25,14 @@ public class User {
     private String phone;
 
     private String profileImage;
+
+    private Integer followers;
+
+    private Integer followings;
+
+    private Integer views;
+
+    private Integer version;
 
     private Date dbCreateTime;
 

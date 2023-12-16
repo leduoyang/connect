@@ -3,6 +3,7 @@ package com.connect.common.exception;
 import com.connect.api.common.APIResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.UnexpectedTypeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,12 +24,6 @@ public class ConnectExceptionHandler {
         return this.buildErrorResult(exception);
     }
 
-
-    /**
-     * 所有验证框架异常捕获处理
-     *
-     * @return
-     */
     @ExceptionHandler(value = {MethodArgumentNotValidException.class, BindException.class})
     @ResponseBody
     public Object validationExceptionHandler(Exception exception, HttpServletRequest request, HttpServletResponse response) {
@@ -44,9 +39,9 @@ public class ConnectExceptionHandler {
     }
 
     private Object buildErrorResult(Throwable error) {
-        APIResponse.Type type = APIResponse.Type.GENERAL;
-        String code = ConnectErrorCode.BLANK.getCode();
-        String msg = ConnectErrorCode.BLANK.getMsg();
+        APIResponse.Type type;
+        String code;
+        String msg;
 
         if (error instanceof IllegalArgumentException) {
             type = APIResponse.Type.INVALID;
@@ -63,7 +58,12 @@ public class ConnectExceptionHandler {
             BindingResult bindResult = ((MethodArgumentNotValidException) error).getBindingResult();
             code = ConnectErrorCode.PARAM_EXCEPTION.getCode();
             msg = bindResult.getAllErrors().get(0).getDefaultMessage();
-        } else {
+        } else if (error instanceof UnexpectedTypeException) {
+            type = APIResponse.Type.INVALID;
+            UnexpectedTypeException ex = (UnexpectedTypeException) error;
+            code = ConnectErrorCode.PARAM_EXCEPTION.getCode();
+            msg = ex.getMessage();
+        }else {
             type = APIResponse.Type.SYS;
             code = ConnectErrorCode.INTERNAL_SERVER_ERROR.getCode();
             msg = ConnectErrorCode.INTERNAL_SERVER_ERROR.getMsg();

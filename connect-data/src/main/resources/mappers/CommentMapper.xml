@@ -5,28 +5,72 @@
         <id property="id" column="id"/>
         <result property="postId" column="postId"/>
         <result property="content" column="content"/>
+        <result property="status" column="status"/>
+        <result property="tags" column="tag"/>
         <result property="createdUser" column="created_user"/>
         <result property="updatedUser" column="updated_user"/>
         <result property="dbCreateTime" column="db_create_time"/>
         <result property="dbModifyTime" column="db_modify_time"/>
     </resultMap>
 
+    <insert id="createComment" parameterType="com.connect.data.entity.Comment" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        INSERT INTO comment(postId, content, tags, status, created_user, updated_user)
+        VALUES (
+        #{postId,jdbcType=BIGINT},
+        #{content, jdbcType=VARCHAR},
+        #{tags, jdbcType=VARCHAR},
+        #{status,jdbcType=TINYINT},
+        #{createdUser,jdbcType=VARCHAR},
+        #{updatedUser,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateComment" parameterType="com.connect.data.entity.Comment">
+        UPDATE comment
+        <trim prefix="set" suffixOverrides=",">
+            updated_user = #{updatedUser, jdbcType=VARCHAR},
+            <if test="content != null and content != ''">
+                content = #{content, jdbcType=VARCHAR},
+            </if>
+            <if test="tags != null and tags != ''">
+                tags = #{tags,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status >= 0">
+                status = #{status,jdbcType=TINYINT}
+            </if>
+        </trim>
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <update id="incrementViews">
+        UPDATE comment
+        SET version = version + 1,
+        views = views + 1
+        WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
+    </update>
+
+    <update id="refreshStars">
+        UPDATE comment
+        SET version = version + 1,
+        stars = #{stars, jdbcType=BIGINT}
+        WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
+    </update>
+
     <delete id="deleteComment">
         UPDATE comment
-        SET `status` = 0,
+        SET `status` = 3,
         updated_user = #{updatedUser, jdbcType=VARCHAR}
         WHERE id = #{id, jdbcType=BIGINT}
     </delete>
 
-    <insert id="createComment" parameterType="com.connect.data.entity.Comment" useGeneratedKeys="true"
-            keyProperty="id" keyColumn="id">
-        INSERT INTO comment(postId, content, created_user, updated_user)
-        VALUES (#{postId,jdbcType=BIGINT}, #{content, jdbcType=VARCHAR},
-        #{createdUser,jdbcType=VARCHAR}, #{updatedUser,jdbcType=VARCHAR})
-    </insert>
+    <select id="queryCommentById" resultMap="commentResultMap">
+        SELECT id, postId, content, tags, status, stars, views, version, created_user, updated_user, db_create_time, db_modify_time
+        FROM comment WHERE id = #{id} AND status != 3
+    </select>
 
     <select id="queryComment" resultMap="commentResultMap">
-        SELECT id, postId, content, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, postId, content, tags, status, stars, views, version, created_user, updated_user, db_create_time, db_modify_time
 
         FROM comment
         WHERE 1=1
@@ -39,29 +83,18 @@
         <if test="keyword != null and keyword != ''">
             AND content LIKE CONCAT('%', #{keyword}, '%')
         </if>
-    </select>
-
-    <select id="queryCommentById" resultMap="commentResultMap">
-        SELECT id, postId, content, created_user, updated_user, db_create_time, db_modify_time
-        FROM comment WHERE id = #{id}
+        <if test="tags != null and tags != ''">
+            AND find_in_set(#{tags}, tags) &gt; 0
+        </if>
+        AND status != 3
+        ORDER BY db_modify_time DESC, db_create_time DESC
     </select>
 
     <select id="commentExisting" resultType="java.lang.Boolean">
         SELECT EXISTS(
         SELECT id
         FROM comment
-        WHERE id = #{id,jdbcType=BIGINT}
+        WHERE id = #{id,jdbcType=BIGINT} AND created_user = #{userId, jdbcType=VARCHAR} AND status != 3
         )
     </select>
-
-    <update id="updateComment" parameterType="com.connect.data.entity.Comment">
-        UPDATE comment
-        <trim prefix="set" suffixOverrides=",">
-            updated_user = #{updatedUser, jdbcType=VARCHAR},
-            <if test="content != null and content != ''">
-                content = #{content, jdbcType=VARCHAR},
-            </if>
-        </trim>
-        WHERE id = #{id, jdbcType=BIGINT}
-    </update>
 </mapper>

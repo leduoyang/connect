@@ -1,10 +1,10 @@
 package com.connect.common.enums;
 
 public enum PostStatus {
-    DELETED(0),
-    PUBLIC(1),
+    PUBLIC(0),
+    SEMI(1),
     PRIVATE(2),
-    TESTED(3);
+    DELETED(3);
 
     final int code;
 

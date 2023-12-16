@@ -8,11 +8,15 @@ import java.util.List;
 public interface IPostRepository {
     void createPost(Post post);
 
-    void deletePost(Long id);
+    void updatePost(Post post);
 
-    List<Post> queryPost(QueryPostParam param);
+    void incrementViews(long id, int version);
+
+    void refreshStars(long id, int version, int stars);
+
+    void deletePost(Post post);
 
     Post queryPostById(long id);
 
-    void updatePost(Post post);
+    List<Post> queryPost(QueryPostParam param);
 }

@@ -2,28 +2,119 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.connect.data.dao.IProjectDao">
     <resultMap id="projectResultMap" type="com.connect.data.entity.Project">
-        <!-- 映射字段，同理可添加其他字段 -->
-        <id property="id" column="id" />
-        <result property="title" column="title" />
-        <result property="description" column="description" />
-        <result property="tags" column="tags" />
-        <result property="likesCount" column="likesCount" />
-        <result property="viewsCount" column="viewsCount" />
-        <result property="version" column="version" />
-        <result property="createdUser" column="created_user" />
-        <result property="updatedUser" column="updated_user" />
-        <result property="dbCreateTime" column="db_create_time" />
-        <result property="dbModifyTime" column="db_modify_time" />
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="tags" column="tags"/>
+        <result property="boosted" column="boosted"/>
+        <result property="likesCount" column="likesCount"/>
+        <result property="viewsCount" column="viewsCount"/>
+        <result property="version" column="version"/>
+        <result property="createdUser" column="created_user"/>
+        <result property="updatedUser" column="updated_user"/>
+        <result property="dbCreateTime" column="db_create_time"/>
+        <result property="dbModifyTime" column="db_modify_time"/>
     </resultMap>
 
-    <select id="getProjectById" resultMap="projectResultMap">
-        SELECT * FROM project WHERE id = #{id}
+    <insert id="createProject" parameterType="com.connect.data.entity.Project" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        INSERT INTO project(title, description, status, tags, boosted, created_user, updated_user)
+        VALUES (
+        #{title, jdbcType=VARCHAR},
+        #{description, jdbcType=VARCHAR},
+        #{status,jdbcType=TINYINT},
+        #{tags,jdbcType=VARCHAR},
+        #{boosted, jdbcType=TINYINT},
+        #{createdUser,jdbcType=VARCHAR},
+        #{updatedUser,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateProject" parameterType="com.connect.data.entity.Project">
+        UPDATE project
+        <trim prefix="set" suffixOverrides=",">
+            updated_user = #{updatedUser, jdbcType=VARCHAR},
+            <if test="title != null and title != ''">
+                title = #{title, jdbcType=VARCHAR},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description, jdbcType=VARCHAR},
+            </if>
+            <if test="status != null and status >= 0">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="tags != null and tags != ''">
+                tags = #{tags, jdbcType=VARCHAR},
+            </if>
+            <if test="boosted != null and boosted >= 0">
+                boosted = #{boosted, jdbcType=TINYINT},
+            </if>
+            <if test="viewsCount != null and viewsCount > 0">
+                viewsCount = #{viewsCount, jdbcType=BIGINT},
+            </if>
+            <if test="likesCount != null and likesCount > 0">
+                likesCount = #{likesCount, jdbcType=BIGINT},
+            </if>
+        </trim>
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <update id="incrementViews">
+        UPDATE project
+        SET version = version + 1,
+        views = views + 1
+        WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
+    </update>
+
+    <update id="refreshStars">
+        UPDATE project
+        SET version = version + 1,
+        stars = #{stars, jdbcType=BIGINT}
+        WHERE id = #{id, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteProject">
+        UPDATE project
+        SET `status` = 3,
+        updated_user = #{updatedUser, jdbcType=VARCHAR}
+        WHERE id = #{id, jdbcType=BIGINT}
+    </delete>
+
+    <select id="queryProjectById" resultMap="projectResultMap">
+        SELECT id, title, description, status, tags, boosted, stars, views, version, created_user,
+        updated_user, db_create_time, db_modify_time
+
+        FROM project WHERE id = #{id} AND status != 3
     </select>
 
-    <select id="getProjectsByUser" resultMap="projectResultMap">
-        SELECT * FROM project WHERE created_user = #{createdUser}
+    <select id="queryProject" resultMap="projectResultMap">
+        SELECT id, title, description, status, tags, boosted, stars, views, version, created_user,
+        updated_user, db_create_time, db_modify_time
+
+        FROM project
+        WHERE 1=1
+        <if test="projectId != null">
+            AND id = #{projectId}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND created_user = #{userId}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="tags != null and tags != ''">
+            AND find_in_set(#{tags}, tags) &gt; 0
+        </if>
+        AND status != 3
+        ORDER BY db_modify_time DESC, db_create_time DESC
     </select>
 
-    <!-- 添加其他操作，如插入、更新、刪除等 -->
-
+    <select id="projectExisting" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT id
+        FROM project
+        WHERE id = #{id, jdbcType=BIGINT} AND created_user = #{userId, jdbcType=VARCHAR} AND status != 3
+        )
+    </select>
 </mapper>

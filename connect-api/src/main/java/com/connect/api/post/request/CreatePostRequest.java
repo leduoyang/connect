@@ -1,25 +1,21 @@
 package com.connect.api.post.request;
 
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Accessors(chain = true)
 @Data
 public class CreatePostRequest {
-    @NotNull
-    private String userId;
+    @Min(value = 0, message = "status must be at least 0 (0 - public, 1 - semi, 2 - private)")
+    @Max(value = 2, message = "status must be at most 2 (0 - public, 1 - semi, 2 - private)")
+    private int status;
 
-    @Size(max = 3)
-    private int status = 1;
-
-    @NotBlank
     private Long referenceId;
 
-    @NotBlank
-    @Size(max = 2000)
+    @Size(min = 1, max = 2000, message = "post must be at most 2000")
     private String content;
+
+    @Size(max = 200, message = "tags must be at most 200")
+    private String tags;
 }

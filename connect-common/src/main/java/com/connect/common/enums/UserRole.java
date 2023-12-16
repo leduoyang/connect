@@ -1,10 +1,11 @@
 package com.connect.common.enums;
 
 public enum UserRole {
-    ADMIN(0),
-    ESSENTIAL(1),
-    PLUS(2),
-    PREMIUM(3);
+    ESSENTIAL(0),
+    PLUS(1),
+    PREMIUM(2),
+    ADMIN(3),
+    ROOT(4);
 
     final int code;
 

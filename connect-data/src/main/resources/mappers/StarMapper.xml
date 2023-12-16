@@ -2,25 +2,73 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.connect.data.dao.IStarDao">
     <resultMap id="starResultMap" type="com.connect.data.entity.Star">
-        <id property="id" column="id" />
-        <result property="userId" column="userId" />
-        <result property="targetId" column="targetId" />
-        <result property="type" column="type" />
-        <result property="dbCreateTime" column="db_create_time" />
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="targetId" column="targetId"/>
+        <result property="targetType" column="targetType"/>
+        <result property="isActive" column="isActive"/>
+        <result property="dbCreateTime" column="db_create_time"/>
+        <result property="dbModifyTime" column="db_modify_time"/>
     </resultMap>
 
-    <select id="getStarById" resultMap="starResultMap">
-        SELECT * FROM star WHERE id = #{id}
+    <insert id="createStar" parameterType="com.connect.data.entity.Star" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        INSERT INTO star(userId, targetId, targetType, isActive)
+        VALUES (
+        #{userId,jdbcType=VARCHAR},
+        #{targetId, jdbcType=BIGINT},
+        #{targetType, jdbcType=BIGINT},
+        #{isActive,jdbcType=BOOLEAN}
+        )
+    </insert>
+
+    <update id="updateStar" parameterType="com.connect.data.entity.Star">
+        UPDATE star
+        <trim prefix="set" suffixOverrides=",">
+            <if test="isActive != null">
+                isActive = #{isActive, jdbcType=BOOLEAN}
+            </if>
+        </trim>
+        WHERE targetType = #{targetType, jdbcType=TINYINT}
+        AND targetId = #{targetId, jdbcType=BIGINT}
+        AND userId = #{userId, jdbcType=VARCHAR}
+    </update>
+
+    <select id="starExisting" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT id
+        FROM star
+        WHERE targetType = #{targetType, jdbcType=TINYINT}
+        AND targetId = #{targetId, jdbcType=BIGINT}
+        AND userId = #{userId, jdbcType=VARCHAR}
+        )
     </select>
 
-    <select id="getStarsByUser" resultMap="starResultMap">
-        SELECT * FROM star WHERE userId = #{userId}
+    <select id="starExistingWithTargetStatus" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT id
+        FROM star
+        WHERE targetType = #{targetType, jdbcType=TINYINT}
+        AND targetId = #{targetId, jdbcType=BIGINT}
+        AND isActive = #{isActive, jdbcType=BOOLEAN}
+        AND userId = #{userId, jdbcType=VARCHAR}
+        )
     </select>
 
-    <select id="getStarsByTypeAndTargetId" resultMap="starResultMap">
-        SELECT * FROM star WHERE type = #{type} AND targetId = #{targetId}
+    <select id="countStars" resultType="java.lang.Integer">
+        SELECT COUNT(id)
+        FROM Star
+        WHERE targetType = #{targetType, jdbcType=TINYINT}
+        AND targetId = #{targetId, jdbcType=BIGINT}
+        AND isActive = TRUE
     </select>
 
-    <!-- 添加其他操作，如插入、更新、刪除等 -->
+    <select id="queryTargetIdList" resultType="java.lang.Integer">
+        SELECT targetId
 
+        FROM Star
+        WHERE targetType = #{targetType, jdbcType=TINYINT}
+        AND userId = #{userId, jdbcType=VARCHAR}
+        AND isActive = TRUE
+    </select>
 </mapper>

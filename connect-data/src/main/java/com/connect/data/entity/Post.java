@@ -10,9 +10,17 @@ import java.util.Date;
 public class Post {
     private Long id;
 
+    private Integer status;
+
     private String content;
 
     private Long referenceId;
+
+    private Integer stars;
+
+    private Integer views;
+
+    private Integer version;
 
     private String createdUser;
 

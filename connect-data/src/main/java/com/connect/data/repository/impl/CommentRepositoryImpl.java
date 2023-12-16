@@ -34,42 +34,63 @@ public class CommentRepositoryImpl implements ICommentRepository {
         return commentDao.queryComment(
                 param.getPostId(),
                 param.getUserId(),
-                param.getKeyword()
+                param.getKeyword(),
+                param.getTags()
         );
     }
 
     public void createComment(Comment comment) {
         int affected = commentDao.createComment(comment);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_CREATE_EXCEPTION);
+            throw new ConnectDataException(ConnectErrorCode.COMMENT_CREATE_EXCEPTION);
         }
     }
 
     public void updateComment(Comment comment) {
-        boolean existed = commentDao.commentExisting(comment.getId());
+        long targetId = comment.getId();
+        String userId = comment.getUpdatedUser();
+        boolean existed = commentDao.commentExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
-                    ConnectErrorCode.POST_NOT_EXISTED_EXCEPTION,
-                    String.format("Comment %s not exited.", comment.getId())
+                    ConnectErrorCode.COMMENT_NOT_EXISTED_EXCEPTION,
+                    String.format("Post %s not exited or user %s is not the creator", targetId, userId)
             );
         }
+
         int affected = commentDao.updateComment(comment);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
+            throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION);
         }
     }
 
-    public void deleteComment(Long id) {
-        boolean existed = commentDao.commentExisting(id);
+    public void incrementViews(long id, int version) {
+        int affected = commentDao.incrementViews(id, version);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION, "update viewCounts failed");
+        }
+    }
+
+    public void refreshStars(long id, int version, int stars) {
+        int affected = commentDao.refreshStars(id, version, stars);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION, "update likesCount failed");
+        }
+    }
+
+    public void deleteComment(Comment comment) {
+        long targetId = comment.getId();
+        String userId = comment.getUpdatedUser();
+        boolean existed = commentDao.commentExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
-                    ConnectErrorCode.POST_NOT_EXISTED_EXCEPTION,
-                    String.format("Comment %s not exited.", id)
+                    ConnectErrorCode.COMMENT_NOT_EXISTED_EXCEPTION,
+                    String.format("Post %s not exited or user %s is not the creator", targetId, userId)
             );
         }
-        int affected = commentDao.deleteComment(id);
+
+        int affected = commentDao.deleteComment(targetId, userId);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
+            throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION);
         }
     }
 }

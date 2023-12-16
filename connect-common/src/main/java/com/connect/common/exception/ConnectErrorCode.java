@@ -6,15 +6,15 @@ import lombok.Getter;
 public enum ConnectErrorCode {
     BLANK("000000", "Default error code"),
     INTERNAL_SERVER_ERROR("100001", "Internal server error"),
-    ILLEGAL_REQUESTER_ERROR("100002", "Illegal Requester"),
+    ILLEGAL_REQUESTER_ERROR("100002", "Not permitted for this request"),
     PARAM_EXCEPTION("100003", "Parameters error"),
-    UNAUTHORIZED_EXCEPTION("100004", "Not Authorized for this action."),
+    UNAUTHORIZED_EXCEPTION("100004", "Not authorized for this action."),
 
     /**
      * User
      */
     USER_CREATE_EXCEPTION("300001", "Create user failed"),
-    USER_UPDATE_EXCEPTION("300002", "Update user failed"),
+    USER_EDIT_EXCEPTION("300002", "Update user failed"),
     USER_DELETE_EXCEPTION("300003", "Delete user failed"),
     USER_NOT_EXISTED_EXCEPTION("300004", "User not existed."),
     USER_EXISTED_EXCEPTION("300005", "User has existed."),
@@ -50,7 +50,25 @@ public enum ConnectErrorCode {
     POST_CREATE_EXCEPTION("300001", "Create post failed"),
     POST_UPDATE_EXCEPTION("300002", "Update post failed"),
     POST_DELETE_EXCEPTION("300003", "Delete post failed"),
-    POST_NOT_EXISTED_EXCEPTION("300004", "Post not existed.");
+    POST_NOT_EXISTED_EXCEPTION("300004", "Post not existed."),
+
+    /**
+     * Follow
+     */
+    FOLLOW_CREATE_EXCEPTION("300001", "Create follow failed"),
+    FOLLOW_UPDATE_EXCEPTION("300002", "Update follow failed"),
+    FOLLOW_DELETE_EXCEPTION("300003", "Delete follow failed"),
+    FOLLOW_NOT_EXISTED_EXCEPTION("300004", "Follow not existed."),
+    FOLLOW_EXISTED_EXCEPTION("300005", "Follow already existed."),
+
+    /**
+     * Star
+     */
+    STAR_CREATE_EXCEPTION("300001", "Create star failed"),
+    STAR_UPDATE_EXCEPTION("300002", "Update star failed"),
+    STAR_DELETE_EXCEPTION("300003", "Delete star failed"),
+    STAR_NOT_EXISTED_EXCEPTION("300004", "Star not existed."),
+    STAR_EXISTED_EXCEPTION("300005", "Star already existed.");
 
     final String code;
     final String msg;

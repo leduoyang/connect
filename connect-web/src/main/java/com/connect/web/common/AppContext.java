@@ -11,7 +11,9 @@ import java.util.Map;
 @Data
 @Component
 public class AppContext {
-    public Map<String, userContext> user = new HashMap<>();
+    public static String adminToken;
+
+    public static Map<String, userContext> user = new HashMap<>();
 
     @Data
     public static class userContext {

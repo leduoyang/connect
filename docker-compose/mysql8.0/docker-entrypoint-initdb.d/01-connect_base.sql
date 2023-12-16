@@ -5,13 +5,17 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `userId`            VARCHAR(256) UNIQUE NOT NULL,
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - private, 3 - tested',
-    `role`              TINYINT(4) DEFAULT '0' COMMENT '0 - admin, 1 - essential, 2 - plus, 3 - premium',
-    `password`          VARCHAR(255) NOT NULL,
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `role`              TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - essential, 1 - plus, 2 - premium, 3 - admin',
+    `password`          VARCHAR(256) NOT NULL,
     `description`       VARCHAR(256),
-    `phone`             VARCHAR(255),
-    `email`             VARCHAR(255) UNIQUE NOT NULL,
-    `profileImage`      VARCHAR(255),
+    `phone`             VARCHAR(256),
+    `email`             VARCHAR(256) UNIQUE NOT NULL,
+    `profileImage`      VARCHAR(256),
+    `views`             INT NOT NULL DEFAULT 0,
+    `followers`         INT NOT NULL DEFAULT 0,
+    `followings`        INT NOT NULL DEFAULT 0,
+    `version`           INT NOT NULL DEFAULT 1,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='User';
@@ -23,7 +27,7 @@ CREATE TABLE `email_verification` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `email`             VARCHAR(256) NOT NULL,
     `code`              VARCHAR(256) NOT NULL,
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - pending, 2 - completed, 3 - expired',
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - DELETED, 1 - PENDING, 2 - COMPLETED, 3 - EXPIRED',
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Email Verification Code';
 CREATE INDEX idx_email_code ON `email_verification` (email, code);
@@ -32,14 +36,14 @@ CREATE INDEX idx_email_code ON `email_verification` (email, code);
 DROP TABLE IF EXISTS `project`;
 CREATE TABLE `project` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
-    `title`             VARCHAR(255) NOT NULL,
+    `title`             VARCHAR(256) NOT NULL,
     `description`       TEXT,
-    `tags`              VARCHAR(255),
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - private, 3 - tested',
-    `boosted`           TINYINT(2) DEFAULT '0' COMMENT '0 - default, 1 - boosted',
-    `likesCount`        INT DEFAULT 0,
-    `viewsCount`        INT DEFAULT 0,
-    `version`           INT DEFAULT 1,  -- Optimistic Locking: Version column
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `tags`              VARCHAR(256) DEFAULT NULL,
+    `boosted`           TINYINT(2) NOT NULL DEFAULT '0' COMMENT '0 - default, 1 - boosted',
+    `stars`             INT NOT NULL DEFAULT 0,
+    `views`             INT NOT NULL DEFAULT 0,
+    `version`           INT NOT NULL DEFAULT 1,
     `created_user`      VARCHAR(256) NOT NULL,
     `updated_user`      VARCHAR(256) DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
@@ -51,11 +55,12 @@ CREATE INDEX idx_userid ON `project` (created_user);
 DROP TABLE IF EXISTS `project_category`;
 CREATE TABLE `project_category` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
-    `title`             VARCHAR(255) NOT NULL,
+    `title`             VARCHAR(256) NOT NULL,
     `description`       TEXT,
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - private, 3 - tested',
-    `viewsCount`        INT DEFAULT 0,
-    `version`           INT DEFAULT 1,  -- Optimistic Locking: Version column
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `stars`             INT NOT NULL DEFAULT 0,
+    `views`             INT NOT NULL DEFAULT 0,
+    `version`           INT NOT NULL DEFAULT 1,
     `created_user`      VARCHAR(256) NOT NULL,
     `updated_user`      VARCHAR(256) DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
@@ -69,7 +74,11 @@ CREATE TABLE `post` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `content`           TEXT,
     `referenceId`       INT COMMENT 'null when it is an original post, reference id otherwise',
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - private, 3 - tested',
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `tags`              VARCHAR(256) DEFAULT NULL,
+    `stars`             INT NOT NULL DEFAULT 0,
+    `views`             INT NOT NULL DEFAULT 0,
+    `version`           INT NOT NULL DEFAULT 1,
     `created_user`      VARCHAR(256) NOT NULL,
     `updated_user`      VARCHAR(256) DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
@@ -83,7 +92,11 @@ CREATE TABLE `comment` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `postId`            INT NOT NULL,
     `content`           TEXT NOT NULL,
-    `status`            TINYINT(4) DEFAULT '1' COMMENT '0 - deleted, 1 - public, 2 - private, 3 - tested',
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `tags`              VARCHAR(256) DEFAULT NULL,
+    `stars`             INT NOT NULL DEFAULT 0,
+    `views`             INT NOT NULL DEFAULT 0,
+    `version`           INT NOT NULL DEFAULT 1,
     `created_user`      VARCHAR(256) NOT NULL,
     `updated_user`      VARCHAR(256) DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
@@ -99,97 +112,104 @@ DROP TABLE IF EXISTS `star`;
 CREATE TABLE `star` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `userId`            VARCHAR(256) NOT NULl,
-    `targetId`          INT,
-    `type`              TINYINT(4) NOT NULL COMMENT '0 - project, 1 - user, 2 - post, 3 - comment',
+    `targetId`          INT NOT NULL,
+    `targetType`        TINYINT(4) NOT NULL COMMENT '0 - project, 1 - post, 2 - comment, 3 - user',
+    `isActive`          BOOLEAN NOT NULL DEFAULT TRUE,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
+    `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
     FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Star';
-CREATE INDEX idx_userId_star ON `star` (userId);
-CREATE INDEX idx_type_targetId_star ON `star` (type, targetId);
+CREATE INDEX idx_type_userId_star ON `star` (targetType, userId);
+CREATE INDEX idx_type_targetId_star ON `star` (targetType, targetId);
+CREATE INDEX idx_type_targetId_active_star ON `star` (targetType, targetId, isActive);
 
--- subscribe table
-DROP TABLE IF EXISTS `subscribe`;
-CREATE TABLE `subscribe` (
+-- follow table
+DROP TABLE IF EXISTS `follow`;
+CREATE TABLE `follow` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
-    `userId`            VARCHAR(256) NOT NULl,
-    `targetId`          INT,
-    `type`              TINYINT(4) NOT NULL COMMENT '0 - project, 1 - user, 2 - post, 3 - comment',
+    `followerId`        VARCHAR(256) NOT NULl,
+    `followingId`       VARCHAR(256) NOT NULl,
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - UNFOLLOW, 1 - PENDING, 2 - APPROVED, 3 - REJECTED',
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
-    FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Subscribe';
-CREATE INDEX idx_userId_subscribe ON `subscribe` (userId);
-CREATE INDEX idx_type_targetId_subscribe ON `subscribe` (type, targetId);
+    `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
+    FOREIGN KEY (`followerId`) REFERENCES `user`(`userId`) ON DELETE CASCADE,
+    FOREIGN KEY (`followingId`) REFERENCES `user`(`userId`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Follow';
+CREATE INDEX idx_followerId_follow ON `follow` (followerId);
+CREATE INDEX idx_followerId_followingId_follow ON `follow` (followerId, followingId);
+CREATE INDEX idx_followerId_followingId_status_follow ON `follow` (followerId, followingId, status);
 
 -- Insert Mock User Data
-INSERT INTO `user` (userId, status, password, email, profileImage, db_create_time)
+INSERT INTO `user` (userId, status, password, email, db_create_time)
 VALUES
-    ('john_doe', 3, 'john123', 'john.doe@email.com', 'john_profile.jpg', CURRENT_TIMESTAMP),
-    ('alice_smith', 3, 'alice456', 'alice.smith@email.com', 'alice_profile.jpg', CURRENT_TIMESTAMP),
-    ('bob_jones', 3, 'bob789', 'bob.jones@email.com', 'bob_profile.jpg', CURRENT_TIMESTAMP),
-    ('sarah_miller', 3, 'sarah456', 'sarah.miller@email.com', 'sarah_profile.jpg', CURRENT_TIMESTAMP),
-    ('david_wilson', 3, 'david789', 'david.wilson@email.com', 'david_profile.jpg', CURRENT_TIMESTAMP),
-    ('emily_parker', 3, 'emily123', 'emily.parker@email.com', 'emily_profile.jpg', CURRENT_TIMESTAMP),
-    ('michael_taylor', 3, 'michael789', 'michael.taylor@email.com', 'michael_profile.jpg', CURRENT_TIMESTAMP),
-    ('olivia_clark', 3, 'olivia456', 'olivia.clark@email.com', 'olivia_profile.jpg', CURRENT_TIMESTAMP),
-    ('ryan_hall', 3, 'ryan123', 'ryan.hall@email.com', 'ryan_profile.jpg', CURRENT_TIMESTAMP),
-    ('grace_turner', 3, 'grace456', 'grace.turner@email.com', 'grace_profile.jpg', CURRENT_TIMESTAMP),
-    ('alice_doe', 3, 'password123', 'alice@example.com', 'profile_alice.jpg', CURRENT_TIMESTAMP),
-    ('bob_smith', 3, 'bobpass456', 'bob@example.com', 'profile_bob.jpg', CURRENT_TIMESTAMP),
-    ('carol_jones', 3, 'carolpass789', 'carol@example.com', 'profile_carol.jpg', CURRENT_TIMESTAMP),
-    ('dave_miller', 3, 'davepass321', 'dave@example.com', 'profile_dave.jpg', CURRENT_TIMESTAMP),
-    ('emma_white', 3, 'emmapass654', 'emma@example.com', 'profile_emma.jpg', CURRENT_TIMESTAMP),
-    ('frank_brown', 3, 'frankpass987', 'frank@example.com', 'profile_frank.jpg', CURRENT_TIMESTAMP),
-    ('grace_taylor', 3, 'gracepass123', 'grace@example.com', 'profile_grace.jpg', CURRENT_TIMESTAMP),
-    ('harry_wilson', 3, 'harrypass456', 'harry@example.com', 'profile_harry.jpg', CURRENT_TIMESTAMP),
-    ('isabel_green', 3, 'isabelpass789', 'isabel@example.com', 'profile_isabel.jpg', CURRENT_TIMESTAMP),
-    ('jack_smith', 3, 'jackpass321', 'jack@example.com', 'profile_jack.jpg', CURRENT_TIMESTAMP),
-    ('kate_jones', 3, 'katepass654', 'kate@example.com', 'profile_kate.jpg', CURRENT_TIMESTAMP),
-    ('liam_davis', 3, 'liampass987', 'liam@example.com', 'profile_liam.jpg', CURRENT_TIMESTAMP),
-    ('maya_anderson', 3, 'mayapass123', 'maya@example.com', 'profile_maya.jpg', CURRENT_TIMESTAMP),
-    ('nathan_baker', 3, 'nathanpass456', 'nathan@example.com', 'profile_nathan.jpg', CURRENT_TIMESTAMP),
-    ('olivia_carter', 3, 'oliviapass789', 'olivia@example.com', 'profile_olivia.jpg', CURRENT_TIMESTAMP),
-    ('peter_evans', 3, 'peterpass321', 'peter@example.com', 'profile_peter.jpg', CURRENT_TIMESTAMP),
-    ('quinn_fisher', 3, 'quinnpass654', 'quinn@example.com', 'profile_quinn.jpg', CURRENT_TIMESTAMP),
-    ('ryan_yang', 3, 'ryanpass987', 'ryan@example.com', 'profile_ryan.jpg', CURRENT_TIMESTAMP),
-    ('sophie_irwin', 3, 'sophiepass123', 'sophie@example.com', 'profile_sophie.jpg', CURRENT_TIMESTAMP),
-    ('tom_king', 3, 'tompass456', 'tom@example.com', 'profile_tom.jpg', CURRENT_TIMESTAMP),
-    ('hiroshi', 3, 'hiroshi123', 'hiroshi@example.com', 'profile_hiroshi.jpg', CURRENT_TIMESTAMP),
-    ('akiko', 3, 'akiko456', 'akiko@example.com', 'profile_akiko.jpg', CURRENT_TIMESTAMP),
-    ('takeshi', 3, 'takeshi789', 'takeshi@example.com', 'profile_takeshi.jpg', CURRENT_TIMESTAMP),
-    ('yuki', 3, 'yuki123', 'yuki@example.com', 'profile_yuki.jpg', CURRENT_TIMESTAMP),
-    ('sakura', 3, 'sakura456', 'sakura@example.com', 'profile_sakura.jpg', CURRENT_TIMESTAMP),
-    ('taro', 3, 'taro789', 'taro@example.com', 'profile_taro.jpg', CURRENT_TIMESTAMP),
-    ('naoko', 3, 'naoko123', 'naoko@example.com', 'profile_naoko.jpg', CURRENT_TIMESTAMP),
-    ('ryota', 3, 'ryota456', 'ryota@example.com', 'profile_ryota.jpg', CURRENT_TIMESTAMP),
-    ('ayumi', 3, 'ayumi789', 'ayumi@example.com', 'profile_ayumi.jpg', CURRENT_TIMESTAMP),
-    ('kenta', 3, 'kenta123', 'kenta@example.com', 'profile_kenta.jpg', CURRENT_TIMESTAMP),
-    ('miho', 3, 'miho456', 'miho@example.com', 'profile_miho.jpg', CURRENT_TIMESTAMP),
-    ('sora', 3, 'sora789', 'sora@example.com', 'profile_sora.jpg', CURRENT_TIMESTAMP),
-    ('kazuki', 3, 'kazuki123', 'kazuki@example.com', 'profile_kazuki.jpg', CURRENT_TIMESTAMP),
-    ('emiko', 3, 'emiko456', 'emiko@example.com', 'profile_emiko.jpg', CURRENT_TIMESTAMP),
-    ('takahiro', 3, 'takahiro789', 'takahiro@example.com', 'profile_takahiro.jpg', CURRENT_TIMESTAMP),
-    ('maiko', 3, 'maiko123', 'maiko@example.com', 'profile_maiko.jpg', CURRENT_TIMESTAMP),
-    ('shinji', 3, 'shinji456', 'shinji@example.com', 'profile_shinji.jpg', CURRENT_TIMESTAMP),
-    ('liuwei', 3, 'liuwei123', 'liuwei@example.com', 'profile_liuwei.jpg', CURRENT_TIMESTAMP),
-    ('wangying', 3, 'wangying456', 'wangying@example.com', 'profile_wangying.jpg', CURRENT_TIMESTAMP),
-    ('zhangwei', 3, 'zhangwei789', 'zhangwei@example.com', 'profile_zhangwei.jpg', CURRENT_TIMESTAMP),
-    ('chenxin', 3, 'chenxin123', 'chenxin@example.com', 'profile_chenxin.jpg', CURRENT_TIMESTAMP),
-    ('yangming', 3, 'yangming456', 'yangming@example.com', 'profile_yangming.jpg', CURRENT_TIMESTAMP),
-    ('xuxin', 3, 'xuxin789', 'xuxin@example.com', 'profile_xuxin.jpg', CURRENT_TIMESTAMP),
-    ('lihong', 3, 'lihong123', 'lihong@example.com', 'profile_lihong.jpg', CURRENT_TIMESTAMP),
-    ('zhaojie', 3, 'zhaojie456', 'zhaojie@example.com', 'profile_zhaojie.jpg', CURRENT_TIMESTAMP),
-    ('sunlei', 3, 'sunlei789', 'sunlei@example.com', 'profile_sunlei.jpg', CURRENT_TIMESTAMP),
-    ('wanglei', 3, 'wanglei123', 'wanglei@example.com', 'profile_wanglei.jpg', CURRENT_TIMESTAMP),
-    ('chenxi', 3, 'chenxi456', 'chenxi@example.com', 'profile_chenxi.jpg', CURRENT_TIMESTAMP),
-    ('yangyun', 3, 'yangyun789', 'yangyun@example.com', 'profile_yangyun.jpg', CURRENT_TIMESTAMP),
-    ('linjun', 3, 'linjun123', 'linjun@example.com', 'profile_linjun.jpg', CURRENT_TIMESTAMP),
-    ('huangwei', 3, 'huangwei456', 'huangwei@example.com', 'profile_huangwei.jpg', CURRENT_TIMESTAMP),
-    ('xumin', 3, 'xumin789', 'xumin@example.com', 'profile_xumin.jpg', CURRENT_TIMESTAMP),
-    ('zhouwei', 3, 'zhouwei123', 'zhouwei@example.com', 'profile_zhouwei.jpg', CURRENT_TIMESTAMP),
-    ('lianghong', 3, 'lianghong456', 'lianghong@example.com', 'profile_lianghong.jpg', CURRENT_TIMESTAMP),
-    ('wangxiao', 3, 'wangxiao789', 'wangxiao@example.com', 'profile_wangxiao.jpg', CURRENT_TIMESTAMP),
-    ('fanyu', 3, 'fanyu123', 'fanyu@example.com', 'profile_fanyu.jpg', CURRENT_TIMESTAMP),
-    ('xulian', 3, 'xulian456', 'xulian@example.com', 'profile_xulian.jpg', CURRENT_TIMESTAMP);
+    ('ROOT', 1, 'thisisrootpassword', 'connect.sideproject@gmail.com', CURRENT_TIMESTAMP),
+    ('john_doe', ROUND(RAND() * 1), 'john123', 'john.doe@email.com', CURRENT_TIMESTAMP),
+    ('alice_smith', ROUND(RAND() * 1), 'alice456', 'alice.smith@email.com', CURRENT_TIMESTAMP),
+    ('bob_jones', ROUND(RAND() * 1), 'bob789', 'bob.jones@email.com', CURRENT_TIMESTAMP),
+    ('sarah_miller', ROUND(RAND() * 1), 'sarah456', 'sarah.miller@email.com', CURRENT_TIMESTAMP),
+    ('david_wilson', ROUND(RAND() * 1), 'david789', 'david.wilson@email.com', CURRENT_TIMESTAMP),
+    ('emily_parker', ROUND(RAND() * 1), 'emily123', 'emily.parker@email.com', CURRENT_TIMESTAMP),
+    ('michael_taylor', ROUND(RAND() * 1), 'michael789', 'michael.taylor@email.com', CURRENT_TIMESTAMP),
+    ('olivia_clark', ROUND(RAND() * 1), 'olivia456', 'olivia.clark@email.com', CURRENT_TIMESTAMP),
+    ('ryan_hall', ROUND(RAND() * 1), 'ryan123', 'ryan.hall@email.com', CURRENT_TIMESTAMP),
+    ('grace_turner', ROUND(RAND() * 1), 'grace456', 'grace.turner@email.com', CURRENT_TIMESTAMP),
+    ('alice_doe', ROUND(RAND() * 1), 'password123', 'alice@example.com', CURRENT_TIMESTAMP),
+    ('bob_smith', ROUND(RAND() * 1), 'bobpass456', 'bob@example.com', CURRENT_TIMESTAMP),
+    ('carol_jones', ROUND(RAND() * 1), 'carolpass789', 'carol@example.com', CURRENT_TIMESTAMP),
+    ('dave_miller', ROUND(RAND() * 1), 'davepass321', 'dave@example.com', CURRENT_TIMESTAMP),
+    ('emma_white', ROUND(RAND() * 1), 'emmapass654', 'emma@example.com', CURRENT_TIMESTAMP),
+    ('frank_brown', ROUND(RAND() * 1), 'frankpass987', 'frank@example.com', CURRENT_TIMESTAMP),
+    ('grace_taylor', ROUND(RAND() * 1), 'gracepass123', 'grace@example.com', CURRENT_TIMESTAMP),
+    ('harry_wilson', ROUND(RAND() * 1), 'harrypass456', 'harry@example.com', CURRENT_TIMESTAMP),
+    ('isabel_green', ROUND(RAND() * 1), 'isabelpass789', 'isabel@example.com', CURRENT_TIMESTAMP),
+    ('jack_smith', ROUND(RAND() * 1), 'jackpass321', 'jack@example.com', CURRENT_TIMESTAMP),
+    ('kate_jones', ROUND(RAND() * 1), 'katepass654', 'kate@example.com', CURRENT_TIMESTAMP),
+    ('liam_davis', ROUND(RAND() * 1), 'liampass987', 'liam@example.com', CURRENT_TIMESTAMP),
+    ('maya_anderson', ROUND(RAND() * 1), 'mayapass123', 'maya@example.com', CURRENT_TIMESTAMP),
+    ('nathan_baker', ROUND(RAND() * 1), 'nathanpass456', 'nathan@example.com', CURRENT_TIMESTAMP),
+    ('olivia_carter', ROUND(RAND() * 1), 'oliviapass789', 'olivia@example.com', CURRENT_TIMESTAMP),
+    ('peter_evans', ROUND(RAND() * 1), 'peterpass321', 'peter@example.com', CURRENT_TIMESTAMP),
+    ('quinn_fisher', ROUND(RAND() * 1), 'quinnpass654', 'quinn@example.com', CURRENT_TIMESTAMP),
+    ('ryan_yang', ROUND(RAND() * 1), 'ryanpass987', 'ryan@example.com', CURRENT_TIMESTAMP),
+    ('sophie_irwin', ROUND(RAND() * 1), 'sophiepass123', 'sophie@example.com', CURRENT_TIMESTAMP),
+    ('tom_king', ROUND(RAND() * 1), 'tompass456', 'tom@example.com', CURRENT_TIMESTAMP),
+    ('hiroshi', ROUND(RAND() * 1), 'hiroshi123', 'hiroshi@example.com', CURRENT_TIMESTAMP),
+    ('akiko', ROUND(RAND() * 1), 'akiko456', 'akiko@example.com', CURRENT_TIMESTAMP),
+    ('takeshi', ROUND(RAND() * 1), 'takeshi789', 'takeshi@example.com', CURRENT_TIMESTAMP),
+    ('yuki', ROUND(RAND() * 1), 'yuki123', 'yuki@example.com', CURRENT_TIMESTAMP),
+    ('sakura', ROUND(RAND() * 1), 'sakura456', 'sakura@example.com', CURRENT_TIMESTAMP),
+    ('taro', ROUND(RAND() * 1), 'taro789', 'taro@example.com', CURRENT_TIMESTAMP),
+    ('naoko', ROUND(RAND() * 1), 'naoko123', 'naoko@example.com', CURRENT_TIMESTAMP),
+    ('ryota', ROUND(RAND() * 1), 'ryota456', 'ryota@example.com', CURRENT_TIMESTAMP),
+    ('ayumi', ROUND(RAND() * 1), 'ayumi789', 'ayumi@example.com', CURRENT_TIMESTAMP),
+    ('kenta', ROUND(RAND() * 1), 'kenta123', 'kenta@example.com', CURRENT_TIMESTAMP),
+    ('miho', ROUND(RAND() * 1), 'miho456', 'miho@example.com', CURRENT_TIMESTAMP),
+    ('sora', ROUND(RAND() * 1), 'sora789', 'sora@example.com', CURRENT_TIMESTAMP),
+    ('kazuki', ROUND(RAND() * 1), 'kazuki123', 'kazuki@example.com', CURRENT_TIMESTAMP),
+    ('emiko', ROUND(RAND() * 1), 'emiko456', 'emiko@example.com', CURRENT_TIMESTAMP),
+    ('takahiro', ROUND(RAND() * 1), 'takahiro789', 'takahiro@example.com', CURRENT_TIMESTAMP),
+    ('maiko', ROUND(RAND() * 1), 'maiko123', 'maiko@example.com', CURRENT_TIMESTAMP),
+    ('shinji', ROUND(RAND() * 1), 'shinji456', 'shinji@example.com', CURRENT_TIMESTAMP),
+    ('liuwei', ROUND(RAND() * 1), 'liuwei123', 'liuwei@example.com', CURRENT_TIMESTAMP),
+    ('wangying', ROUND(RAND() * 1), 'wangying456', 'wangying@example.com', CURRENT_TIMESTAMP),
+    ('zhangwei', ROUND(RAND() * 1), 'zhangwei789', 'zhangwei@example.com', CURRENT_TIMESTAMP),
+    ('chenxin', ROUND(RAND() * 1), 'chenxin123', 'chenxin@example.com', CURRENT_TIMESTAMP),
+    ('yangming', ROUND(RAND() * 1), 'yangming456', 'yangming@example.com', CURRENT_TIMESTAMP),
+    ('xuxin', ROUND(RAND() * 1), 'xuxin789', 'xuxin@example.com', CURRENT_TIMESTAMP),
+    ('lihong', ROUND(RAND() * 1), 'lihong123', 'lihong@example.com', CURRENT_TIMESTAMP),
+    ('zhaojie', ROUND(RAND() * 1), 'zhaojie456', 'zhaojie@example.com', CURRENT_TIMESTAMP),
+    ('sunlei', ROUND(RAND() * 1), 'sunlei789', 'sunlei@example.com', CURRENT_TIMESTAMP),
+    ('wanglei', ROUND(RAND() * 1), 'wanglei123', 'wanglei@example.com', CURRENT_TIMESTAMP),
+    ('chenxi', ROUND(RAND() * 1), 'chenxi456', 'chenxi@example.com', CURRENT_TIMESTAMP),
+    ('yangyun', ROUND(RAND() * 1), 'yangyun789', 'yangyun@example.com', CURRENT_TIMESTAMP),
+    ('linjun', ROUND(RAND() * 1), 'linjun123', 'linjun@example.com', CURRENT_TIMESTAMP),
+    ('huangwei', ROUND(RAND() * 1), 'huangwei456', 'huangwei@example.com', CURRENT_TIMESTAMP),
+    ('xumin', ROUND(RAND() * 1), 'xumin789', 'xumin@example.com', CURRENT_TIMESTAMP),
+    ('zhouwei', ROUND(RAND() * 1), 'zhouwei123', 'zhouwei@example.com', CURRENT_TIMESTAMP),
+    ('lianghong', ROUND(RAND() * 1), 'lianghong456', 'lianghong@example.com', CURRENT_TIMESTAMP),
+    ('wangxiao', ROUND(RAND() * 1), 'wangxiao789', 'wangxiao@example.com', CURRENT_TIMESTAMP),
+    ('fanyu', ROUND(RAND() * 1), 'fanyu123', 'fanyu@example.com', CURRENT_TIMESTAMP),
+    ('xulian', ROUND(RAND() * 1), 'xulian456', 'xulian@example.com', CURRENT_TIMESTAMP);
 
 -- Insert Mock Project Data
 INSERT INTO `project` (title, description, tags, created_user, updated_user)
@@ -211,26 +231,26 @@ VALUES
     ('綠意城市計畫 - 創建城市綠洲', '提倡城市綠化，打造一個促進城市居民參與綠化計畫的平台。', '城市綠化,社區,環保', 'yangming', 'yangming'),
     ('娛樂活動應用 - 探索當地娛樂', '開發一個能夠提供當地娛樂活動信息的應用，讓用戶盡情享受當地文化。', '娛樂,活動,當地', 'xuxin', 'xuxin'),
     ('社會公益平台 - 愛心助人', '建立一個支持社會公益事業的平台，匯聚善心人士共同參與公益活動。', '公益,愛心,社會', 'liuwei', 'liuwei'),
-    ('E-commerce Platform - Seamless Shopping Experience', 'Create a luxurious and convenient e-commerce platform, offering the latest fashion products and a unique shopping experience.', 'e-commerce, fashion, shopping', 'ryan_hall', 'ryan_hall'),
-    ('Social Media Platform - Building an Online Community', 'Build an interactive social platform where users can share life moments, exchange ideas, and create an online community.', 'social media, interaction, sharing', 'sophie_irwin', 'sophie_irwin'),
-    ('News Website - Real-time Reporting of Latest Information', 'Provide the latest news coverage, covering various global topics, allowing users to stay informed anytime, anywhere.', 'news, real-time, reporting', 'tom_king', 'tom_king'),
-    ('Travel Guide App - Explore the Unknown', 'Design an app that provides precise travel guides, allowing users to effortlessly explore exotic destinations.', 'travel, guide, adventure', 'lihong', 'lihong'),
-    ('Health Lifestyle Platform - Pursuing Holistic Wellness', 'Create an online platform that combines information on exercise, diet, and mental health to assist users in pursuing holistic health.', 'health, lifestyle, exercise', 'wangying', 'wangying'),
-    ('Music Sharing Platform - Discovering Sonic Wonders', 'Offer a platform for users to share and discover music, supporting various music genres and emerging artists.', 'music, sharing, exploration', 'zhangwei', 'zhangwei'),
-    ('Online Learning Platform - Knowledge Without Borders', 'Establish a diverse online learning platform, providing courses on various topics to make learning easy and enjoyable.', 'learning, online courses, knowledge', 'chenxin', 'chenxin'),
-    ('Art Exhibition Website - Feast of Art', 'Create an online platform for art exhibitions, showcasing artworks of various styles and periods.', 'art, exhibition, artwork', 'yangming', 'yangming'),
-    ('Tech Innovation Project - One Small Step to Change the World', 'Initiate a project supporting technological innovation, dedicated to solving social issues and advancing technology.', 'technology, innovation, social', 'liuwei', 'liuwei'),
-    ('Fashion Design Platform - Infinite Creativity', 'Build a platform for fashion designers and enthusiasts to exchange ideas, sharing the latest fashion trends and design inspirations.', 'fashion, design, creativity', 'ryan_hall', 'ryan_hall'),
-    ('Community Farmers Market - Local Flavors', 'Create an online market supporting local produce, allowing users to purchase fresh and healthy farm products.', 'farm products, market, local', 'sophie_irwin', 'sophie_irwin'),
-    ('Environmental App - Small Green Actions', 'Develop an app promoting an eco-friendly lifestyle, providing eco-friendly information and sustainable living suggestions.', 'environmental, lifestyle, sustainable', 'tom_king', 'tom_king'),
-    ('EdTech Tool - Innovative Learning Experience', 'Design an application tool that combines education and technology to enhance students\' learning effectiveness.', 'education, technology, learning', 'lihong', 'lihong'),
-    ('Food Sharing Community - Taste of World Cuisine', 'Establish a community where users can share and explore global cuisines, promoting cross-cultural exchange.', 'food, sharing, community', 'wangying', 'wangying'),
-    ('Green City Initiative - Creating Urban Oases', 'Advocate for urban greening, create a platform that encourages city residents to participate in greening projects.', 'urban greening, community, environmental', 'zhangwei', 'zhangwei'),
-    ('Entertainment Events App - Explore Local Entertainment', 'Develop an app that provides local entertainment event information, allowing users to enjoy local culture to the fullest.', 'entertainment, events, local', 'chenxin', 'chenxin'),
-    ('Social Welfare Platform - Helping with Love', 'Establish a platform supporting social welfare causes, bringing together kind-hearted individuals to participate in charitable activities.', 'welfare, love, social', 'yangming', 'yangming'),
-    ('Educational Technology Tool - Innovative Learning Solutions', 'Create a tool that combines education and technology to provide innovative solutions for students\' learning challenges.', 'education, technology, learning', 'xuxin', 'xuxin'),
-    ('Fitness App - Personalized Wellness Journey', 'Develop a fitness app that offers personalized workout plans and wellness guidance, helping users achieve their fitness goals.', 'fitness, wellness, workout', 'liuwei', 'liuwei'),
-    ('Online Art Marketplace - Connecting Artists and Collectors', 'Build a platform that connects artists with art collectors, facilitating the buying and selling of unique artworks online.', 'art, marketplace, collecting', 'sophie_irwin', 'sophie_irwin');
+    ('E-commerce Platform - Seamless Shopping Experience', 'Create a luxurious and convenient e-commerce platform, offering the latest fashion products and a unique shopping experience.', 'e-commerce,fashion,shopping', 'ryan_hall', 'ryan_hall'),
+    ('Social Media Platform - Building an Online Community', 'Build an interactive social platform where users can share life moments, exchange ideas, and create an online community.', 'social media,interaction,sharing', 'sophie_irwin', 'sophie_irwin'),
+    ('News Website - Real-time Reporting of Latest Information', 'Provide the latest news coverage, covering various global topics, allowing users to stay informed anytime, anywhere.', 'news,real-time,reporting', 'tom_king', 'tom_king'),
+    ('Travel Guide App - Explore the Unknown', 'Design an app that provides precise travel guides, allowing users to effortlessly explore exotic destinations.', 'travel,guide,adventure', 'lihong', 'lihong'),
+    ('Health Lifestyle Platform - Pursuing Holistic Wellness', 'Create an online platform that combines information on exercise, diet, and mental health to assist users in pursuing holistic health.', 'health,lifestyle,exercise', 'wangying', 'wangying'),
+    ('Music Sharing Platform - Discovering Sonic Wonders', 'Offer a platform for users to share and discover music, supporting various music genres and emerging artists.', 'music,sharing,exploration', 'zhangwei', 'zhangwei'),
+    ('Online Learning Platform - Knowledge Without Borders', 'Establish a diverse online learning platform, providing courses on various topics to make learning easy and enjoyable.', 'learning,online courses,knowledge', 'chenxin', 'chenxin'),
+    ('Art Exhibition Website - Feast of Art', 'Create an online platform for art exhibitions, showcasing artworks of various styles and periods.', 'art,exhibition,artwork', 'yangming', 'yangming'),
+    ('Tech Innovation Project - One Small Step to Change the World', 'Initiate a project supporting technological innovation, dedicated to solving social issues and advancing technology.', 'technology,innovation,social', 'liuwei', 'liuwei'),
+    ('Fashion Design Platform - Infinite Creativity', 'Build a platform for fashion designers and enthusiasts to exchange ideas, sharing the latest fashion trends and design inspirations.', 'fashion,design,creativity', 'ryan_hall', 'ryan_hall'),
+    ('Community Farmers Market - Local Flavors', 'Create an online market supporting local produce, allowing users to purchase fresh and healthy farm products.', 'farm products,market,local', 'sophie_irwin', 'sophie_irwin'),
+    ('Environmental App - Small Green Actions', 'Develop an app promoting an eco-friendly lifestyle, providing eco-friendly information and sustainable living suggestions.', 'environmental,lifestyle,sustainable', 'tom_king', 'tom_king'),
+    ('EdTech Tool - Innovative Learning Experience', 'Design an application tool that combines education and technology to enhance students\' learning effectiveness.', 'education,technology,learning', 'lihong', 'lihong'),
+    ('Food Sharing Community - Taste of World Cuisine', 'Establish a community where users can share and explore global cuisines, promoting cross-cultural exchange.', 'food,sharing,community', 'wangying', 'wangying'),
+    ('Green City Initiative - Creating Urban Oases', 'Advocate for urban greening, create a platform that encourages city residents to participate in greening projects.', 'urban greening,community,environmental', 'zhangwei', 'zhangwei'),
+    ('Entertainment Events App - Explore Local Entertainment', 'Develop an app that provides local entertainment event information, allowing users to enjoy local culture to the fullest.', 'entertainment,events,local', 'chenxin', 'chenxin'),
+    ('Social Welfare Platform - Helping with Love', 'Establish a platform supporting social welfare causes, bringing together kind-hearted individuals to participate in charitable activities.', 'welfare,love,social', 'yangming', 'yangming'),
+    ('Educational Technology Tool - Innovative Learning Solutions', 'Create a tool that combines education and technology to provide innovative solutions for students\' learning challenges.', 'education,technology,learning', 'xuxin', 'xuxin'),
+    ('Fitness App - Personalized Wellness Journey', 'Develop a fitness app that offers personalized workout plans and wellness guidance, helping users achieve their fitness goals.', 'fitness,wellness,workout', 'liuwei', 'liuwei'),
+    ('Online Art Marketplace - Connecting Artists and Collectors', 'Build a platform that connects artists with art collectors, facilitating the buying and selling of unique artworks online.', 'art,marketplace,collecting', 'sophie_irwin', 'sophie_irwin');
 
 -- Insert Mock post Data
 INSERT INTO `post` (content, referenceId, created_user, updated_user)
@@ -283,7 +303,7 @@ VALUES
     ('和朋友一同參加了一場瑜珈課程，感受身心靈的平靜。🧘‍♂️🌺 #瑜珈課程 #身心靈平靜', NULL, 'sophie_irwin', 'sophie_irwin');
 
 -- Insert Mock Comment Data
-INSERT INTO `comment` (postId, content, created_user)
+INSERT INTO `comment` (postId, content, created_user, updated_user)
 VALUES
     (1, 'Great work on this project!', 'ryan_hall', 'ryan_hall'),
     (2, 'I love the design of your website!', 'sophie_irwin', 'sophie_irwin'),
@@ -328,46 +348,47 @@ VALUES
 
 -- Insert Mock Star Data
 -- likedType 0: Project (targetId 1-20)
-INSERT INTO `star` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 19 + 1), 0
+INSERT INTO `star` (userId, targetId, targetType, isActive)
+SELECT userId, ROUND(RAND() * 19 + 1), 0, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- likedType 1: User (targetId 1-20)
-INSERT INTO `star` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 19 + 1), 0
+INSERT INTO `star` (userId, targetId, targetType, isActive)
+SELECT userId, ROUND(RAND() * 19 + 1), 3, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- likedType 2: Post (targetId 1-40, after the first 20 entries)
-INSERT INTO `star` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 39 + 1), 2
+INSERT INTO `star` (userId, targetId, targetType, isActive)
+SELECT userId, ROUND(RAND() * 39 + 1), 1, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- likedType 3: Comment (targetId 1-20)
-INSERT INTO `star` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 19 + 1), 3
+INSERT INTO `star` (userId, targetId, targetType, isActive)
+SELECT userId, ROUND(RAND() * 19 + 1), 2, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
--- Insert Mock Subscribe Data
--- likedType 0: Project (targetId 1-20)
-INSERT INTO `subscribe` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 19 + 1), 0
-FROM User
-ORDER BY RAND()
-LIMIT 20;
+-- Follow
+INSERT INTO `follow` (followerId, followingId, status)
+    ('ryan_hall', 'ROOT', 1),
+    ('emily_parker', 'ROOT', 1),
+    ('wanglei', 'ROOT', 1),
+    ('fanyu', 'ROOT', 1),
+    ('taro', 'ROOT', 2),
+    ('miho', 'ROOT', 2),
+    ('sakura', 'ROOT', 2),
+    ('olivia_clark', 'ROOT', 2),
+    ('ryota', 'ROOT', 3),
+    ('quinn_fisher', 'ROOT', 3),
+    ('wangying', 'ROOT', 3),
+    ('michael_taylor', 'ROOT', 3);
 
--- likedType 1: User (targetId 1-20)
-INSERT INTO `subscribe` (userId, targetId, type)
-SELECT userId, ROUND(RAND() * 19 + 1), 1
-FROM User
-ORDER BY RAND()
-LIMIT 20;
 
 

@@ -1,10 +1,10 @@
 package com.connect.common.enums;
 
 public enum UserStatus {
-    DELETED(0),
-    PUBLIC(1),
+    PUBLIC(0),
+    SEMI(1),
     PRIVATE(2),
-    TESTED(3);
+    DELETED(3);
 
     final int code;
 
@@ -14,5 +14,14 @@ public enum UserStatus {
 
     public int getCode() {
         return code;
+    }
+
+    public static UserStatus getStatus(int code) {
+        for (UserStatus status : values()) {
+            if (status.getCode() == code) {
+                return status;
+            }
+        }
+        return null;
     }
 }

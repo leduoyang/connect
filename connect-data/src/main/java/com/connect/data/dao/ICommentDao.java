@@ -5,15 +5,19 @@ import com.connect.data.entity.Comment;
 import java.util.List;
 
 public interface ICommentDao {
-    Comment queryCommentById(Long id);
-
-    List<Comment> queryComment(Long postId, String userId, String keyword);
-
     int createComment(Comment comment);
 
     int updateComment(Comment comment);
 
-    int deleteComment(Long id);
+    int incrementViews(long id, int version);
 
-    boolean commentExisting(Long id);
+    int refreshStars(long id, int version, int stars);
+
+    int deleteComment(long id, String userId);
+
+    Comment queryCommentById(long id);
+
+    List<Comment> queryComment(Long postId, String userId, String keyword, String tags);
+
+    boolean commentExisting(long id, String userId);
 }

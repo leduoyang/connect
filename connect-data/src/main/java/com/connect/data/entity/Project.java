@@ -14,13 +14,17 @@ public class Project {
 
     private String description;
 
+    private Integer status;
+
     private String tags;
 
-    private int likesCount;
+    private Integer boosted;
 
-    private int viewsCount;
+    private Integer stars;
 
-    private int version;
+    private Integer views;
+
+    private Integer version;
 
     private String createdUser;
 

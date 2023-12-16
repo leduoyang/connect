@@ -1,9 +1,10 @@
 package com.connect.core.service.post.iml;
 
-import com.connect.api.post.dto.PostDto;
-import com.connect.api.post.request.CreatePostRequest;
+import com.connect.api.post.dto.CreatePostDto;
+import com.connect.api.post.dto.DeletePostDto;
+import com.connect.api.post.dto.QueryPostDto;
+import com.connect.api.post.dto.UpdatePostDto;
 import com.connect.api.post.request.QueryPostRequest;
-import com.connect.api.post.request.UpdatePostRequest;
 import com.connect.core.service.post.IPostService;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -26,12 +27,21 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public PostDto queryPostById(long id) {
+    public QueryPostDto queryPostById(long id) {
         Post post = postRepository.queryPostById(id);
+        postRepository.incrementViews(
+                post.getId(),
+                post.getVersion()
+        );
 
-        PostDto postDto = new PostDto()
+        QueryPostDto postDto = new QueryPostDto()
                 .setId(post.getId())
+                .setStatus(post.getStatus())
+                .setStars(post.getStars())
+                .setViews(post.getViews())
+                .setCreatedUser(post.getCreatedUser())
                 .setUpdatedUser(post.getUpdatedUser())
+                .setDbCreateTime(post.getDbCreateTime())
                 .setDbModifyTime(post.getDbModifyTime());
         if (post.getContent() != null) {
             postDto.setContent(post.getContent());
@@ -43,64 +53,109 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public List<PostDto> queryPost(QueryPostRequest request) {
+    public List<QueryPostDto> queryPost(QueryPostRequest request) {
         QueryPostParam param = new QueryPostParam()
                 .setPostId(request.getPostId())
                 .setKeyword(request.getKeyword())
-                .setUserId(request.getUserId());
+                .setUserId(request.getUserId())
+                .setTags(request.getTags());
 
         List<Post> postList = postRepository.queryPost(param);
 
         return postList
                 .stream()
-                .map(x -> new PostDto()
+                .map(x -> new QueryPostDto()
                         .setId(x.getId())
+                        .setStatus(x.getStatus())
                         .setContent(x.getContent())
+                        .setStars(x.getStars())
+                        .setViews(x.getViews())
+                        .setCreatedUser(x.getCreatedUser())
                         .setUpdatedUser(x.getUpdatedUser())
-                        .setDbModifyTime(x.getDbModifyTime())
-                        .setReferencePost(checkReferencePost(x)))
+                        .setDbCreateTime(x.getDbCreateTime())
+                        .setDbModifyTime(x.getDbModifyTime()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void createPost(CreatePostRequest request) {
+    public void createPost(CreatePostDto request) {
+        if (request.getStatus() < 0 || request.getStatus() > 2) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "Invalid payload (status should be between 0 and 2)"
+            );
+        }
+
         Post post = new Post()
-                .setCreatedUser(request.getUserId())
-                .setUpdatedUser(request.getUserId());
+                .setStatus(request.getStatus())
+                .setCreatedUser(request.getCreatedUser())
+                .setUpdatedUser(request.getCreatedUser());
         if (request.getContent() != null) {
+            if (request.getContent().equals("")) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (post content can not be blank)"
+                );
+            }
             post.setContent(request.getContent());
         } else if (request.getReferenceId() != null) {
             post.setReferenceId(request.getReferenceId());
         } else {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
-                    "Invalid payload (content and referenceId can not both be absent)"
+                    "Invalid payload (post content and referenceId can not both be absent)"
             );
         }
+
         postRepository.createPost(post);
     }
 
     @Override
-    public void updatePost(Long postId, UpdatePostRequest request) {
+    public void updatePost(UpdatePostDto request) {
         Post post = new Post()
-                .setId(postId)
-                .setContent(request.getContent())
+                .setId(request.getId())
                 .setUpdatedUser(request.getUpdatedUser());
+        if (request.getStatus() != null) {
+            if (request.getStatus() < 0 || request.getStatus() > 2) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (status should be between 0 and 2)"
+                );
+            }
+            post.setStatus(request.getStatus());
+        }
+        if (request.getReferenceId() != null) {
+            post.setReferenceId(request.getReferenceId());
+        }
+        if (request.getContent() != null) {
+            if (request.getContent().equals("")) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (post content can not be blank)"
+                );
+            }
+            post.setContent(request.getContent());
+        }
+
         postRepository.updatePost(post);
     }
 
     @Override
-    public void deletePost(Long id) {
-        postRepository.deletePost(id);
+    public void deletePost(DeletePostDto request) {
+        Post post = new Post()
+                .setId(request.getId())
+                .setUpdatedUser(request.getUpdatedUser());
+
+        postRepository.deletePost(post);
     }
 
-    private PostDto checkReferencePost(Post post) {
+    private QueryPostDto checkReferencePost(Post post) {
         if (post.getReferenceId() == null) {
             return null;
         }
 
         Post referencePost = postRepository.queryPostById(post.getReferenceId());
-        return new PostDto()
+        return new QueryPostDto()
                 .setId(referencePost.getId())
                 .setContent(referencePost.getContent())
                 .setUpdatedUser(referencePost.getUpdatedUser())

@@ -1,20 +1,20 @@
 version: '3'
 services:
-#  backend-app:
-#    build:
-#      context: ..
-#      dockerfile: Dockerfile
-#    container_name: connect-backend
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - mysql-database
-#    environment:
-#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-database:3306/connect_base
-#      SPRING_DATASOURCE_USERNAME: root
-#      SPRING_DATASOURCE_PASSWORD: poorguy
-#    networks:
-#      - inner_network
+  backend-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: connect-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-database:3306/connect_base
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: poorguy
+    networks:
+      - inner_network
 
   connect-redis:
     image: redis:6.0.8

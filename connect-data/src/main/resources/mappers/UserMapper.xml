@@ -10,18 +10,29 @@
         <result property="description" column="description"/>
         <result property="email" column="email"/>
         <result property="phone" column="phone"/>
+        <result property="views" column="views"/>
+        <result property="followers" column="followers"/>
+        <result property="followings" column="followings"/>
         <result property="profileImage" column="profileImage"/>
         <result property="dbCreateTime" column="db_create_time"/>
         <result property="dbModifyTime" column="db_modify_time"/>
     </resultMap>
 
-    <delete id="deleteUser">
-        UPDATE user
-        SET `status` = 0,
-        WHERE userId = #{userId, jdbcType=VARCHAR}
-    </delete>
+    <select id="authenticateRootUser" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT userId
+        FROM user
+        WHERE userId = #{userId,jdbcType=VARCHAR} AND password = #{password,jdbcType=VARCHAR}
+        )
+    </select>
 
-    <insert id="createUser" parameterType="com.connect.data.entity.User" useGeneratedKeys="true"
+    <select id="signIn" resultMap="userResultMap">
+        SELECT userId, status, role, password
+        FROM user
+        WHERE userId = #{userId,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="signUp" parameterType="com.connect.data.entity.User" useGeneratedKeys="true"
             keyProperty="id" keyColumn="id">
         INSERT INTO user(userId, password, status, role, description, email, phone, profileImage)
         VALUES (
@@ -36,44 +47,7 @@
         )
     </insert>
 
-    <select id="authenticateRootUser" resultType="java.lang.Boolean">
-        SELECT EXISTS(
-        SELECT userId
-        FROM user
-        WHERE userId = #{userId,jdbcType=VARCHAR} AND password = #{password,jdbcType=VARCHAR}
-        )
-    </select>
-
-    <select id="queryUser" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage
-
-        FROM user
-        WHERE (userId LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
-    </select>
-
-    <select id="queryUserByUserId" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage
-
-        FROM user WHERE userId = #{userId}
-    </select>
-
-    <select id="userExisting" resultType="java.lang.Boolean">
-        SELECT EXISTS(
-        SELECT userId
-        FROM user
-        WHERE userId = #{userId,jdbcType=VARCHAR}
-        )
-    </select>
-
-    <select id="userExistingWithEmail" resultType="java.lang.Boolean">
-        SELECT EXISTS(
-        SELECT userId
-        FROM user
-        WHERE userId = #{userId,jdbcType=VARCHAR} OR email = #{email,jdbcType=VARCHAR}
-        )
-    </select>
-
-    <update id="updateUser" parameterType="com.connect.data.entity.User">
+    <update id="editUser" parameterType="com.connect.data.entity.User">
         UPDATE user
         <trim prefix="set" suffixOverrides=",">
             <if test="userId != null and userId != ''">
@@ -99,5 +73,81 @@
             </if>
         </trim>
         WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <update id="editUserProfile" parameterType="com.connect.data.entity.Profile">
+        UPDATE user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="userId != null and userId != ''">
+                userId = #{userId, jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status, jdbcType=TINYINT},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description, jdbcType=VARCHAR},
+            </if>
+            <if test="profileImage != null and profileImage != ''">
+                profileImage = #{profileImage, jdbcType=VARCHAR},
+            </if>
+        </trim>
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteUser">
+        UPDATE user
+        SET `status` = 3,
+        WHERE userId = #{userId, jdbcType=VARCHAR}
+    </delete>
+
+    <select id="queryUser" resultMap="userResultMap">
+        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version, db_create_time, db_modify_time
+
+        FROM user
+        WHERE (userId LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
+        AND status != 3
+    </select>
+
+    <select id="queryUserByUserId" resultMap="userResultMap">
+        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version, db_create_time, db_modify_time
+
+        FROM user WHERE userId = #{userId} AND status != 3
+    </select>
+
+    <select id="userExisting" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT userId
+        FROM user
+        WHERE userId = #{userId,jdbcType=VARCHAR} AND status != 3
+        )
+    </select>
+
+    <select id="userExistingWithEmail" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT userId
+        FROM user
+        WHERE userId = #{userId,jdbcType=VARCHAR} OR email = #{email,jdbcType=VARCHAR} AND status != 3
+        )
+    </select>
+
+    <update id="incrementViews">
+        UPDATE user
+        SET version = version + 1,
+        views = views + 1
+        WHERE userId = #{userId,jdbcType=VARCHAR} AND version = #{version, jdbcType=BIGINT}
+    </update>
+
+    <update id="refreshFollowers">
+        UPDATE user
+        SET version = version + 1,
+        followers = #{followers, jdbcType=BIGINT}
+        WHERE userId = #{userId,jdbcType=VARCHAR} AND version = #{version, jdbcType=BIGINT}
+    </update>
+
+    <update id="refreshFollowings">
+        UPDATE user
+        SET version = version + 1,
+        followings = #{followings, jdbcType=BIGINT}
+        WHERE userId = #{userId,jdbcType=VARCHAR} AND version = #{version, jdbcType=BIGINT}
     </update>
 </mapper>

@@ -11,4 +11,6 @@ public class QueryPostParam {
     private String userId;
 
     private String keyword;
+
+    private String tags;
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.connect.data.dao.IUserSecurityDao">
+    <resultMap id="userSecurityResultMap" type="com.connect.data.entity.UserSecurity">
+        <id property="id" column="id"/>
+        <result property="username" column="userId"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
+        <result property="role" column="role"/>
+    </resultMap>
+
+
+    <select id="findByUsername" resultMap="userSecurityResultMap">
+        SELECT id, userId, password, status, role
+
+        FROM user
+        WHERE userId = #{username,jdbcType=VARCHAR}
+    </select>
+</mapper>

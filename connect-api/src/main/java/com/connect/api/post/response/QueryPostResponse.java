@@ -1,6 +1,6 @@
 package com.connect.api.post.response;
 
-import com.connect.api.post.dto.PostDto;
+import com.connect.api.post.dto.QueryPostDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -9,7 +9,7 @@ import java.util.List;
 @Accessors(chain = true)
 @Data
 public class QueryPostResponse {
-    private List<PostDto> items;
+    private List<QueryPostDto> items;
 
-    private int total = 0;
+    private Integer total = 0;
 }

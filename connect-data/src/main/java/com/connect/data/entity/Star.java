@@ -10,11 +10,15 @@ import java.util.Date;
 public class Star {
     private Long id;
 
-    private String username;
+    private String userId;
 
     private Long targetId;
 
-    private int type;
+    private Integer targetType;
+
+    private Boolean isActive;
 
     private Date dbCreateTime;
+
+    private Date dbModifyTime;
 }

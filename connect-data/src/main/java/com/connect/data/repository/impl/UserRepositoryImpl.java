@@ -3,6 +3,7 @@ package com.connect.data.repository.impl;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.data.dao.IUserDao;
+import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
 import com.connect.data.param.QueryUserParam;
 import com.connect.data.repository.IUserRepository;
@@ -27,23 +28,20 @@ public class UserRepositoryImpl implements IUserRepository {
         return userDao.authenticateRootUser(userId, password);
     }
 
-    public User queryUserByUserId(String userId) {
-        User targetUser = userDao.queryUserByUserId(userId);
-        if (targetUser == null) {
+    public User signIn(String userId) {
+        User user = userDao.signIn(userId);
+
+        if (user == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
-                    String.format("User %s not exited.", userId)
+                    String.format("SignIn Failed as userId not exited.", userId)
             );
         }
-        return targetUser;
+
+        return user;
     }
 
-    public List<User> queryUser(QueryUserParam param) {
-        log.info(param.toString());
-        return userDao.queryUser(param.getKeyword());
-    }
-
-    public void createUser(User user) {
+    public void signUp(User user) {
         boolean existed = userDao.userExistingWithEmail(user.getUserId(), user.getEmail());
         if (existed) {
             throw new ConnectDataException(
@@ -53,27 +51,66 @@ public class UserRepositoryImpl implements IUserRepository {
         }
 
         log.info("payload for creating user - " + user);
-        int affected = userDao.createUser(user);
+        int affected = userDao.signUp(user);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.USER_CREATE_EXCEPTION);
         }
     }
 
-    public void updateUser(User user) {
-        User targetUser = userDao.queryUserByUserId(user.getUserId());
+    public void editUser(String userId, User user) {
+        User targetUser = userDao.queryUserByUserId(userId);
         log.info("targetUser for updating - " + targetUser);
         if (targetUser == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
-                    String.format("User %s not exited.", user.getId())
+                    String.format("User %s not exited.", userId)
             );
         }
         user.setId(targetUser.getId());
         log.info("payload for updating user - " + user);
 
-        int affected = userDao.updateUser(user);
+        int affected = userDao.editUser(user);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.USER_UPDATE_EXCEPTION);
+            throw new ConnectDataException(ConnectErrorCode.USER_EDIT_EXCEPTION);
+        }
+    }
+
+    public void editUserProfile(String userId, Profile profile) {
+        User targetUser = userDao.queryUserByUserId(userId);
+        log.info("targetUser for updating - " + targetUser);
+        if (targetUser == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
+                    String.format("User %s not exited.", userId)
+            );
+        }
+        profile.setId(targetUser.getId());
+        log.info("payload for updating user - " + profile);
+
+        int affected = userDao.editUserProfile(profile);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.USER_EDIT_EXCEPTION);
+        }
+    }
+
+    public void incrementViews(String userId, int version) {
+        int affected = userDao.incrementViews(userId, version);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.USER_EDIT_EXCEPTION, "update viewCounts failed");
+        }
+    }
+
+    public void refreshFollowers(String userId, int version, int followers) {
+        int affected = userDao.refreshFollowers(userId, version, followers);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.USER_EDIT_EXCEPTION, "update followers failed");
+        }
+    }
+
+    public void refreshFollowings(String userId, int version, int followings) {
+        int affected = userDao.refreshFollowings(userId, version, followings);
+        if (affected <= 0) {
+            throw new ConnectDataException(ConnectErrorCode.USER_EDIT_EXCEPTION, "update followings failed");
         }
     }
 
@@ -89,5 +126,21 @@ public class UserRepositoryImpl implements IUserRepository {
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.USER_DELETE_EXCEPTION);
         }
+    }
+
+    public List<User> queryUser(QueryUserParam param) {
+        log.info(param.toString());
+        return userDao.queryUser(param.getKeyword());
+    }
+
+    public User queryUserByUserId(String userId) {
+        User targetUser = userDao.queryUserByUserId(userId);
+        if (targetUser == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
+                    String.format("User %s not exited.", userId)
+            );
+        }
+        return targetUser;
     }
 }
