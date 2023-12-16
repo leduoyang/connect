@@ -19,8 +19,8 @@ public interface IFollowApi {
             @NotNull @PathVariable String followingId
     );
 
-    @GetMapping(value = "/followExisting/{followingId}")
-    APIResponse<Map<String, Boolean>> followExisting(
+    @GetMapping(value = "/isFollowing/{followingId}")
+    APIResponse<Map<String, Boolean>> isFollowing(
             @NotNull @PathVariable String followingId
     );
 

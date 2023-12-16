@@ -10,9 +10,9 @@ public interface IFollowDao {
 
     int updateFollow(Follow follow);
 
-    boolean followExisting(String followerId, String followingId);
+    boolean isFollowing(String followerId, String followingId);
 
-    boolean followExistingWithTargetStatus(String followerId, String followingId, int status);
+    boolean isFollowingWithTargetStatus(String followerId, String followingId, int status);
 
     int countFollower(String followingId);
 

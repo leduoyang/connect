@@ -23,7 +23,7 @@ public class FollowRepositoryImpl implements IFollowRepository {
     }
 
     public void createFollow(Follow follow) {
-        if (followDao.followExisting(follow.getFollowerId(), follow.getFollowingId())) {
+        if (followDao.isFollowing(follow.getFollowerId(), follow.getFollowingId())) {
             throw new ConnectDataException(ConnectErrorCode.FOLLOW_EXISTED_EXCEPTION);
         }
 
@@ -34,7 +34,7 @@ public class FollowRepositoryImpl implements IFollowRepository {
     }
 
     public void updateFollow(Follow follow) {
-        if (!followDao.followExisting(follow.getFollowerId(), follow.getFollowingId())) {
+        if (!followDao.isFollowing(follow.getFollowerId(), follow.getFollowingId())) {
             throw new ConnectDataException(ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION);
         }
 
@@ -44,12 +44,12 @@ public class FollowRepositoryImpl implements IFollowRepository {
         }
     }
 
-    public boolean followExisting(String followerId, String followingId) {
-        return followDao.followExisting(followerId, followingId);
+    public boolean isFollowing(String followerId, String followingId) {
+        return followDao.isFollowing(followerId, followingId);
     }
 
-    public boolean followExisting(String followerId, String followingId, int status) {
-        return followDao.followExistingWithTargetStatus(followerId, followingId, status);
+    public boolean isFollowing(String followerId, String followingId, int status) {
+        return followDao.isFollowingWithTargetStatus(followerId, followingId, status);
     }
 
     public int countFollower(String followingId) {
@@ -73,7 +73,7 @@ public class FollowRepositoryImpl implements IFollowRepository {
     }
 
     public void approve(String followingId, String followerId) {
-        if (!followDao.followExistingWithTargetStatus(followingId, followerId, FollowStatus.PENDING.getCode())) {
+        if (!followDao.isFollowingWithTargetStatus(followingId, followerId, FollowStatus.PENDING.getCode())) {
             throw new ConnectDataException(
                     ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
                     String.format("PENDING status not found for %s following %s", followerId, followingId)
@@ -87,7 +87,7 @@ public class FollowRepositoryImpl implements IFollowRepository {
     }
 
     public void reject(String followingId, String followerId) {
-        if (!followDao.followExistingWithTargetStatus(followingId, followerId, FollowStatus.PENDING.getCode())) {
+        if (!followDao.isFollowingWithTargetStatus(followingId, followerId, FollowStatus.PENDING.getCode())) {
             throw new ConnectDataException(
                     ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
                     String.format("PENDING status not found for %s following %s", followerId, followingId)
@@ -101,7 +101,7 @@ public class FollowRepositoryImpl implements IFollowRepository {
     }
 
     public void remove(String followingId, String followerId) {
-        if (!followDao.followExistingWithTargetStatus(followingId, followerId, FollowStatus.APPROVED.getCode())) {
+        if (!followDao.isFollowingWithTargetStatus(followingId, followerId, FollowStatus.APPROVED.getCode())) {
             throw new ConnectDataException(
                     ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
                     String.format("APPROVED status not found for %s following %s", followerId, followingId)

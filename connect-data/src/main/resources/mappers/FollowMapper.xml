@@ -27,7 +27,7 @@
         AND followingId = #{followingId, jdbcType=VARCHAR}
     </update>
 
-    <select id="followExisting" resultType="java.lang.Boolean">
+    <select id="isFollowing" resultType="java.lang.Boolean">
         SELECT EXISTS(
         SELECT id
         FROM follow
@@ -36,7 +36,7 @@
         )
     </select>
 
-    <select id="followExistingWithTargetStatus" resultType="java.lang.Boolean">
+    <select id="isFollowingWithTargetStatus" resultType="java.lang.Boolean">
         SELECT EXISTS(
         SELECT id
         FROM follow

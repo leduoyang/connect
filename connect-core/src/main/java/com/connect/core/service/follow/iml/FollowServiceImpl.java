@@ -61,7 +61,7 @@ public class FollowServiceImpl implements IFollowService {
             follow.setStatus(FollowStatus.APPROVED.getCode());
         }
 
-        if (followRepository.followExisting(follow.getFollowerId(), follow.getFollowingId())) {
+        if (followRepository.isFollowing(follow.getFollowerId(), follow.getFollowingId())) {
             followRepository.updateFollow(follow);
         } else {
             followRepository.createFollow(follow);
@@ -78,7 +78,7 @@ public class FollowServiceImpl implements IFollowService {
                 .setFollowingId(request.getFollowingId())
                 .setStatus(FollowStatus.UNFOLLOW.getCode());
 
-        if (followRepository.followExisting(follow.getFollowerId(), follow.getFollowingId())) {
+        if (followRepository.isFollowing(follow.getFollowerId(), follow.getFollowingId())) {
             followRepository.updateFollow(follow);
         } else {
             followRepository.createFollow(follow);
@@ -89,8 +89,8 @@ public class FollowServiceImpl implements IFollowService {
     }
 
     @Override
-    public boolean followExisting(String followerId, String followingId, FollowStatus status) {
-        return followRepository.followExisting(
+    public boolean isFollowing(String followerId, String followingId, FollowStatus status) {
+        return followRepository.isFollowing(
                 followerId,
                 followingId,
                 status.getCode()

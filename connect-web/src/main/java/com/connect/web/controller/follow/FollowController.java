@@ -68,9 +68,9 @@ public class FollowController implements IFollowApi {
     }
 
     @Override
-    public APIResponse<Map<String, Boolean>> followExisting(String followingId) {
+    public APIResponse<Map<String, Boolean>> isFollowing(String followingId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean existed = followService.followExisting(
+        boolean existed = followService.isFollowing(
                 authentication.getName(),
                 followingId,
                 FollowStatus.APPROVED

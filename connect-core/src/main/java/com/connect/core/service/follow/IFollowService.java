@@ -9,7 +9,7 @@ public interface IFollowService {
 
     void unfollow(UnFollowDto request);
 
-    boolean followExisting(String followerId, String followingId, FollowStatus status);
+    boolean isFollowing(String followerId, String followingId, FollowStatus status);
 
     void approve(String followingId, String followerId);
 

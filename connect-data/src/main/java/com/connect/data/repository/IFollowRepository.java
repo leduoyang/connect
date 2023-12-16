@@ -9,9 +9,9 @@ public interface IFollowRepository {
 
     void updateFollow(Follow follow);
 
-    boolean followExisting(String followerId, String followingId);
+    boolean isFollowing(String followerId, String followingId);
 
-    boolean followExisting(String followerId, String followingId, int status);
+    boolean isFollowing(String followerId, String followingId, int status);
 
     int countFollower(String followingId);
 
