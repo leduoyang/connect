@@ -2,7 +2,6 @@ package com.connect.web.controller.root;
 
 import com.connect.api.common.APIResponse;
 import com.connect.api.root.IRootApi;
-import com.connect.api.user.dto.UserDto;
 import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -11,6 +10,7 @@ import com.connect.web.util.JwtTokenUtil;
 import com.connect.web.common.AppContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,7 +30,7 @@ public class RootController implements IRootApi {
     }
 
     @Override
-    public APIResponse queryTestToken(@RequestHeader String isRoot, @RequestHeader String mockId) {
+    public APIResponse queryTestToken(@RequestHeader String isRoot, @Validated String mockId) {
         if (isRoot == null || !Boolean.parseBoolean(isRoot)) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION
