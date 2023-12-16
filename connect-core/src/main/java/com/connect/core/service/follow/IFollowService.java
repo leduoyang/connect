@@ -7,15 +7,15 @@ import com.connect.common.enums.FollowStatus;
 public interface IFollowService {
     void follow(FollowDto request);
 
-    void unfollow(UnFollowDto request);
+    void unfollow(FollowDto request);
 
     boolean isFollowing(String followerId, String followingId, FollowStatus status);
 
-    void approve(String followingId, String followerId);
+    void approve(FollowDto request);
 
-    void reject(String followingId, String followerId);
+    void reject(FollowDto request);
 
-    void remove(String followingId, String followerId);
+    void remove(FollowDto request);
 
-    void approveAll(String followingId);
+    void approveAll(FollowDto request);
 }

@@ -22,12 +22,4 @@ public interface IFollowRepository {
     List<String> queryFollowingIdList(String followerId);
 
     List<String> queryPendingIdList(String followingId);
-
-    void approve(String followingId, String followerId);
-
-    void reject(String followingId, String followerId);
-
-    void remove(String followingId, String followerId);
-
-    void approveAll(String followingId);
 }

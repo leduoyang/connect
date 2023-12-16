@@ -3,7 +3,6 @@ package com.connect.web.controller.follow;
 import com.connect.api.common.APIResponse;
 import com.connect.api.follow.IFollowApi;
 import com.connect.api.follow.dto.FollowDto;
-import com.connect.api.follow.dto.UnFollowDto;
 import com.connect.api.user.dto.UserDto;
 import com.connect.common.enums.FollowStatus;
 import com.connect.common.enums.UserStatus;
@@ -59,11 +58,11 @@ public class FollowController implements IFollowApi {
             );
         }
 
-        UnFollowDto unFollowDto = new UnFollowDto()
+        FollowDto followDto = new FollowDto()
                 .setFollowerId(authentication.getName())
                 .setFollowingId(followingId);
 
-        followService.unfollow(unFollowDto);
+        followService.unfollow(followDto);
         return APIResponse.getOKJsonResult(null);
     }
 
@@ -92,7 +91,11 @@ public class FollowController implements IFollowApi {
             );
         }
 
-        followService.approve(authentication.getName(), followerId);
+        FollowDto followDto = new FollowDto()
+                .setFollowerId(followerId)
+                .setFollowingId(authentication.getName());
+
+        followService.approve(followDto);
         return APIResponse.getOKJsonResult(null);
     }
 
@@ -107,14 +110,23 @@ public class FollowController implements IFollowApi {
             );
         }
 
-        followService.reject(authentication.getName(), followerId);
+        FollowDto followDto = new FollowDto()
+                .setFollowerId(followerId)
+                .setFollowingId(authentication.getName());
+        followService.reject(followDto);
+
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
     public APIResponse<Void> remove(String followerId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        followService.remove(authentication.getName(), followerId);
+
+        FollowDto followDto = new FollowDto()
+                .setFollowerId(followerId)
+                .setFollowingId(authentication.getName());
+
+        followService.remove(followDto);
         return APIResponse.getOKJsonResult(null);
     }
 
@@ -129,7 +141,10 @@ public class FollowController implements IFollowApi {
             );
         }
 
-        followService.approveAll(authentication.getName());
+        FollowDto followDto = new FollowDto()
+                .setFollowingId(authentication.getName());
+
+        followService.approveAll(followDto);
         return APIResponse.getOKJsonResult(null);
     }
 }

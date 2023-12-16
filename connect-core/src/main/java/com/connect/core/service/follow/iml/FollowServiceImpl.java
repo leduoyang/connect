@@ -12,6 +12,8 @@ import com.connect.data.repository.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Log4j2
 @Service
 public class FollowServiceImpl implements IFollowService {
@@ -61,31 +63,26 @@ public class FollowServiceImpl implements IFollowService {
             follow.setStatus(FollowStatus.APPROVED.getCode());
         }
 
-        if (followRepository.isFollowing(follow.getFollowerId(), follow.getFollowingId())) {
-            followRepository.updateFollow(follow);
-        } else {
-            followRepository.createFollow(follow);
-        }
-
-        updateFollowingCount(request.getFollowerId());
-        updateFollowerCount(request.getFollowingId());
+        updateTargetStatus(follow);
     }
 
     @Override
-    public void unfollow(UnFollowDto request) {
-        Follow follow = new Follow()
-                .setFollowerId(request.getFollowerId())
-                .setFollowingId(request.getFollowingId())
-                .setStatus(FollowStatus.UNFOLLOW.getCode());
+    public void unfollow(FollowDto request) {
+        String followerId = request.getFollowerId();
+        String followingId = request.getFollowingId();
 
-        if (followRepository.isFollowing(follow.getFollowerId(), follow.getFollowingId())) {
-            followRepository.updateFollow(follow);
-        } else {
-            followRepository.createFollow(follow);
+        if (!followRepository.isFollowing(followerId, followingId, FollowStatus.APPROVED.getCode())) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
+                    String.format("UNFOLLOW FAILED! %s is not following %s", followerId, followingId)
+            );
         }
 
-        updateFollowingCount(request.getFollowerId());
-        updateFollowerCount(request.getFollowingId());
+        Follow follow = new Follow()
+                .setFollowerId(followerId)
+                .setFollowingId(followingId)
+                .setStatus(FollowStatus.UNFOLLOW.getCode());
+        updateTargetStatus(follow);
     }
 
     @Override
@@ -98,23 +95,91 @@ public class FollowServiceImpl implements IFollowService {
     }
 
     @Override
-    public void approve(String followingId, String followerId) {
-        followRepository.approve(followingId, followerId);
+    public void approve(FollowDto request) {
+        String followerId = request.getFollowerId();
+        String followingId = request.getFollowingId();
+
+        if (!followRepository.isFollowing(followerId, followingId, FollowStatus.PENDING.getCode())) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
+                    String.format("PENDING status not found for %s following %s", followerId, followingId)
+            );
+        }
+
+        Follow follow = new Follow()
+                .setFollowerId(followerId)
+                .setFollowingId(followingId)
+                .setStatus(FollowStatus.APPROVED.getCode());
+        updateTargetStatus(follow);
     }
 
     @Override
-    public void reject(String followingId, String followerId) {
-        followRepository.reject(followingId, followerId);
+    public void reject(FollowDto request) {
+        String followerId = request.getFollowerId();
+        String followingId = request.getFollowingId();
+
+        if (!followRepository.isFollowing(followerId, followingId, FollowStatus.PENDING.getCode())) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
+                    String.format("PENDING status not found for %s following %s", followerId, followingId)
+            );
+        }
+
+        Follow follow = new Follow()
+                .setFollowerId(followerId)
+                .setFollowingId(followingId)
+                .setStatus(FollowStatus.REJECTED.getCode());
+        updateTargetStatus(follow);
     }
 
     @Override
-    public void remove(String followingId, String followerId) {
-        followRepository.remove(followingId, followerId);
+    public void remove(FollowDto request) {
+        String followerId = request.getFollowerId();
+        String followingId = request.getFollowingId();
+
+        if (!followRepository.isFollowing(followerId, followingId, FollowStatus.APPROVED.getCode())) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
+                    String.format("REMOVE FAILED! %s is not following %s", followerId, followingId)
+            );
+        }
+
+        Follow follow = new Follow()
+                .setFollowerId(followerId)
+                .setFollowingId(followingId)
+                .setStatus(FollowStatus.UNFOLLOW.getCode());
+        updateTargetStatus(follow);
     }
 
     @Override
-    public void approveAll(String followingId) {
-        followRepository.approveAll(followingId);
+    public void approveAll(FollowDto request) {
+        String followingId = request.getFollowingId();
+
+        List<String> pendingList = followRepository.queryPendingIdList(followingId);
+        if (pendingList == null || pendingList.size() == 0) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
+                    String.format("nothing to approve for user %s", followingId)
+            );
+        }
+
+        Follow follow = new Follow()
+                .setFollowingId(request.getFollowingId())
+                .setStatus(FollowStatus.APPROVED.getCode());
+        followRepository.updateFollow(follow);
+    }
+
+    private void updateTargetStatus(Follow follow) {
+        String followerId = follow.getFollowerId();
+        String followingId = follow.getFollowingId();
+
+        if (followRepository.isFollowing(followerId, followingId)) {
+            followRepository.updateFollow(follow);
+        } else {
+            followRepository.createFollow(follow);
+        }
+        updateFollowingCount(followerId);
+        updateFollowerCount(followingId);
     }
 
     private void updateFollowingCount(String followerId) {
