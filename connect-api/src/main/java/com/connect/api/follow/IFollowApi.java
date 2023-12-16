@@ -24,21 +24,21 @@ public interface IFollowApi {
             @NotNull @PathVariable String followingId
     );
 
-    @PostMapping(value = "/follow/approve/{followerId}")
+    @PostMapping(value = "/follow/request/approve/{followerId}")
     APIResponse<Void> approve(
             @NotNull @PathVariable String followerId
     );
 
-    @PostMapping(value = "/follow/reject/{followerId}")
+    @PostMapping(value = "/follow/request/reject/{followerId}")
     APIResponse<Void> reject(
             @NotNull @PathVariable String followerId
     );
 
-    @PostMapping(value = "/follow/remove/{followerId}")
+    @PostMapping(value = "/follow/request/remove/{followerId}")
     APIResponse<Void> remove(
             @NotNull @PathVariable String followerId
     );
 
-    @PostMapping(value = "/follow/approveAll")
+    @PostMapping(value = "/follow/request/approveAll")
     APIResponse<Void> approveAll();
 }
