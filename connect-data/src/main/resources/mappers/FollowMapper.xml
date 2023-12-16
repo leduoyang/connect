@@ -92,7 +92,7 @@
         AND status = 1
     </update>
 
-    <update id="reject" parameterType="java.lang.String">
+    <update id="remove" parameterType="java.lang.String">
         UPDATE follow
         SET status = 3
         WHERE followerId = #{followerId, jdbcType=VARCHAR}
