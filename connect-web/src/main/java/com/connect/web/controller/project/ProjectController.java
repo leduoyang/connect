@@ -10,6 +10,11 @@ import com.connect.api.project.request.CreateProjectRequest;
 import com.connect.api.project.request.QueryProjectRequest;
 import com.connect.api.project.request.UpdateProjectRequest;
 import com.connect.api.project.response.QueryProjectResponse;
+import com.connect.common.enums.FollowStatus;
+import com.connect.common.enums.ProjectStatus;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
+import com.connect.core.service.follow.IFollowService;
 import com.connect.core.service.project.IProjectService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,16 +34,36 @@ import java.util.List;
 public class ProjectController implements IProjectApi {
     private final IProjectService projectService;
 
-    public ProjectController(IProjectService projectService) {
+    private IFollowService followService;
+
+    public ProjectController(IProjectService projectService, IFollowService followService) {
         this.projectService = projectService;
+        this.followService = followService;
     }
 
     @Override
     public APIResponse<QueryProjectResponse> queryProject(Long projectId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         QueryProjectDto projectDto = projectService.queryProjectById(projectId);
+        if (projectDto.getStatus() == ProjectStatus.PRIVATE.getCode()
+                && !projectDto.getCreatedUser().equals(authentication.getName())
+        ) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    "private post can only be viewed by creator"
+            );
+        }
+        if (projectDto.getStatus() == ProjectStatus.SEMI.getCode() &&
+                !followService.isFollowing(authentication.getName(), projectDto.getCreatedUser(), FollowStatus.APPROVED)
+        ) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    String.format("you have to follow user %s first to view his contents", projectDto.getCreatedUser())
+            );
+        }
+
         List<QueryProjectDto> projectDtoList = new ArrayList<>();
         projectDtoList.add(projectDto);
-
         QueryProjectResponse response = new QueryProjectResponse()
                 .setItems(projectDtoList)
                 .setTotal(projectDtoList.size());

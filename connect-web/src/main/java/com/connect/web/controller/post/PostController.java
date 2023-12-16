@@ -10,6 +10,11 @@ import com.connect.api.common.APIResponse;
 import com.connect.api.post.request.CreatePostRequest;
 import com.connect.api.post.request.QueryPostRequest;
 import com.connect.api.post.request.UpdatePostRequest;
+import com.connect.common.enums.FollowStatus;
+import com.connect.common.enums.PostStatus;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
+import com.connect.core.service.follow.IFollowService;
 import com.connect.core.service.post.IPostService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,13 +34,35 @@ import java.util.List;
 public class PostController implements IPostApi {
     private final IPostService postService;
 
-    public PostController(IPostService postService) {
+    private IFollowService followService;
+
+    public PostController(IPostService postService, IFollowService followService) {
         this.postService = postService;
+        this.followService = followService;
     }
 
     @Override
     public APIResponse<QueryPostResponse> queryPost(Long postId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         QueryPostDto postDto = postService.queryPostById(postId);
+
+        if (postDto.getStatus() == PostStatus.PRIVATE.getCode()
+                && !postDto.getCreatedUser().equals(authentication.getName())
+        ) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    "private post can only be viewed by creator"
+            );
+        }
+        if (postDto.getStatus() == PostStatus.SEMI.getCode() &&
+                !followService.isFollowing(authentication.getName(), postDto.getCreatedUser(), FollowStatus.APPROVED)
+        ) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    String.format("you have to follow user %s first to view his contents", postDto.getCreatedUser())
+            );
+        }
+
         List<QueryPostDto> postDtoList = new ArrayList<>();
         postDtoList.add(postDto);
 
