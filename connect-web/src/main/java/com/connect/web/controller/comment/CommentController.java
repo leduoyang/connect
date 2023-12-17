@@ -8,6 +8,8 @@ import com.connect.api.comment.request.UpdateCommentRequest;
 import com.connect.api.comment.response.QueryCommentResponse;
 import com.connect.api.common.APIResponse;
 import com.connect.api.common.RequestMetaInfo;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.comment.ICommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -37,6 +39,13 @@ public class CommentController implements ICommentApi {
                 .setDetails(authentication.getDetails());
 
         QueryCommentResponseDto commentDto = commentService.queryCommentById(commentId, requestMetaInfo);
+        if (commentDto == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    "target comment not found or not authorized to retrieve"
+            );
+        }
+
         List<QueryCommentResponseDto> commentDtoList = new ArrayList<>();
         commentDtoList.add(commentDto);
 
