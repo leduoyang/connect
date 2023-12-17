@@ -16,6 +16,8 @@ public class Post {
 
     private Long referenceId;
 
+    private String tags;
+
     private Integer stars;
 
     private Integer views;

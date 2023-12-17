@@ -27,6 +27,11 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public QueryProjectResponseDto queryProjectById(long id, RequestMetaInfo requestMetaInfo) {
         Project project = projectRepository.queryProjectById(id, requestMetaInfo.getUserId());
+        if (project == null) {
+            log.error("query project not found or not authorized to retrieve");
+            return null;
+        }
+
         projectRepository.incrementViews(
                 project.getId(),
                 project.getVersion()

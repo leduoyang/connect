@@ -75,8 +75,7 @@
         status = 0
         OR (status = 1
         AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
-        OR (status = 2
-        AND created_user = #{userId} )
+        OR (status != 3 AND created_user = #{userId} )
         )
     </select>
 
@@ -101,9 +100,8 @@
         AND (
         status = 0
         OR (status = 1
-            AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
-        OR (status = 2
-            AND created_user = #{userId} )
+        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (status != 3 AND created_user = #{userId} )
         )
         ORDER BY db_modify_time DESC, db_create_time DESC
     </select>

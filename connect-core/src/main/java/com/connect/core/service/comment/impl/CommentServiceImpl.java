@@ -27,6 +27,11 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public QueryCommentResponseDto queryCommentById(long id, RequestMetaInfo requestMetaInfo) {
         Comment comment = commentRepository.queryCommentById(id, requestMetaInfo.getUserId());
+        if (comment == null) {
+            log.error("query comment not found or not authorized to retrieve");
+            return null;
+        }
+
         commentRepository.incrementViews(
                 comment.getId(),
                 comment.getVersion()
