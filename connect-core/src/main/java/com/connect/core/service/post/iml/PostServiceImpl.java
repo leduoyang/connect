@@ -140,7 +140,12 @@ public class PostServiceImpl implements IPostService {
      * @param userId      id of the user making the request
      * @return target post
      */
-    private QueryPostResponseDto checkReferencePost(long referenceId, String userId) {
+    private QueryPostResponseDto checkReferencePost(Long referenceId, String userId) {
+        if (referenceId == null) {
+            log.warn("referenceId not exist");
+            return null;
+        }
+
         Post referencePost = postRepository.queryPostById(referenceId, userId);
 
         if (referencePost == null) {
