@@ -115,7 +115,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void editUser(String userId, EditUserRequest request) {
+    public void editUser(EditUserRequest request, RequestMetaInfo requestMetaInfo) {
         User user = new User()
                 .setUserId(request.getUserId())
                 .setPassword(request.getPassword())
@@ -134,11 +134,11 @@ public class UserServiceImpl implements IUserService {
             user.setStatus(request.getStatus());
         }
 
-        userRepository.editUser(userId, user);
+        userRepository.editUser(requestMetaInfo.getUserId(), user);
     }
 
     @Override
-    public void editUserProfile(String userId, EditProfileRequest request) {
+    public void editUserProfile(EditProfileRequest request, RequestMetaInfo requestMetaInfo) {
         Profile profile = new Profile()
                 .setUserId(request.getUserId())
                 .setDescription(request.getDescription())
@@ -154,12 +154,12 @@ public class UserServiceImpl implements IUserService {
             profile.setStatus(request.getStatus());
         }
 
-        userRepository.editUserProfile(userId, profile);
+        userRepository.editUserProfile(requestMetaInfo.getUserId(), profile);
     }
 
     @Override
-    public void editProfileImage(String userId, MultipartFile image) {
-        User user = userRepository.queryUserByUserId(userId);
+    public void editProfileImage(MultipartFile image, RequestMetaInfo requestMetaInfo) {
+        User user = userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId());
         String profileImage =
                 imageUploadUtil.profileImage(
                         user.getId() + "." + imageUploadUtil.getExtension(image),
@@ -168,7 +168,7 @@ public class UserServiceImpl implements IUserService {
 
         EditProfileRequest editProfileRequest = new EditProfileRequest()
                 .setProfileImage(profileImage);
-        editUserProfile(userId, editProfileRequest);
+        editUserProfile(editProfileRequest, requestMetaInfo);
     }
 
     @Override
@@ -177,8 +177,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserDto queryUserByUserId(String userId) {
-        User user = userRepository.queryUserByUserId(userId);
+    public UserDto queryUserByUserId(String userId, RequestMetaInfo requestMetaInfo) {
+        User user = userRepository.queryUserByUserId(userId, requestMetaInfo.getUserId());
         userRepository.incrementViews(
                 user.getUserId(),
                 user.getVersion()
@@ -199,9 +199,9 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<UserDto> queryUser(QueryUserRequest request) {
+    public List<UserDto> queryUser(QueryUserRequest request, RequestMetaInfo requestMetaInfo) {
         QueryUserParam param = new QueryUserParam().setKeyword(request.getKeyword());
-        List<User> userList = userRepository.queryUser(param);
+        List<User> userList = userRepository.queryUser(param, requestMetaInfo.getUserId());
 
         return userList
                 .stream()
@@ -249,21 +249,42 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    public UserDto internalQueryUserByUserId(String userId) {
+        User user = userRepository.internalQueryUserByUserId(userId);
+        userRepository.incrementViews(
+                user.getUserId(),
+                user.getVersion()
+        );
+
+        UserDto userDto = new UserDto()
+                .setUserId(user.getUserId())
+                .setStatus(user.getStatus())
+                .setRole(user.getRole())
+                .setDescription(user.getDescription())
+                .setProfileImage(user.getProfileImage())
+                .setViews(user.getViews())
+                .setFollowers(user.getFollowers())
+                .setFollowings(user.getFollowings())
+                .setDbCreateTime(user.getDbCreateTime())
+                .setDbModifyTime(user.getDbModifyTime());
+        return userDto;
+    }
+
     @Override
     public List<UserDto> queryFollowerList(String userId) {
         List<String> userIdList = followRepository.queryFollowerIdList(userId);
-        return userIdList.stream().map(this::queryUserByUserId).toList();
+        return userIdList.stream().map(this::internalQueryUserByUserId).toList();
     }
 
     @Override
     public List<UserDto> queryFollowingList(String userId) {
         List<String> userIdList = followRepository.queryFollowingIdList(userId);
-        return userIdList.stream().map(this::queryUserByUserId).toList();
+        return userIdList.stream().map(this::internalQueryUserByUserId).toList();
     }
 
     @Override
     public List<UserDto> queryPendingList(String userId) {
         List<String> userIdList = followRepository.queryPendingIdList(userId);
-        return userIdList.stream().map(this::queryUserByUserId).toList();
+        return userIdList.stream().map(this::internalQueryUserByUserId).toList();
     }
 }

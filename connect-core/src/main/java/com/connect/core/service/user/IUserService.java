@@ -16,17 +16,19 @@ public interface IUserService {
 
     void signUp(SignUpRequest request);
 
-    void editUser(String userId, EditUserRequest request);
+    void editUser(EditUserRequest request, RequestMetaInfo requestMetaInfo);
 
-    void editUserProfile(String userId, EditProfileRequest request);
+    void editUserProfile(EditProfileRequest request, RequestMetaInfo requestMetaInfo);
 
-    void editProfileImage(String userId, MultipartFile image);
+    void editProfileImage(MultipartFile image, RequestMetaInfo requestMetaInfo);
 
     void deleteUser(String userId);
 
-    List<UserDto> queryUser(QueryUserRequest request);
+    List<UserDto> queryUser(QueryUserRequest request, RequestMetaInfo requestMetaInfo);
 
-    UserDto queryUserByUserId(String userId);
+    UserDto queryUserByUserId(String userId, RequestMetaInfo requestMetaInfo);
+
+    UserDto internalQueryUserByUserId(String userId);
 
     <T> List<T> queryUserStarList(StarTargetType targetType, RequestMetaInfo requestMetaInfo, Class<T> returnClass);
 

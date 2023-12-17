@@ -13,9 +13,9 @@ public interface IUserRepository {
 
     void signUp(User user);
 
-    void editUser(String userId, User user);
+    void editUser(String requesterId, User user);
 
-    void editUserProfile(String userId, Profile profile);
+    void editUserProfile(String requesterId, Profile profile);
 
     void incrementViews(String userId, int version);
 
@@ -25,7 +25,9 @@ public interface IUserRepository {
 
     void deleteUser(String userId);
 
-    List<User> queryUser(QueryUserParam param);
+    List<User> queryUser(QueryUserParam param, String requesterId);
 
-    User queryUserByUserId(String userId);
+    User queryUserByUserId(String userId, String requesterId);
+
+    User internalQueryUserByUserId(String userId);
 }

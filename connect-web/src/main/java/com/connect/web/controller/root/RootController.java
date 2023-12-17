@@ -41,7 +41,7 @@ public class RootController implements IRootApi {
         String role = UserRole.ADMIN.toString();
         String userId = UserRole.ROOT.toString();
         if (mockId != null) {
-            UserDto mockUser = userService.queryUserByUserId(mockId);
+            UserDto mockUser = userService.internalQueryUserByUserId(mockId);
             if (mockUser == null) {
                 throw new ConnectDataException(
                         ConnectErrorCode.UNAUTHORIZED_EXCEPTION,

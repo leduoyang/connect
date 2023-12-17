@@ -31,13 +31,13 @@ public class FollowServiceImpl implements IFollowService {
 
     @Override
     public void follow(FollowDto request) {
-        if (userRepository.queryUserByUserId(request.getFollowerId()) == null) {
+        if (userRepository.internalQueryUserByUserId(request.getFollowerId()) == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
                     "follower not existed: " + request.getFollowingId()
             );
         }
-        User targetUser = userRepository.queryUserByUserId(request.getFollowingId());
+        User targetUser = userRepository.internalQueryUserByUserId(request.getFollowingId());
         if (targetUser == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -184,7 +184,7 @@ public class FollowServiceImpl implements IFollowService {
 
     private void updateFollowingCount(String followerId) {
         int followings = followRepository.countFollowing(followerId);
-        User user = userRepository.queryUserByUserId(followerId);
+        User user = userRepository.internalQueryUserByUserId(followerId);
         user.setFollowings(followings);
         userRepository.refreshFollowings(
                 user.getUserId(),
@@ -195,7 +195,7 @@ public class FollowServiceImpl implements IFollowService {
 
     private void updateFollowerCount(String followingId) {
         int followers = followRepository.countFollower(followingId);
-        User user = userRepository.queryUserByUserId(followingId);
+        User user = userRepository.internalQueryUserByUserId(followingId);
         user.setFollowings(followers);
         userRepository.refreshFollowers(
                 user.getUserId(),

@@ -83,7 +83,7 @@ public class FollowController implements IFollowApi {
     @Override
     public APIResponse<Void> approve(String followerId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDto userDto = userService.queryUserByUserId(authentication.getName());
+        UserDto userDto = userService.internalQueryUserByUserId(authentication.getName());
         if (userDto.getStatus() != UserStatus.SEMI.getCode()) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
@@ -102,7 +102,7 @@ public class FollowController implements IFollowApi {
     @Override
     public APIResponse<Void> reject(String followerId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDto userDto = userService.queryUserByUserId(authentication.getName());
+        UserDto userDto = userService.internalQueryUserByUserId(authentication.getName());
         if (userDto.getStatus() != UserStatus.SEMI.getCode()) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
@@ -133,7 +133,7 @@ public class FollowController implements IFollowApi {
     @Override
     public APIResponse<Void> approveAll() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDto userDto = userService.queryUserByUserId(authentication.getName());
+        UserDto userDto = userService.internalQueryUserByUserId(authentication.getName());
         if (userDto.getStatus() != UserStatus.SEMI.getCode()) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION,

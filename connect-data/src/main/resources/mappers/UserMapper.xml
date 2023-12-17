@@ -101,17 +101,40 @@
     </delete>
 
     <select id="queryUser" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version, db_create_time, db_modify_time
+        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version,
+        db_create_time, db_modify_time
 
         FROM user
         WHERE (userId LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
-        AND status != 3
+        AND (
+        status = 0
+        OR (status = 1
+        AND userId IN (SELECT followingId FROM follow WHERE followerId = #{requesterId} AND status = 2 ) )
+        OR (status != 3 AND userId = #{requesterId} )
+        )
     </select>
 
     <select id="queryUserByUserId" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version, db_create_time, db_modify_time
+        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version,
+        db_create_time, db_modify_time
 
-        FROM user WHERE userId = #{userId} AND status != 3
+        FROM user
+        WHERE userId = #{userId}
+        AND (
+        status = 0
+        OR (status = 1
+        AND userId IN (SELECT followingId FROM follow WHERE followerId = #{requesterId} AND status = 2 ) )
+        OR (status != 3 AND userId = #{requesterId} )
+        )
+    </select>
+
+    <select id="internalQueryUserByUserId" resultMap="userResultMap">
+        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version,
+        db_create_time, db_modify_time
+
+        FROM user
+        WHERE userId = #{userId}
+        AND status != 3
     </select>
 
     <select id="userExisting" resultType="java.lang.Boolean">

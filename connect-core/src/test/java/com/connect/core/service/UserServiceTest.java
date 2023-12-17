@@ -1,5 +1,6 @@
 package com.connect.core.service;
 
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.user.request.EditUserRequest;
 import com.connect.api.user.request.SignUpRequest;
 import com.connect.common.enums.UserStatus;
@@ -47,9 +48,12 @@ public class UserServiceTest {
 
     @Test
     public void test_update_post_without_status_should_avoid_default_value() {
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId("userId");
+
         EditUserRequest editUserRequest = new EditUserRequest();
 
-        userService.editUser("userId", editUserRequest);
+        userService.editUser(editUserRequest, requestMetaInfo);
 
         verify(userRepository, times(1)).editUser(any(), postCaptor.capture());
         User capturedUser = postCaptor.getValue();
@@ -58,11 +62,14 @@ public class UserServiceTest {
 
     @Test
     public void test_update_post_with_valid_status_should_edit_with_target_value() {
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId("userId");
+
         int targetStatus = UserStatus.PRIVATE.getCode();
         EditUserRequest editUserRequest = new EditUserRequest();
         editUserRequest.setStatus(targetStatus);
 
-        userService.editUser("userId", editUserRequest);
+        userService.editUser(editUserRequest, requestMetaInfo);
 
         verify(userRepository, times(1)).editUser(any(), postCaptor.capture());
         User capturedUser = postCaptor.getValue();
@@ -71,11 +78,14 @@ public class UserServiceTest {
 
     @Test
     public void test_update_post_with_invalid_status_should_raise_exception() {
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId("userId");
+
         EditUserRequest editUserRequest = new EditUserRequest();
         editUserRequest.setStatus(-1);
 
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            userService.editUser("userId", editUserRequest);
+            userService.editUser(editUserRequest, requestMetaInfo);
         });
 
         assertEquals("Parameters error:Invalid payload (status should be between 0 and 3)", expectedException.getErrorMsg());

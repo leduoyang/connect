@@ -57,13 +57,13 @@ public class UserRepositoryImpl implements IUserRepository {
         }
     }
 
-    public void editUser(String userId, User user) {
-        User targetUser = userDao.queryUserByUserId(userId);
+    public void editUser(String requesterId, User user) {
+        User targetUser = userDao.internalQueryUserByUserId(requesterId);
         log.info("targetUser for updating - " + targetUser);
         if (targetUser == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
-                    String.format("User %s not exited.", userId)
+                    String.format("User %s not exited.", requesterId)
             );
         }
         user.setId(targetUser.getId());
@@ -75,13 +75,13 @@ public class UserRepositoryImpl implements IUserRepository {
         }
     }
 
-    public void editUserProfile(String userId, Profile profile) {
-        User targetUser = userDao.queryUserByUserId(userId);
+    public void editUserProfile(String requesterId, Profile profile) {
+        User targetUser = userDao.internalQueryUserByUserId(requesterId);
         log.info("targetUser for updating - " + targetUser);
         if (targetUser == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
-                    String.format("User %s not exited.", userId)
+                    String.format("User %s not exited.", requesterId)
             );
         }
         profile.setId(targetUser.getId());
@@ -128,17 +128,28 @@ public class UserRepositoryImpl implements IUserRepository {
         }
     }
 
-    public List<User> queryUser(QueryUserParam param) {
+    public List<User> queryUser(QueryUserParam param, String requesterId) {
         log.info(param.toString());
-        return userDao.queryUser(param.getKeyword());
+        return userDao.queryUser(param.getKeyword(), requesterId);
     }
 
-    public User queryUserByUserId(String userId) {
-        User targetUser = userDao.queryUserByUserId(userId);
+    public User internalQueryUserByUserId(String userId) {
+        User targetUser = userDao.internalQueryUserByUserId(userId);
         if (targetUser == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
-                    String.format("User %s not exited.", userId)
+                    String.format("User %s not exited", userId)
+            );
+        }
+        return targetUser;
+    }
+
+    public User queryUserByUserId(String userId, String requesterId) {
+        User targetUser = userDao.queryUserByUserId(userId, requesterId);
+        if (targetUser == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
+                    String.format("User %s not exited or not authorized to see it", userId)
             );
         }
         return targetUser;

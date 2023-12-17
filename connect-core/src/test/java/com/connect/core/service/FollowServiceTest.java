@@ -50,8 +50,8 @@ public class FollowServiceTest {
                 .setStatus(UserStatus.PUBLIC.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.queryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.queryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
         Mockito.when(followRepository.isFollowing(followerId, followingId)).thenReturn(false);
 
         FollowDto followDto = new FollowDto()
@@ -77,8 +77,8 @@ public class FollowServiceTest {
                 .setStatus(UserStatus.SEMI.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.queryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.queryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
         Mockito.when(followRepository.isFollowing(followerId, followingId)).thenReturn(false);
 
         FollowDto followDto = new FollowDto()
@@ -104,8 +104,8 @@ public class FollowServiceTest {
                 .setStatus(UserStatus.PRIVATE.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.queryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.queryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
         Mockito.when(followRepository.isFollowing(followerId, followingId)).thenReturn(false);
 
         FollowDto followDto = new FollowDto()
@@ -133,8 +133,8 @@ public class FollowServiceTest {
                 .setStatus(UserStatus.DELETED.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.queryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.queryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
         Mockito.when(followRepository.isFollowing(followerId, followingId)).thenReturn(false);
 
         FollowDto followDto = new FollowDto()
@@ -158,8 +158,8 @@ public class FollowServiceTest {
                 .setStatus(UserStatus.DELETED.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.queryUserByUserId(followerId)).thenReturn(null);
-        Mockito.when(userRepository.queryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(null);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
 
         FollowDto followDto = new FollowDto()
                 .setFollowerId(followerId)
@@ -186,8 +186,8 @@ public class FollowServiceTest {
                 .setStatus(UserStatus.PUBLIC.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.queryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.queryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
         Mockito.when(followRepository.isFollowing(
                 followerId,
                 followingId,
@@ -240,8 +240,8 @@ public class FollowServiceTest {
                 .setStatus(UserStatus.DELETED.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.queryUserByUserId(followerId)).thenReturn(null);
-        Mockito.when(userRepository.queryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(null);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
 
         FollowDto followDto = new FollowDto()
                 .setFollowerId(followerId)
@@ -268,8 +268,8 @@ public class FollowServiceTest {
                 .setStatus(UserStatus.SEMI.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.queryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.queryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
         Mockito.when(followRepository.isFollowing(
                 followerId,
                 followingId,
@@ -331,8 +331,8 @@ public class FollowServiceTest {
                 .setStatus(UserStatus.SEMI.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.queryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.queryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
         Mockito.when(followRepository.isFollowing(
                 followerId,
                 followingId,
@@ -394,8 +394,8 @@ public class FollowServiceTest {
                 .setStatus(UserStatus.PUBLIC.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.queryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.queryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
         Mockito.when(followRepository.isFollowing(
                 followerId,
                 followingId,
