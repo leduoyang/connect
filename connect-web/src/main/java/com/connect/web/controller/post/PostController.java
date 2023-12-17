@@ -98,6 +98,12 @@ public class PostController implements IPostApi {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         createPostDto.setCreatedUser(authentication.getName());
 
+        if (request.getContent() == null && request.getReferenceId() == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "Invalid payload (post content and referenceId can not both be absent)"
+            );
+        }
         postService.createPost(createPostDto);
 
         return APIResponse.getOKJsonResult(null);

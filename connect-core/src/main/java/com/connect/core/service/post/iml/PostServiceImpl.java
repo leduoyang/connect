@@ -73,6 +73,7 @@ public class PostServiceImpl implements IPostService {
                         .setContent(x.getContent())
                         .setStars(x.getStars())
                         .setViews(x.getViews())
+                        .setReferencePost(checkReferencePost(x.getReferenceId(), requestMetaInfo.getUserId()))
                         .setCreatedUser(x.getCreatedUser())
                         .setUpdatedUser(x.getUpdatedUser())
                         .setDbCreateTime(x.getDbCreateTime())
@@ -82,32 +83,17 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public void createPost(CreatePostDto request) {
-        if (request.getStatus() < 0 || request.getStatus() > 2) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.PARAM_EXCEPTION,
-                    "Invalid payload (status should be between 0 and 2)"
-            );
-        }
-
         Post post = new Post()
                 .setStatus(request.getStatus())
                 .setCreatedUser(request.getCreatedUser())
                 .setUpdatedUser(request.getCreatedUser());
+
         if (request.getContent() != null) {
-            if (request.getContent().equals("")) {
-                throw new ConnectDataException(
-                        ConnectErrorCode.PARAM_EXCEPTION,
-                        "Invalid payload (post content can not be blank)"
-                );
-            }
             post.setContent(request.getContent());
-        } else if (request.getReferenceId() != null) {
+        }
+        if (request.getReferenceId() != null
+                && checkReferencePost(request.getReferenceId(), request.getCreatedUser()) != null) {
             post.setReferenceId(request.getReferenceId());
-        } else {
-            throw new ConnectDataException(
-                    ConnectErrorCode.PARAM_EXCEPTION,
-                    "Invalid payload (post content and referenceId can not both be absent)"
-            );
         }
 
         postRepository.createPost(post);
@@ -117,17 +103,12 @@ public class PostServiceImpl implements IPostService {
     public void updatePost(UpdatePostDto request) {
         Post post = new Post()
                 .setId(request.getId())
+                .setStatus(request.getStatus())
                 .setUpdatedUser(request.getUpdatedUser());
-        if (request.getStatus() != null) {
-            if (request.getStatus() < 0 || request.getStatus() > 2) {
-                throw new ConnectDataException(
-                        ConnectErrorCode.PARAM_EXCEPTION,
-                        "Invalid payload (status should be between 0 and 2)"
-                );
-            }
-            post.setStatus(request.getStatus());
-        }
-        if (request.getReferenceId() != null) {
+
+        if (request.getReferenceId() != null
+                && checkReferencePost(request.getReferenceId(), request.getUpdatedUser()) != null
+        ) {
             post.setReferenceId(request.getReferenceId());
         }
         if (request.getContent() != null) {
@@ -163,8 +144,10 @@ public class PostServiceImpl implements IPostService {
         Post referencePost = postRepository.queryPostById(referenceId, userId);
 
         if (referencePost == null) {
-            return new QueryPostResponseDto()
-                    .setContent("query post not found or not authorized to retrieve");
+            throw new ConnectDataException(
+                    ConnectErrorCode.INTERNAL_SERVER_ERROR,
+                    "reference post not found or not authorized to retrieve"
+            );
         }
 
         return new QueryPostResponseDto()
