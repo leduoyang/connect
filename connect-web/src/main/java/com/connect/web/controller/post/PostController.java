@@ -1,10 +1,8 @@
 package com.connect.web.controller.post;
 
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.post.IPostApi;
-import com.connect.api.post.dto.CreatePostDto;
-import com.connect.api.post.dto.DeletePostDto;
-import com.connect.api.post.dto.QueryPostDto;
-import com.connect.api.post.dto.UpdatePostDto;
+import com.connect.api.post.dto.*;
 import com.connect.api.post.response.QueryPostResponse;
 import com.connect.api.common.APIResponse;
 import com.connect.api.post.request.CreatePostRequest;
@@ -44,32 +42,24 @@ public class PostController implements IPostApi {
     @Override
     public APIResponse<QueryPostResponse> queryPost(Long postId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        QueryPostDto postDto = postService.queryPostById(postId);
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
-        if (postDto.getStatus() == PostStatus.PRIVATE.getCode()
-                && !postDto.getCreatedUser().equals(authentication.getName())
-        ) {
+        QueryPostResponseDto postResponseDto = postService.queryPostById(postId, requestMetaInfo);
+        if (postResponseDto == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
-                    "private post can only be viewed by creator"
-            );
-        }
-        if (postDto.getStatus() == PostStatus.SEMI.getCode() &&
-                !followService.isFollowing(authentication.getName(), postDto.getCreatedUser(), FollowStatus.APPROVED)
-        ) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
-                    String.format("you have to follow user %s first to view his contents", postDto.getCreatedUser())
+                    "target post not found or not authorized to retrieve"
             );
         }
 
-        List<QueryPostDto> postDtoList = new ArrayList<>();
-        postDtoList.add(postDto);
+        List<QueryPostResponseDto> postDtoList = new ArrayList<>();
+        postDtoList.add(postResponseDto);
 
         QueryPostResponse response = new QueryPostResponse()
                 .setItems(postDtoList)
                 .setTotal(postDtoList.size());
-
         return APIResponse.getOKJsonResult(response);
     }
 
@@ -77,11 +67,24 @@ public class PostController implements IPostApi {
     public APIResponse<QueryPostResponse> queryPostWithFilter(
             QueryPostRequest request
     ) {
-        List<QueryPostDto> postDtoList = postService.queryPost(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        QueryPostDto postDto = new QueryPostDto()
+                .setPostId(request.getPostId())
+                .setKeyword(request.getKeyword())
+                .setUserId(request.getUserId())
+                .setTags(request.getTags())
+                .setPageSize(request.getPageSize())
+                .setPageIndex(request.getPageIndex());
+
+        List<QueryPostResponseDto> postResponseDto = postService.queryPost(postDto, requestMetaInfo);
 
         QueryPostResponse response = new QueryPostResponse()
-                .setItems(postDtoList)
-                .setTotal(postDtoList.size());
+                .setItems(postResponseDto)
+                .setTotal(postResponseDto.size());
         return APIResponse.getOKJsonResult(response);
     }
 

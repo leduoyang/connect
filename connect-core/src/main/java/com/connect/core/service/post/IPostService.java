@@ -1,17 +1,15 @@
 package com.connect.core.service.post;
 
-import com.connect.api.post.dto.CreatePostDto;
-import com.connect.api.post.dto.DeletePostDto;
-import com.connect.api.post.dto.QueryPostDto;
-import com.connect.api.post.dto.UpdatePostDto;
+import com.connect.api.common.RequestMetaInfo;
+import com.connect.api.post.dto.*;
 import com.connect.api.post.request.QueryPostRequest;
 
 import java.util.List;
 
 public interface IPostService {
-    QueryPostDto queryPostById(long id);
+    QueryPostResponseDto queryPostById(long id, RequestMetaInfo requestMetaInfo);
 
-    List<QueryPostDto> queryPost(QueryPostRequest request);
+    List<QueryPostResponseDto> queryPost(QueryPostDto request, RequestMetaInfo requestMetaInfo);
 
     void createPost(CreatePostDto request);
 

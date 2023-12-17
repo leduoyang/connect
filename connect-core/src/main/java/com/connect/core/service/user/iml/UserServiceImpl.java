@@ -1,8 +1,9 @@
 package com.connect.core.service.user.iml;
 
-import com.connect.api.comment.dto.QueryCommentDto;
-import com.connect.api.post.dto.QueryPostDto;
-import com.connect.api.project.dto.QueryProjectDto;
+import com.connect.api.comment.dto.QueryCommentResponseDto;
+import com.connect.api.common.RequestMetaInfo;
+import com.connect.api.post.dto.QueryPostResponseDto;
+import com.connect.api.project.dto.QueryProjectResponseDto;
 import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
@@ -220,24 +221,24 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public <T> List<T> queryUserStarList(String userId, StarTargetType targetType, Class<T> returnClass) {
-        List<Integer> idList = starRepository.queryTargetIdList(targetType.getCode(), userId);
+    public <T> List<T> queryUserStarList(StarTargetType targetType, RequestMetaInfo requestMetaInfo, Class<T> returnClass) {
+        List<Integer> idList = starRepository.queryTargetIdList(targetType.getCode(), requestMetaInfo.getUserId());
         switch (Objects.requireNonNull(targetType)) {
             case PROJECT:
-                List<QueryProjectDto> projectDtoList =
+                List<QueryProjectResponseDto> projectDtoList =
                         idList.stream().map(
-                                x -> projectService.queryProjectById(x)
+                                x -> projectService.queryProjectById(x, requestMetaInfo)
                         ).collect(Collectors.toList());
                 return (List<T>) projectDtoList;
             case POST:
-                List<QueryPostDto> postDtoList =
+                List<QueryPostResponseDto> postDtoList =
                         idList.stream().map(
-                                x -> postService.queryPostById(x)
+                                x -> postService.queryPostById(x, requestMetaInfo)
                         ).collect(Collectors.toList());
                 return (List<T>) postDtoList;
             case COMMENT:
-                List<QueryCommentDto> commentDtoList = idList.stream().map(
-                        x -> commentService.queryCommentById(x)
+                List<QueryCommentResponseDto> commentDtoList = idList.stream().map(
+                        x -> commentService.queryCommentById(x, requestMetaInfo)
                 ).collect(Collectors.toList());
                 return (List<T>) commentDtoList;
             default:

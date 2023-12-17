@@ -23,22 +23,26 @@ public class PostRepositoryImpl implements IPostRepository {
         this.postDao = postDao;
     }
 
-    public Post queryPostById(long id) {
-        return postDao.queryPostById(id);
+    public Post queryPostById(long id, String userId) {
+        return postDao.queryPostById(id, userId);
     }
 
-    public List<Post> queryPost(QueryPostParam param) {
+    public List<Post> queryPost(QueryPostParam param, String userId) {
         return postDao.queryPost(
                 param.getPostId(),
                 param.getUserId(),
                 param.getKeyword(),
-                param.getTags()
+                param.getTags(),
+                userId
         );
     }
 
     public void createPost(Post post) {
         if (post.getReferenceId() != null) {
-            Post referencePost = postDao.queryPostById(post.getReferenceId());
+            Post referencePost = postDao.queryPostById(
+                    post.getReferenceId(),
+                    post.getCreatedUser()
+            );
             if (referencePost == null) {
                 throw new ConnectDataException(
                         ConnectErrorCode.POST_NOT_EXISTED_EXCEPTION,

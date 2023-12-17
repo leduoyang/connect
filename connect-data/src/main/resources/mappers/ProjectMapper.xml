@@ -85,7 +85,15 @@
         SELECT id, title, description, status, tags, boosted, stars, views, version, created_user,
         updated_user, db_create_time, db_modify_time
 
-        FROM project WHERE id = #{id} AND status != 3
+        FROM project
+        WHERE id = #{id}
+        AND (
+        status = 0
+        OR (status = 1
+        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (status = 2
+        AND created_user = #{userId} )
+        )
     </select>
 
     <select id="queryProject" resultMap="projectResultMap">
@@ -106,7 +114,13 @@
         <if test="tags != null and tags != ''">
             AND find_in_set(#{tags}, tags) &gt; 0
         </if>
-        AND status != 3
+        AND (
+        status = 0
+        OR (status = 1
+        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (status = 2
+        AND created_user = #{userId} )
+        )
         ORDER BY db_modify_time DESC, db_create_time DESC
     </select>
 

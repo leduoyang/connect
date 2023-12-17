@@ -1,5 +1,6 @@
 package com.connect.core.service.user;
 
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
@@ -27,7 +28,7 @@ public interface IUserService {
 
     UserDto queryUserByUserId(String userId);
 
-    <T> List<T> queryUserStarList(String userId, StarTargetType targetType, Class<T> returnClass);
+    <T> List<T> queryUserStarList(StarTargetType targetType, RequestMetaInfo requestMetaInfo, Class<T> returnClass);
 
     List<UserDto> queryFollowerList(String userId);
 

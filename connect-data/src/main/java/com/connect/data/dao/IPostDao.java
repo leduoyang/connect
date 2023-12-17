@@ -15,9 +15,9 @@ public interface IPostDao {
 
     int deletePost(long id, String userId);
 
-    Post queryPostById(long id);
+    Post queryPostById(long id, String userId);
 
-    List<Post> queryPost(Long postId, String userId, String keyword, String tags);
+    List<Post> queryPost(Long postId, String createdUserId, String keyword, String tags, String userId);
 
     boolean postExisting(long id, String userId);
 }

@@ -1,19 +1,17 @@
 package com.connect.core.service.comment;
 
-import com.connect.api.comment.dto.CreateCommentDto;
-import com.connect.api.comment.dto.DeleteCommentDto;
-import com.connect.api.comment.dto.QueryCommentDto;
-import com.connect.api.comment.dto.UpdateCommentDto;
+import com.connect.api.comment.dto.*;
 import com.connect.api.comment.request.CreateCommentRequest;
 import com.connect.api.comment.request.QueryCommentRequest;
 import com.connect.api.comment.request.UpdateCommentRequest;
+import com.connect.api.common.RequestMetaInfo;
 
 import java.util.List;
 
 public interface ICommentService {
-    QueryCommentDto queryCommentById(long id);
+    QueryCommentResponseDto queryCommentById(long id, RequestMetaInfo requestMetaInfo);
 
-    List<QueryCommentDto> queryComment(QueryCommentRequest request);
+    List<QueryCommentResponseDto> queryComment(QueryCommentRequest request, RequestMetaInfo requestMetaInfo);
 
     void createComment(CreateCommentDto request);
 

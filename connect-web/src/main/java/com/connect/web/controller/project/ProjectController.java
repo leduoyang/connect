@@ -1,11 +1,9 @@
 package com.connect.web.controller.project;
 
 import com.connect.api.common.APIResponse;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.project.IProjectApi;
-import com.connect.api.project.dto.CreateProjectDto;
-import com.connect.api.project.dto.DeleteProjectDto;
-import com.connect.api.project.dto.QueryProjectDto;
-import com.connect.api.project.dto.UpdateProjectDto;
+import com.connect.api.project.dto.*;
 import com.connect.api.project.request.CreateProjectRequest;
 import com.connect.api.project.request.QueryProjectRequest;
 import com.connect.api.project.request.UpdateProjectRequest;
@@ -44,25 +42,19 @@ public class ProjectController implements IProjectApi {
     @Override
     public APIResponse<QueryProjectResponse> queryProject(Long projectId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        QueryProjectDto projectDto = projectService.queryProjectById(projectId);
-        if (projectDto.getStatus() == ProjectStatus.PRIVATE.getCode()
-                && !projectDto.getCreatedUser().equals(authentication.getName())
-        ) {
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        QueryProjectResponseDto projectDto = projectService.queryProjectById(projectId, requestMetaInfo);
+        if (projectDto == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
-                    "private post can only be viewed by creator"
-            );
-        }
-        if (projectDto.getStatus() == ProjectStatus.SEMI.getCode() &&
-                !followService.isFollowing(authentication.getName(), projectDto.getCreatedUser(), FollowStatus.APPROVED)
-        ) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
-                    String.format("you have to follow user %s first to view his contents", projectDto.getCreatedUser())
+                    "target project not found or not authorized to retrieve"
             );
         }
 
-        List<QueryProjectDto> projectDtoList = new ArrayList<>();
+        List<QueryProjectResponseDto> projectDtoList = new ArrayList<>();
         projectDtoList.add(projectDto);
         QueryProjectResponse response = new QueryProjectResponse()
                 .setItems(projectDtoList)
@@ -75,7 +67,11 @@ public class ProjectController implements IProjectApi {
     public APIResponse<QueryProjectResponse> queryProjectWithFilter(
             QueryProjectRequest request
     ) {
-        List<QueryProjectDto> projectDtoList = projectService.queryProject(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+        List<QueryProjectResponseDto> projectDtoList = projectService.queryProject(request, requestMetaInfo);
 
         QueryProjectResponse response = new QueryProjectResponse()
                 .setItems(projectDtoList)

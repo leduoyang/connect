@@ -14,7 +14,7 @@ public class ICommentRepositoryTest {
     @Test
     void get_comment_by_comment_id_should_return_target_comment() {
         Long commentId = 1L;
-        Comment comment = commentRepository.queryCommentById(commentId);
+        Comment comment = commentRepository.queryCommentById(commentId, "ROOT");
         System.out.println(comment.toString());
     }
 }

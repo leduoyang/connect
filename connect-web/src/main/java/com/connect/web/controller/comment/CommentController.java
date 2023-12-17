@@ -1,15 +1,13 @@
 package com.connect.web.controller.comment;
 
 import com.connect.api.comment.ICommentApi;
-import com.connect.api.comment.dto.CreateCommentDto;
-import com.connect.api.comment.dto.DeleteCommentDto;
-import com.connect.api.comment.dto.QueryCommentDto;
-import com.connect.api.comment.dto.UpdateCommentDto;
+import com.connect.api.comment.dto.*;
 import com.connect.api.comment.request.CreateCommentRequest;
 import com.connect.api.comment.request.QueryCommentRequest;
 import com.connect.api.comment.request.UpdateCommentRequest;
 import com.connect.api.comment.response.QueryCommentResponse;
 import com.connect.api.common.APIResponse;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.core.service.comment.ICommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -33,11 +31,18 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<QueryCommentResponse> queryComment(Long commentId) {
-        QueryCommentDto commentDto = commentService.queryCommentById(commentId);
-        List<QueryCommentDto> commentDtoList = new ArrayList<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        QueryCommentResponseDto commentDto = commentService.queryCommentById(commentId, requestMetaInfo);
+        List<QueryCommentResponseDto> commentDtoList = new ArrayList<>();
         commentDtoList.add(commentDto);
 
-        QueryCommentResponse response = new QueryCommentResponse().setItems(commentDtoList).setTotal(commentDtoList.size());
+        QueryCommentResponse response = new QueryCommentResponse()
+                .setItems(commentDtoList)
+                .setTotal(commentDtoList.size());
 
         return APIResponse.getOKJsonResult(response);
     }
@@ -46,7 +51,12 @@ public class CommentController implements ICommentApi {
     public APIResponse<QueryCommentResponse> queryCommentWithFilter(
             QueryCommentRequest request
     ) {
-        List<QueryCommentDto> commentDtoList = commentService.queryComment(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        List<QueryCommentResponseDto> commentDtoList = commentService.queryComment(request, requestMetaInfo);
 
         QueryCommentResponse response = new QueryCommentResponse()
                 .setItems(commentDtoList)

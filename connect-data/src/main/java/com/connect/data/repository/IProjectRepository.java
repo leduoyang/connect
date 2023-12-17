@@ -16,7 +16,7 @@ public interface IProjectRepository {
 
     void deleteProject(Project project);
 
-    Project queryProjectById(long id);
+    Project queryProjectById(long id, String userId);
 
-    List<Project> queryProject(QueryProjectParam param);
+    List<Project> queryProject(QueryProjectParam param, String userId);
 }

@@ -2,6 +2,7 @@ package com.connect.web.controller.user;
 
 import com.connect.api.comment.dto.QueryCommentDto;
 import com.connect.api.common.APIResponse;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.post.dto.QueryPostDto;
 import com.connect.api.project.dto.QueryProjectDto;
 import com.connect.api.user.IUserApi;
@@ -201,13 +202,15 @@ public class UserController implements IUserApi {
     @Override
     public APIResponse<QueryStarListResponse> queryPersonalStarList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = authentication.getName();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
         List<QueryProjectDto> projectDtoList =
-                userService.queryUserStarList(userId, StarTargetType.PROJECT, QueryProjectDto.class);
+                userService.queryUserStarList(StarTargetType.PROJECT, requestMetaInfo, QueryProjectDto.class);
         List<QueryPostDto> postDtoList =
-                userService.queryUserStarList(userId, StarTargetType.POST, QueryPostDto.class);
+                userService.queryUserStarList(StarTargetType.POST, requestMetaInfo, QueryPostDto.class);
         List<QueryCommentDto> commentDtoList =
-                userService.queryUserStarList(userId, StarTargetType.COMMENT, QueryCommentDto.class);
+                userService.queryUserStarList(StarTargetType.COMMENT, requestMetaInfo, QueryCommentDto.class);
 
         QueryStarListResponse response = new QueryStarListResponse()
                 .setProjects(projectDtoList)

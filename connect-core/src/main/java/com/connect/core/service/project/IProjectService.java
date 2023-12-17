@@ -1,17 +1,15 @@
 package com.connect.core.service.project;
 
-import com.connect.api.project.dto.CreateProjectDto;
-import com.connect.api.project.dto.DeleteProjectDto;
-import com.connect.api.project.dto.QueryProjectDto;
-import com.connect.api.project.dto.UpdateProjectDto;
+import com.connect.api.common.RequestMetaInfo;
+import com.connect.api.project.dto.*;
 import com.connect.api.project.request.QueryProjectRequest;
 
 import java.util.List;
 
 public interface IProjectService {
-    QueryProjectDto queryProjectById(long id);
+    QueryProjectResponseDto queryProjectById(long id, RequestMetaInfo requestMetaInfo);
 
-    List<QueryProjectDto> queryProject(QueryProjectRequest request);
+    List<QueryProjectResponseDto> queryProject(QueryProjectRequest request, RequestMetaInfo requestMetaInfo);
 
     void createProject(CreateProjectDto request);
 

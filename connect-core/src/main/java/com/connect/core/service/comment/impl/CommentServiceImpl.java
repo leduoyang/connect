@@ -1,10 +1,8 @@
 package com.connect.core.service.comment.impl;
 
-import com.connect.api.comment.dto.CreateCommentDto;
-import com.connect.api.comment.dto.DeleteCommentDto;
-import com.connect.api.comment.dto.QueryCommentDto;
-import com.connect.api.comment.dto.UpdateCommentDto;
+import com.connect.api.comment.dto.*;
 import com.connect.api.comment.request.QueryCommentRequest;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.core.service.comment.ICommentService;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -27,14 +25,14 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public QueryCommentDto queryCommentById(long id) {
-        Comment comment = commentRepository.queryCommentById(id);
+    public QueryCommentResponseDto queryCommentById(long id, RequestMetaInfo requestMetaInfo) {
+        Comment comment = commentRepository.queryCommentById(id, requestMetaInfo.getUserId());
         commentRepository.incrementViews(
                 comment.getId(),
                 comment.getVersion()
         );
 
-        QueryCommentDto commentDto = new QueryCommentDto()
+        QueryCommentResponseDto commentDto = new QueryCommentResponseDto()
                 .setId(comment.getId())
                 .setPostId(comment.getPostId())
                 .setStatus(comment.getStatus())
@@ -50,18 +48,18 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public List<QueryCommentDto> queryComment(QueryCommentRequest request) {
+    public List<QueryCommentResponseDto> queryComment(QueryCommentRequest request, RequestMetaInfo requestMetaInfo) {
         QueryCommentParam param = new QueryCommentParam()
                 .setPostId(request.getPostId())
                 .setUserId(request.getUserId())
                 .setKeyword(request.getKeyword())
                 .setTags(request.getTags());
 
-        List<Comment> commentList = commentRepository.queryComment(param);
+        List<Comment> commentList = commentRepository.queryComment(param, requestMetaInfo.getUserId());
 
         return commentList
                 .stream()
-                .map(x -> new QueryCommentDto()
+                .map(x -> new QueryCommentResponseDto()
                         .setId(x.getId())
                         .setPostId(x.getPostId())
                         .setStatus(x.getStatus())

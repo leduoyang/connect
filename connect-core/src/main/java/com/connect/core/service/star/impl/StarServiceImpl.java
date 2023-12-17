@@ -54,7 +54,7 @@ public class StarServiceImpl implements IStarService {
         } else {
             starRepository.createStar(star);
         }
-        updateLikesCountForTarget(star.getTargetId(), star.getTargetType());
+        updateStarsForTarget(star.getTargetId(), star.getTargetType(), request.getUserId());
     }
 
     @Override
@@ -77,7 +77,7 @@ public class StarServiceImpl implements IStarService {
         } else {
             starRepository.createStar(star);
         }
-        updateLikesCountForTarget(star.getTargetId(), star.getTargetType());
+        updateStarsForTarget(star.getTargetId(), star.getTargetType(), request.getUserId());
     }
 
     @Override
@@ -90,13 +90,13 @@ public class StarServiceImpl implements IStarService {
         );
     }
 
-    private void updateLikesCountForTarget(long targetId, int targetType) {
+    private void updateStarsForTarget(long targetId, int targetType, String userId) {
         int stars = starRepository.countStars(targetId, targetType);
 
         StarTargetType target = StarTargetType.getType(targetType);
         switch (target) {
             case PROJECT:
-                Project project = projectRepository.queryProjectById(targetId);
+                Project project = projectRepository.queryProjectById(targetId, userId);
                 project.setStars(stars);
                 projectRepository.refreshStars(
                         project.getId(),
@@ -105,7 +105,7 @@ public class StarServiceImpl implements IStarService {
                 );
                 break;
             case POST:
-                Post post = postRepository.queryPostById(targetId);
+                Post post = postRepository.queryPostById(targetId, userId);
                 post.setStars(stars);
                 postRepository.refreshStars(
                         post.getId(),
@@ -114,7 +114,7 @@ public class StarServiceImpl implements IStarService {
                 );
                 break;
             case COMMENT:
-                Comment comment = commentRepository.queryCommentById(targetId);
+                Comment comment = commentRepository.queryCommentById(targetId, userId);
                 comment.setStars(stars);
                 commentRepository.refreshStars(
                         comment.getId(),

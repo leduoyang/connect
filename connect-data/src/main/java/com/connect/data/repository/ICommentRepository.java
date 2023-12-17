@@ -16,7 +16,7 @@ public interface ICommentRepository {
 
     void deleteComment(Comment comment);
 
-    Comment queryCommentById(long id);
+    Comment queryCommentById(long id, String userId);
 
-    List<Comment> queryComment(QueryCommentParam param);
+    List<Comment> queryComment(QueryCommentParam param, String userId);
 }
