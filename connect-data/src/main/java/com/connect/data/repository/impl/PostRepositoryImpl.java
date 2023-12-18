@@ -79,15 +79,17 @@ public class PostRepositoryImpl implements IPostRepository {
 
     public void incrementViews(long id, int version) {
         int affected = postDao.incrementViews(id, version);
+
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "update viewCounts failed");
+            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "increase views failed");
         }
     }
 
     public void refreshStars(long id, int version, int stars) {
         int affected = postDao.refreshStars(id, version, stars);
+
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "update likesCount failed");
+            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "refresh stars failed");
         }
     }
 
@@ -104,7 +106,7 @@ public class PostRepositoryImpl implements IPostRepository {
 
         int affected = postDao.deletePost(targetId, userId);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
+            throw new ConnectDataException(ConnectErrorCode.POST_DELETE_EXCEPTION);
         }
     }
 }
