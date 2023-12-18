@@ -2,10 +2,7 @@ package com.connect.core.service.post.iml;
 
 import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.post.dto.*;
-import com.connect.api.post.request.QueryPostRequest;
 import com.connect.core.service.post.IPostService;
-import com.connect.common.exception.ConnectDataException;
-import com.connect.common.exception.ConnectErrorCode;
 import com.connect.data.entity.Post;
 import com.connect.data.param.QueryPostParam;
 import com.connect.data.repository.IPostRepository;
@@ -82,11 +79,11 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public void createPost(CreatePostDto request) {
+    public void createPost(CreatePostDto request, RequestMetaInfo requestMetaInfo) {
         Post post = new Post()
                 .setStatus(request.getStatus())
-                .setCreatedUser(request.getCreatedUser())
-                .setUpdatedUser(request.getCreatedUser());
+                .setCreatedUser(requestMetaInfo.getUserId())
+                .setUpdatedUser(requestMetaInfo.getUserId());
 
         if (request.getContent() != null) {
             post.setContent(request.getContent());
@@ -100,24 +97,18 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public void updatePost(UpdatePostDto request) {
+    public void updatePost(UpdatePostDto request, RequestMetaInfo requestMetaInfo) {
         Post post = new Post()
                 .setId(request.getId())
                 .setStatus(request.getStatus())
-                .setUpdatedUser(request.getUpdatedUser());
+                .setUpdatedUser(requestMetaInfo.getUserId());
 
         if (request.getReferenceId() != null
-                && checkReferencePost(request.getReferenceId(), request.getUpdatedUser()) != null
+                && checkReferencePost(request.getReferenceId(), requestMetaInfo.getUserId()) != null
         ) {
             post.setReferenceId(request.getReferenceId());
         }
         if (request.getContent() != null) {
-            if (request.getContent().equals("")) {
-                throw new ConnectDataException(
-                        ConnectErrorCode.PARAM_EXCEPTION,
-                        "Invalid payload (post content can not be blank)"
-                );
-            }
             post.setContent(request.getContent());
         }
 
@@ -125,10 +116,10 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public void deletePost(DeletePostDto request) {
+    public void deletePost(DeletePostDto request, RequestMetaInfo requestMetaInfo) {
         Post post = new Post()
                 .setId(request.getId())
-                .setUpdatedUser(request.getUpdatedUser());
+                .setUpdatedUser(requestMetaInfo.getUserId());
 
         postRepository.deletePost(post);
     }
@@ -142,17 +133,15 @@ public class PostServiceImpl implements IPostService {
      */
     private QueryPostResponseDto checkReferencePost(Long referenceId, String userId) {
         if (referenceId == null) {
-            log.warn("referenceId not exist");
+            log.info("referenceId not exist");
             return null;
         }
 
         Post referencePost = postRepository.queryPostById(referenceId, userId);
 
         if (referencePost == null) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.INTERNAL_SERVER_ERROR,
-                    "reference post not found or not authorized to retrieve"
-            );
+            log.warn("reference post not found or not authorized to retrieve");
+            return null;
         }
 
         return new QueryPostResponseDto()

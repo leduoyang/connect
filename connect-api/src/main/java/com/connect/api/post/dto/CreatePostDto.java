@@ -12,5 +12,7 @@ public class CreatePostDto {
 
     private Long referenceId;
 
+    private String tags;
+
     private String createdUser;
 }

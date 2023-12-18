@@ -92,11 +92,14 @@ public class PostController implements IPostApi {
     public APIResponse<Void> createPost(
             @RequestBody CreatePostRequest request
     ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
         CreatePostDto createPostDto = new CreatePostDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, createPostDto);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        createPostDto.setCreatedUser(authentication.getName());
 
         if (request.getContent() == null && request.getReferenceId() == null) {
             throw new ConnectDataException(
@@ -104,7 +107,7 @@ public class PostController implements IPostApi {
                     "Invalid payload (post content and referenceId can not both be absent)"
             );
         }
-        postService.createPost(createPostDto);
+        postService.createPost(createPostDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }
@@ -114,14 +117,23 @@ public class PostController implements IPostApi {
             @PathVariable Long postId,
             @RequestBody UpdatePostRequest request
     ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
         UpdatePostDto updatePostDto = new UpdatePostDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, updatePostDto);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        updatePostDto.setUpdatedUser(authentication.getName());
         updatePostDto.setId(postId);
 
-        postService.updatePost(updatePostDto);
+        if (request.getContent() != null && request.getContent().equals("")) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "Invalid payload (post content can not be blank)"
+            );
+        }
+        postService.updatePost(updatePostDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }
@@ -131,11 +143,14 @@ public class PostController implements IPostApi {
             @PathVariable Long postId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
         DeletePostDto deletePostDto = new DeletePostDto()
                 .setId(postId)
                 .setUpdatedUser(authentication.getName());
-        postService.deletePost(deletePostDto);
+        postService.deletePost(deletePostDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }

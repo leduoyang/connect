@@ -16,6 +16,8 @@ public class QueryPostResponseDto {
 
     private Long referenceId;
 
+    private String tags;
+
     private Integer stars;
 
     private Integer views;
