@@ -1,7 +1,6 @@
 package com.connect.core.service.follow.iml;
 
 import com.connect.api.follow.dto.FollowDto;
-import com.connect.api.follow.dto.UnFollowDto;
 import com.connect.common.enums.FollowStatus;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
@@ -153,20 +152,15 @@ public class FollowServiceImpl implements IFollowService {
 
     @Override
     public void approveAll(FollowDto request) {
-        String followingId = request.getFollowingId();
-
-        List<String> pendingList = followRepository.queryPendingIdList(followingId);
-        if (pendingList == null || pendingList.size() == 0) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
-                    String.format("nothing to approve for user %s", followingId)
-            );
-        }
-
         Follow follow = new Follow()
                 .setFollowingId(request.getFollowingId())
                 .setStatus(FollowStatus.APPROVED.getCode());
         followRepository.updateFollow(follow);
+    }
+
+    @Override
+    public List<String> queryPendingIdList(String followingId) {
+        return followRepository.queryPendingIdList(followingId);
     }
 
     private void updateTargetStatus(Follow follow) {

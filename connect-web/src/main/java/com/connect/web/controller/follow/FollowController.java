@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -141,9 +142,16 @@ public class FollowController implements IFollowApi {
             );
         }
 
+        List<String> pendingList = followService.queryPendingIdList(authentication.getName());
+        if (pendingList == null || pendingList.size() == 0) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
+                    String.format("nothing to approve for user %s", authentication.getName())
+            );
+        }
+
         FollowDto followDto = new FollowDto()
                 .setFollowingId(authentication.getName());
-
         followService.approveAll(followDto);
         return APIResponse.getOKJsonResult(null);
     }
