@@ -23,6 +23,8 @@ public class FollowRepositoryImpl implements IFollowRepository {
     }
 
     public void createFollow(Follow follow) {
+        log.info(String.format("follower: %s, following %s", follow.getFollowerId(), follow.getFollowingId()));
+
         if (followDao.isFollowing(follow.getFollowerId(), follow.getFollowingId())) {
             throw new ConnectDataException(ConnectErrorCode.FOLLOW_EXISTED_EXCEPTION);
         }
@@ -34,6 +36,8 @@ public class FollowRepositoryImpl implements IFollowRepository {
     }
 
     public void updateFollow(Follow follow) {
+        log.info(String.format("follower: %s, following %s", follow.getFollowerId(), follow.getFollowingId()));
+
         if (!followDao.isFollowing(follow.getFollowerId(), follow.getFollowingId())) {
             throw new ConnectDataException(ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION);
         }
