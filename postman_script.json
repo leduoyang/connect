@@ -71,7 +71,7 @@
 							"response": []
 						},
 						{
-							"name": "0.5 john editUserProfile to public",
+							"name": "0.5 john editUserProfile to semi public",
 							"event": [
 								{
 									"listen": "test",
@@ -100,7 +100,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"description\": \"update status to public\",\n    \"status\": 0\n}",
+									"raw": "{\n    \"description\": \"update status to semi public\",\n    \"status\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1494,6 +1494,505 @@
 									"response": []
 								}
 							]
+						}
+					]
+				},
+				{
+					"name": "referencePostTest (for semi-public post)",
+					"item": [
+						{
+							"name": "0. testLogin with john",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let token = pm.response.json().data;",
+											"pm.globals.set('Authorization', token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "isroot",
+										"value": "true",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/root/test/token?mockId=john_doe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"root",
+										"test",
+										"token"
+									],
+									"query": [
+										{
+											"key": "mockId",
+											"value": "john_doe"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1. john editUserProfile to semi public",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"description\": \"update status to semi public\",\n    \"status\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
+							},
+							"response": []
+						},
+						{
+							"name": "2. john add semi-public post",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let id = pm.response.json().data;",
+											"let parsedId = parseFloat(id);",
+											"",
+											"pm.globals.set('postId', parsedId);",
+											"console.log(parsedId)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									},
+									{
+										"key": "isRoot",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "// status default set to 0\n{\n    \"status\": 1, // 0 - public, 1 - semi, 2- private\n    \"referenceId\": null,\n    \"content\": \"this is a content for testing adding posts\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/connect/v1/post",
+								"description": "This test is written to validate the server performed a function as expected."
+							},
+							"response": []
+						},
+						{
+							"name": "3. testLogin with Root",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let token = pm.response.json().data;",
+											"pm.globals.set('Authorization', token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "isroot",
+										"value": "true",
+										"type": "text"
+									}
+								],
+								"url": "http://localhost:8080/api/root/test/token"
+							},
+							"response": []
+						},
+						{
+							"name": "4. ROOT unfollow john",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									}
+								],
+								"url": "http://localhost:8080/api/connect/v1/unfollow/john_doe",
+								"description": "This test is written to validate the server performed a function as expected."
+							},
+							"response": []
+						},
+						{
+							"name": "5. ROOT addPost with referenceId set to the previous post (should failed)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": 1, // 0 - public, 1 - semi, 2- private\n    \"referenceId\": {{postId}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/connect/v1/post",
+								"description": "This test is written to validate the server performed a function as expected."
+							},
+							"response": []
+						},
+						{
+							"name": "6. ROOT follow john",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/connect/v1/follow/john_doe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"connect",
+										"v1",
+										"follow",
+										"john_doe"
+									],
+									"query": [
+										{
+											"key": null,
+											"value": "",
+											"disabled": true
+										}
+									]
+								},
+								"description": "This test is written to validate the server performed a function as expected."
+							},
+							"response": []
+						},
+						{
+							"name": "7. testLogin with john",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let token = pm.response.json().data;",
+											"pm.globals.set('Authorization', token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "isroot",
+										"value": "true",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/root/test/token?mockId=john_doe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"root",
+										"test",
+										"token"
+									],
+									"query": [
+										{
+											"key": "mockId",
+											"value": "john_doe"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "8. john editUserProfile to public (ROOT should follow john afterwards)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"description\": \"update status to public\",\n    \"status\": 0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
+							},
+							"response": []
+						},
+						{
+							"name": "9. testLogin with Root",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let token = pm.response.json().data;",
+											"pm.globals.set('Authorization', token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "isroot",
+										"value": "true",
+										"type": "text"
+									}
+								],
+								"url": "http://localhost:8080/api/root/test/token"
+							},
+							"response": []
+						},
+						{
+							"name": "10. ROOT addPost with referenceId set to the previous post (should passed)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let id = pm.response.json().data;",
+											"let parsedId = parseFloat(id);",
+											"",
+											"pm.globals.set('postId', parsedId);",
+											"console.log(parsedId)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": 1, // 0 - public, 1 - semi, 2- private\n    \"referenceId\": {{postId}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/connect/v1/post",
+								"description": "This test is written to validate the server performed a function as expected."
+							},
+							"response": []
+						},
+						{
+							"name": "11. getPostById of the previous post (reference post should be retrieved)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									}
+								],
+								"url": "http://localhost:8080/api/connect/v1/post/{{postId}}",
+								"description": "This test is to validate the response status code. This Snippet is also available on the right sidebar under `Status code: Code in 200`."
+							},
+							"response": []
 						}
 					]
 				},
