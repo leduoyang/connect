@@ -11,9 +11,9 @@ public interface IProjectService {
 
     List<QueryProjectResponseDto> queryProject(QueryProjectRequest request, RequestMetaInfo requestMetaInfo);
 
-    void createProject(CreateProjectDto request);
+    long createProject(CreateProjectDto request, RequestMetaInfo requestMetaInfo);
 
-    void updateProject(UpdateProjectDto request);
+    void updateProject(UpdateProjectDto request, RequestMetaInfo requestMetaInfo);
 
-    void deleteProject(DeleteProjectDto request);
+    void deleteProject(DeleteProjectDto request, RequestMetaInfo requestMetaInfo);
 }

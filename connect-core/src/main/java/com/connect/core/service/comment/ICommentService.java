@@ -13,9 +13,9 @@ public interface ICommentService {
 
     List<QueryCommentResponseDto> queryComment(QueryCommentRequest request, RequestMetaInfo requestMetaInfo);
 
-    void createComment(CreateCommentDto request);
+    long createComment(CreateCommentDto request, RequestMetaInfo requestMetaInfo);
 
-    void updateComment(UpdateCommentDto request);
+    void updateComment(UpdateCommentDto request, RequestMetaInfo requestMetaInfo);
 
-    void deleteComment(DeleteCommentDto id);
+    void deleteComment(DeleteCommentDto id, RequestMetaInfo requestMetaInfo);
 }

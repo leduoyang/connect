@@ -40,11 +40,13 @@ public class CommentRepositoryImpl implements ICommentRepository {
         );
     }
 
-    public void createComment(Comment comment) {
+    public long createComment(Comment comment) {
         int affected = commentDao.createComment(comment);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.COMMENT_CREATE_EXCEPTION);
         }
+
+        return comment.getId();
     }
 
     public void updateComment(Comment comment) {

@@ -79,7 +79,7 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public void createComment(CreateCommentDto request) {
+    public long createComment(CreateCommentDto request, RequestMetaInfo requestMetaInfo) {
         if (request.getStatus() < 0 || request.getStatus() > 2) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -90,8 +90,8 @@ public class CommentServiceImpl implements ICommentService {
         Comment comment = new Comment()
                 .setStatus(request.getStatus())
                 .setPostId(request.getPostId())
-                .setCreatedUser(request.getCreatedUser())
-                .setUpdatedUser(request.getCreatedUser());
+                .setCreatedUser(requestMetaInfo.getUserId())
+                .setUpdatedUser(requestMetaInfo.getUserId());
         if (request.getContent() == null || request.getContent().equals("")) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -100,14 +100,14 @@ public class CommentServiceImpl implements ICommentService {
         }
         comment.setContent(request.getContent());
 
-        commentRepository.createComment(comment);
+        return commentRepository.createComment(comment);
     }
 
     @Override
-    public void updateComment(UpdateCommentDto request) {
+    public void updateComment(UpdateCommentDto request, RequestMetaInfo requestMetaInfo) {
         Comment comment = new Comment()
                 .setId(request.getId())
-                .setUpdatedUser(request.getUpdatedUser());
+                .setUpdatedUser(requestMetaInfo.getUserId());
         if (request.getStatus() != null) {
             if (request.getStatus() < 0 || request.getStatus() > 2) {
                 throw new ConnectDataException(
@@ -131,10 +131,10 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public void deleteComment(DeleteCommentDto request) {
+    public void deleteComment(DeleteCommentDto request, RequestMetaInfo requestMetaInfo) {
         Comment comment = new Comment()
                 .setId(request.getId())
-                .setUpdatedUser(request.getUpdatedUser());
+                .setUpdatedUser(requestMetaInfo.getUserId());
 
         commentRepository.deleteComment(comment);
     }

@@ -24,10 +24,14 @@ public class PostRepositoryImpl implements IPostRepository {
     }
 
     public Post queryPostById(long id, String userId) {
+        log.info(String.format("param: %s, userId %s", id, userId));
+
         return postDao.queryPostById(id, userId);
     }
 
     public List<Post> queryPost(QueryPostParam param, String userId) {
+        log.info(String.format("param: %s, userId %s", param, userId));
+
         return postDao.queryPost(
                 param.getPostId(),
                 param.getUserId(),
@@ -37,7 +41,9 @@ public class PostRepositoryImpl implements IPostRepository {
         );
     }
 
-    public void createPost(Post post) {
+    public long createPost(Post post) {
+        log.info(String.format("param: %s, userId %s", post, post.getCreatedUser()));
+
         if (post.getReferenceId() != null) {
             Post referencePost = postDao.queryPostById(
                     post.getReferenceId(),
@@ -58,9 +64,13 @@ public class PostRepositoryImpl implements IPostRepository {
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.POST_CREATE_EXCEPTION);
         }
+
+        return post.getId();
     }
 
     public void updatePost(Post post) {
+        log.info(String.format("param: %s, userId %s", post, post.getUpdatedUser()));
+
         long targetId = post.getId();
         String userId = post.getUpdatedUser();
         boolean existed = postDao.postExisting(targetId, userId);
@@ -94,6 +104,8 @@ public class PostRepositoryImpl implements IPostRepository {
     }
 
     public void deletePost(Post post) {
+        log.info(String.format("param: %s, userId %s", post, post.getUpdatedUser()));
+
         long targetId = post.getId();
         String userId = post.getUpdatedUser();
         boolean existed = postDao.postExisting(targetId, userId);

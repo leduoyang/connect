@@ -21,7 +21,7 @@ public interface IProjectApi {
     );
 
     @PostMapping(value = "/project")
-    APIResponse<Void> createProject(
+    APIResponse<Long> createProject(
             @Validated @RequestBody CreateProjectRequest request
     );
 

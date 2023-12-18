@@ -6,7 +6,7 @@ import com.connect.data.param.QueryProjectParam;
 import java.util.List;
 
 public interface IProjectRepository {
-    void createProject(Project project);
+    long createProject(Project project);
 
     void updateProject(Project project);
 

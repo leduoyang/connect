@@ -7,7 +7,7 @@ import com.connect.data.param.QueryPostParam;
 import java.util.List;
 
 public interface IPostRepository {
-    void createPost(Post post);
+    long createPost(Post post);
 
     void updatePost(Post post);
 

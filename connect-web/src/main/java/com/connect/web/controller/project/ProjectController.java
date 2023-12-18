@@ -8,8 +8,6 @@ import com.connect.api.project.request.CreateProjectRequest;
 import com.connect.api.project.request.QueryProjectRequest;
 import com.connect.api.project.request.UpdateProjectRequest;
 import com.connect.api.project.response.QueryProjectResponse;
-import com.connect.common.enums.FollowStatus;
-import com.connect.common.enums.ProjectStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.follow.IFollowService;
@@ -80,18 +78,21 @@ public class ProjectController implements IProjectApi {
     }
 
     @Override
-    public APIResponse<Void> createProject(
+    public APIResponse<Long> createProject(
             @RequestBody CreateProjectRequest request
     ) {
         CreateProjectDto createProjectDto = new CreateProjectDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, createProjectDto);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        createProjectDto.setCreatedUser(authentication.getName());
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
-        projectService.createProject(createProjectDto);
+        Long id = projectService.createProject(createProjectDto, requestMetaInfo);
 
-        return APIResponse.getOKJsonResult(null);
+        return APIResponse.getOKJsonResult(id);
     }
 
     @Override
@@ -102,11 +103,14 @@ public class ProjectController implements IProjectApi {
         UpdateProjectDto updateProjectDto = new UpdateProjectDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, updateProjectDto);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        updateProjectDto.setUpdatedUser(authentication.getName());
         updateProjectDto.setId(projectId);
 
-        projectService.updateProject(updateProjectDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        projectService.updateProject(updateProjectDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }
@@ -116,11 +120,14 @@ public class ProjectController implements IProjectApi {
             @PathVariable Long projectId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
         DeleteProjectDto deleteProjectDto = new DeleteProjectDto()
-                .setId(projectId)
-                .setUpdatedUser(authentication.getName());
-        projectService.deleteProject(deleteProjectDto);
+                .setId(projectId);
+
+        projectService.deleteProject(deleteProjectDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }

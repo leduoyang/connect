@@ -11,7 +11,7 @@ public interface IPostService {
 
     List<QueryPostResponseDto> queryPost(QueryPostDto request, RequestMetaInfo requestMetaInfo);
 
-    void createPost(CreatePostDto request, RequestMetaInfo requestMetaInfo);
+    long createPost(CreatePostDto request, RequestMetaInfo requestMetaInfo);
 
     void updatePost(UpdatePostDto request, RequestMetaInfo requestMetaInfo);
 

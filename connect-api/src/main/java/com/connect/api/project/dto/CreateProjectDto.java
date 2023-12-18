@@ -17,6 +17,4 @@ public class CreateProjectDto {
     private String tags;
 
     private int boosted;
-
-    private String createdUser;
 }

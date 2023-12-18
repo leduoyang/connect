@@ -22,7 +22,7 @@ public interface IPostApi {
     );
 
     @PostMapping(value = "/post")
-    APIResponse<Void> createPost(
+    APIResponse<Long> createPost(
             @Validated @RequestBody CreatePostRequest request
     );
 

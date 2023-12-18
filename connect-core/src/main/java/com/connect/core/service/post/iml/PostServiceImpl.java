@@ -2,6 +2,8 @@ package com.connect.core.service.post.iml;
 
 import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.post.dto.*;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.post.IPostService;
 import com.connect.data.entity.Post;
 import com.connect.data.param.QueryPostParam;
@@ -79,7 +81,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public void createPost(CreatePostDto request, RequestMetaInfo requestMetaInfo) {
+    public long createPost(CreatePostDto request, RequestMetaInfo requestMetaInfo) {
         Post post = new Post()
                 .setStatus(request.getStatus())
                 .setCreatedUser(requestMetaInfo.getUserId())
@@ -88,12 +90,17 @@ public class PostServiceImpl implements IPostService {
         if (request.getContent() != null) {
             post.setContent(request.getContent());
         }
-        if (request.getReferenceId() != null
-                && checkReferencePost(request.getReferenceId(), request.getCreatedUser()) != null) {
+        if (request.getReferenceId() != null){
+            if(checkReferencePost(request.getReferenceId(), requestMetaInfo.getUserId()) == null) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (targetReferenceId not existed or unauthorized to retrieve)"
+                );
+            }
             post.setReferenceId(request.getReferenceId());
         }
 
-        postRepository.createPost(post);
+        return postRepository.createPost(post);
     }
 
     @Override

@@ -74,18 +74,21 @@ public class CommentController implements ICommentApi {
     }
 
     @Override
-    public APIResponse<Void> createComment(
+    public APIResponse<Long> createComment(
             @RequestBody CreateCommentRequest request
     ) {
         CreateCommentDto createCommentDto = new CreateCommentDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, createCommentDto);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        createCommentDto.setCreatedUser(authentication.getName());
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
-        commentService.createComment(createCommentDto);
+        Long id = commentService.createComment(createCommentDto, requestMetaInfo);
 
-        return APIResponse.getOKJsonResult(null);
+        return APIResponse.getOKJsonResult(id);
     }
 
     @Override
@@ -96,11 +99,14 @@ public class CommentController implements ICommentApi {
         UpdateCommentDto updateCommentDto = new UpdateCommentDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, updateCommentDto);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        updateCommentDto.setUpdatedUser(authentication.getName());
         updateCommentDto.setId(commentId);
 
-        commentService.updateComment(updateCommentDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        commentService.updateComment(updateCommentDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }
@@ -110,10 +116,13 @@ public class CommentController implements ICommentApi {
             @PathVariable Long commentId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
         DeleteCommentDto deleteCommentDto = new DeleteCommentDto()
-                .setId(commentId)
-                .setUpdatedUser(authentication.getName());
-        commentService.deleteComment(deleteCommentDto);
+                .setId(commentId);
+        commentService.deleteComment(deleteCommentDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }

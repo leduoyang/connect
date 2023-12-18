@@ -83,7 +83,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public void createProject(CreateProjectDto request) {
+    public long createProject(CreateProjectDto request, RequestMetaInfo requestMetaInfo) {
         if (request.getStatus() < 0 || request.getStatus() > 2) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -103,20 +103,20 @@ public class ProjectServiceImpl implements IProjectService {
                 .setTags(request.getTags())
                 .setStatus(request.getStatus())
                 .setBoosted(request.getBoosted())
-                .setCreatedUser(request.getCreatedUser())
-                .setUpdatedUser(request.getCreatedUser());
+                .setCreatedUser(requestMetaInfo.getUserId())
+                .setUpdatedUser(requestMetaInfo.getUserId());
 
-        projectRepository.createProject(project);
+        return projectRepository.createProject(project);
     }
 
     @Override
-    public void updateProject(UpdateProjectDto request) {
+    public void updateProject(UpdateProjectDto request, RequestMetaInfo requestMetaInfo) {
         Project project = new Project()
                 .setId(request.getId())
                 .setTitle(request.getTitle())
                 .setDescription(request.getDescription())
                 .setTags(request.getTags())
-                .setUpdatedUser(request.getUpdatedUser());
+                .setUpdatedUser(requestMetaInfo.getUserId());
         if (request.getStatus() != null) {
             if (request.getStatus() < 0 || request.getStatus() > 2) {
                 throw new ConnectDataException(
@@ -140,10 +140,10 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public void deleteProject(DeleteProjectDto request) {
+    public void deleteProject(DeleteProjectDto request, RequestMetaInfo requestMetaInfo) {
         Project project = new Project()
                 .setId(request.getId())
-                .setUpdatedUser(request.getUpdatedUser());
+                .setUpdatedUser(requestMetaInfo.getUserId());
 
         projectRepository.deleteProject(project);
     }

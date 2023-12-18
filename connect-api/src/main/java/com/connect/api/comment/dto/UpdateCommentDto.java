@@ -11,6 +11,4 @@ public class UpdateCommentDto {
     private Integer status;
 
     private String content;
-
-    private String updatedUser;
 }

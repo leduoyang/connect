@@ -37,11 +37,13 @@ public class ProjectRepositoryImpl implements IProjectRepository {
         );
     }
 
-    public void createProject(Project project) {
+    public long createProject(Project project) {
         int affected = projectDao.createProject(project);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.PROJECT_CREATE_EXCEPTION);
         }
+
+        return project.getId();
     }
 
     public void updateProject(Project project) {

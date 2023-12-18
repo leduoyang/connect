@@ -89,7 +89,7 @@ public class PostController implements IPostApi {
     }
 
     @Override
-    public APIResponse<Void> createPost(
+    public APIResponse<Long> createPost(
             @RequestBody CreatePostRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -107,9 +107,9 @@ public class PostController implements IPostApi {
                     "Invalid payload (post content and referenceId can not both be absent)"
             );
         }
-        postService.createPost(createPostDto, requestMetaInfo);
+        Long id = postService.createPost(createPostDto, requestMetaInfo);
 
-        return APIResponse.getOKJsonResult(null);
+        return APIResponse.getOKJsonResult(id);
     }
 
     @Override
@@ -148,8 +148,7 @@ public class PostController implements IPostApi {
                 .setDetails(authentication.getDetails());
 
         DeletePostDto deletePostDto = new DeletePostDto()
-                .setId(postId)
-                .setUpdatedUser(authentication.getName());
+                .setId(postId);
         postService.deletePost(deletePostDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);

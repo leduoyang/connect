@@ -6,7 +6,7 @@ import com.connect.data.param.QueryCommentParam;
 import java.util.List;
 
 public interface ICommentRepository {
-    void createComment(Comment comment);
+    long createComment(Comment comment);
 
     void updateComment(Comment comment);
 

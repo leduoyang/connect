@@ -1,10 +1,13 @@
 package com.connect.web.controller.user;
 
 import com.connect.api.comment.dto.QueryCommentDto;
+import com.connect.api.comment.dto.QueryCommentResponseDto;
 import com.connect.api.common.APIResponse;
 import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.post.dto.QueryPostDto;
+import com.connect.api.post.dto.QueryPostResponseDto;
 import com.connect.api.project.dto.QueryProjectDto;
+import com.connect.api.project.dto.QueryProjectResponseDto;
 import com.connect.api.user.IUserApi;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
@@ -227,12 +230,12 @@ public class UserController implements IUserApi {
                 .setUserId(authentication.getName())
                 .setDetails(authentication.getDetails());
 
-        List<QueryProjectDto> projectDtoList =
-                userService.queryUserStarList(StarTargetType.PROJECT, requestMetaInfo, QueryProjectDto.class);
-        List<QueryPostDto> postDtoList =
-                userService.queryUserStarList(StarTargetType.POST, requestMetaInfo, QueryPostDto.class);
-        List<QueryCommentDto> commentDtoList =
-                userService.queryUserStarList(StarTargetType.COMMENT, requestMetaInfo, QueryCommentDto.class);
+        List<QueryProjectResponseDto> projectDtoList =
+                userService.queryUserStarList(StarTargetType.PROJECT, requestMetaInfo, QueryProjectResponseDto.class);
+        List<QueryPostResponseDto> postDtoList =
+                userService.queryUserStarList(StarTargetType.POST, requestMetaInfo, QueryPostResponseDto.class);
+        List<QueryCommentResponseDto> commentDtoList =
+                userService.queryUserStarList(StarTargetType.COMMENT, requestMetaInfo, QueryCommentResponseDto.class);
 
         QueryStarListResponse response = new QueryStarListResponse()
                 .setProjects(projectDtoList)

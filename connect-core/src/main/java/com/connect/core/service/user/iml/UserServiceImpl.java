@@ -7,6 +7,7 @@ import com.connect.api.project.dto.QueryProjectResponseDto;
 import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
+import com.connect.common.enums.FollowStatus;
 import com.connect.common.enums.StarTargetType;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
@@ -16,6 +17,7 @@ import com.connect.core.service.comment.ICommentService;
 import com.connect.core.service.post.IPostService;
 import com.connect.core.service.project.IProjectService;
 import com.connect.core.service.user.IUserService;
+import com.connect.data.entity.Follow;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
 import com.connect.data.param.QueryUserParam;
@@ -135,6 +137,13 @@ public class UserServiceImpl implements IUserService {
         }
 
         userRepository.editUser(requestMetaInfo.getUserId(), user);
+
+        if(UserStatus.getStatus(user.getStatus()).equals(UserStatus.PUBLIC)) {
+            Follow follow = new Follow()
+                    .setFollowingId(requestMetaInfo.getUserId())
+                    .setStatus(FollowStatus.APPROVED.getCode());
+            followRepository.updateFollow(follow);
+        }
     }
 
     @Override
@@ -155,6 +164,13 @@ public class UserServiceImpl implements IUserService {
         }
 
         userRepository.editUserProfile(requestMetaInfo.getUserId(), profile);
+
+        if(UserStatus.getStatus(profile.getStatus()).equals(UserStatus.PUBLIC)) {
+            Follow follow = new Follow()
+                    .setFollowingId(requestMetaInfo.getUserId())
+                    .setStatus(FollowStatus.APPROVED.getCode());
+            followRepository.updateFollow(follow);
+        }
     }
 
     @Override
