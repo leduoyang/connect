@@ -8,11 +8,14 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql-database
+      - connect-mysql
+      - connect-redis
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-database:3306/connect_base
+      SPRING_DATASOURCE_URL: jdbc:mysql://connect-mysql:3306/connect_base
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: poorguy
+      SPRING_DATA_REDIS_HOST: connect-redis
+      SPRING_DATA_REDIS_PASSWORD: poorguy
     networks:
       - inner_network
 
@@ -32,7 +35,7 @@ services:
     networks:
       - inner_network
 
-  mysql-database:
+  connect-mysql:
     image: mysql:8.0
     container_name: connect-mysql
     restart: unless-stopped
