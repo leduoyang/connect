@@ -1,5 +1,6 @@
-package com.connect.web.interceptor;
+package com.connect.web.config;
 
+import com.connect.web.interceptor.LoggingInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
