@@ -1,4 +1,4 @@
-package com.connect.web.interceptor;
+package com.connect.web.common;
 
 import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
