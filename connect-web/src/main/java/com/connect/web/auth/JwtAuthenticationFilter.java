@@ -2,6 +2,7 @@ package com.connect.web.auth;
 
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
+import com.connect.web.interceptor.CustomHttpRequestWrapper;
 import com.connect.web.util.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,6 +32,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        request = new CustomHttpRequestWrapper(request);
+
         log.info("enter jwt filter for " + request.getRequestURI());
 
         if (request.getRequestURI().startsWith("/api/connect/v1/public/") ||
