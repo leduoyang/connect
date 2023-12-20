@@ -12,6 +12,4 @@ public class CreateCommentDto {
     private Long postId;
 
     private String content;
-
-    private String createdUser;
 }

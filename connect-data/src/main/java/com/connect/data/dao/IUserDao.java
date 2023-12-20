@@ -25,9 +25,11 @@ public interface IUserDao {
 
     int deleteUser(String userId);
 
-    List<User> queryUser(String keyword);
+    List<User> queryUser(String keyword, String requesterId);
 
-    User queryUserByUserId(String userId);
+    User internalQueryUserByUserId(String userId);
+
+    User queryUserByUserId(String userId, String requesterId);
 
     boolean userExisting(String userId);
 

@@ -1,11 +1,13 @@
 package com.connect.core.service.user.iml;
 
-import com.connect.api.comment.dto.QueryCommentDto;
-import com.connect.api.post.dto.QueryPostDto;
-import com.connect.api.project.dto.QueryProjectDto;
+import com.connect.api.comment.dto.QueryCommentResponseDto;
+import com.connect.api.common.RequestMetaInfo;
+import com.connect.api.post.dto.QueryPostResponseDto;
+import com.connect.api.project.dto.QueryProjectResponseDto;
 import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
+import com.connect.common.enums.FollowStatus;
 import com.connect.common.enums.StarTargetType;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
@@ -15,6 +17,7 @@ import com.connect.core.service.comment.ICommentService;
 import com.connect.core.service.post.IPostService;
 import com.connect.core.service.project.IProjectService;
 import com.connect.core.service.user.IUserService;
+import com.connect.data.entity.Follow;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
 import com.connect.data.param.QueryUserParam;
@@ -114,7 +117,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void editUser(String userId, EditUserRequest request) {
+    public void editUser(EditUserRequest request, RequestMetaInfo requestMetaInfo) {
         User user = new User()
                 .setUserId(request.getUserId())
                 .setPassword(request.getPassword())
@@ -133,11 +136,18 @@ public class UserServiceImpl implements IUserService {
             user.setStatus(request.getStatus());
         }
 
-        userRepository.editUser(userId, user);
+        userRepository.editUser(requestMetaInfo.getUserId(), user);
+
+        if(UserStatus.getStatus(user.getStatus()).equals(UserStatus.PUBLIC)) {
+            Follow follow = new Follow()
+                    .setFollowingId(requestMetaInfo.getUserId())
+                    .setStatus(FollowStatus.APPROVED.getCode());
+            followRepository.updateFollow(follow);
+        }
     }
 
     @Override
-    public void editUserProfile(String userId, EditProfileRequest request) {
+    public void editUserProfile(EditProfileRequest request, RequestMetaInfo requestMetaInfo) {
         Profile profile = new Profile()
                 .setUserId(request.getUserId())
                 .setDescription(request.getDescription())
@@ -153,12 +163,19 @@ public class UserServiceImpl implements IUserService {
             profile.setStatus(request.getStatus());
         }
 
-        userRepository.editUserProfile(userId, profile);
+        userRepository.editUserProfile(requestMetaInfo.getUserId(), profile);
+
+        if(UserStatus.getStatus(profile.getStatus()).equals(UserStatus.PUBLIC)) {
+            Follow follow = new Follow()
+                    .setFollowingId(requestMetaInfo.getUserId())
+                    .setStatus(FollowStatus.APPROVED.getCode());
+            followRepository.updateFollow(follow);
+        }
     }
 
     @Override
-    public void editProfileImage(String userId, MultipartFile image) {
-        User user = userRepository.queryUserByUserId(userId);
+    public void editProfileImage(MultipartFile image, RequestMetaInfo requestMetaInfo) {
+        User user = userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId());
         String profileImage =
                 imageUploadUtil.profileImage(
                         user.getId() + "." + imageUploadUtil.getExtension(image),
@@ -167,7 +184,7 @@ public class UserServiceImpl implements IUserService {
 
         EditProfileRequest editProfileRequest = new EditProfileRequest()
                 .setProfileImage(profileImage);
-        editUserProfile(userId, editProfileRequest);
+        editUserProfile(editProfileRequest, requestMetaInfo);
     }
 
     @Override
@@ -176,8 +193,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserDto queryUserByUserId(String userId) {
-        User user = userRepository.queryUserByUserId(userId);
+    public UserDto queryUserByUserId(String userId, RequestMetaInfo requestMetaInfo) {
+        User user = userRepository.queryUserByUserId(userId, requestMetaInfo.getUserId());
         userRepository.incrementViews(
                 user.getUserId(),
                 user.getVersion()
@@ -198,9 +215,9 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<UserDto> queryUser(QueryUserRequest request) {
+    public List<UserDto> queryUser(QueryUserRequest request, RequestMetaInfo requestMetaInfo) {
         QueryUserParam param = new QueryUserParam().setKeyword(request.getKeyword());
-        List<User> userList = userRepository.queryUser(param);
+        List<User> userList = userRepository.queryUser(param, requestMetaInfo.getUserId());
 
         return userList
                 .stream()
@@ -220,24 +237,24 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public <T> List<T> queryUserStarList(String userId, StarTargetType targetType, Class<T> returnClass) {
-        List<Integer> idList = starRepository.queryTargetIdList(targetType.getCode(), userId);
+    public <T> List<T> queryUserStarList(StarTargetType targetType, RequestMetaInfo requestMetaInfo, Class<T> returnClass) {
+        List<Integer> idList = starRepository.queryTargetIdList(targetType.getCode(), requestMetaInfo.getUserId());
         switch (Objects.requireNonNull(targetType)) {
             case PROJECT:
-                List<QueryProjectDto> projectDtoList =
+                List<QueryProjectResponseDto> projectDtoList =
                         idList.stream().map(
-                                x -> projectService.queryProjectById(x)
+                                x -> projectService.queryProjectById(x, requestMetaInfo)
                         ).collect(Collectors.toList());
                 return (List<T>) projectDtoList;
             case POST:
-                List<QueryPostDto> postDtoList =
+                List<QueryPostResponseDto> postDtoList =
                         idList.stream().map(
-                                x -> postService.queryPostById(x)
+                                x -> postService.queryPostById(x, requestMetaInfo)
                         ).collect(Collectors.toList());
                 return (List<T>) postDtoList;
             case COMMENT:
-                List<QueryCommentDto> commentDtoList = idList.stream().map(
-                        x -> commentService.queryCommentById(x)
+                List<QueryCommentResponseDto> commentDtoList = idList.stream().map(
+                        x -> commentService.queryCommentById(x, requestMetaInfo)
                 ).collect(Collectors.toList());
                 return (List<T>) commentDtoList;
             default:
@@ -248,21 +265,42 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    public UserDto internalQueryUserByUserId(String userId) {
+        User user = userRepository.internalQueryUserByUserId(userId);
+        userRepository.incrementViews(
+                user.getUserId(),
+                user.getVersion()
+        );
+
+        UserDto userDto = new UserDto()
+                .setUserId(user.getUserId())
+                .setStatus(user.getStatus())
+                .setRole(user.getRole())
+                .setDescription(user.getDescription())
+                .setProfileImage(user.getProfileImage())
+                .setViews(user.getViews())
+                .setFollowers(user.getFollowers())
+                .setFollowings(user.getFollowings())
+                .setDbCreateTime(user.getDbCreateTime())
+                .setDbModifyTime(user.getDbModifyTime());
+        return userDto;
+    }
+
     @Override
     public List<UserDto> queryFollowerList(String userId) {
         List<String> userIdList = followRepository.queryFollowerIdList(userId);
-        return userIdList.stream().map(this::queryUserByUserId).toList();
+        return userIdList.stream().map(this::internalQueryUserByUserId).toList();
     }
 
     @Override
     public List<UserDto> queryFollowingList(String userId) {
         List<String> userIdList = followRepository.queryFollowingIdList(userId);
-        return userIdList.stream().map(this::queryUserByUserId).toList();
+        return userIdList.stream().map(this::internalQueryUserByUserId).toList();
     }
 
     @Override
     public List<UserDto> queryPendingList(String userId) {
         List<String> userIdList = followRepository.queryPendingIdList(userId);
-        return userIdList.stream().map(this::queryUserByUserId).toList();
+        return userIdList.stream().map(this::internalQueryUserByUserId).toList();
     }
 }

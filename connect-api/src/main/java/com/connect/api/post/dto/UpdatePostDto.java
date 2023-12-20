@@ -14,5 +14,5 @@ public class UpdatePostDto {
 
     private Long referenceId;
 
-    private String updatedUser;
+    private String tags;
 }

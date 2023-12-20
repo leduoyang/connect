@@ -1,9 +1,13 @@
 package com.connect.web.controller.user;
 
 import com.connect.api.comment.dto.QueryCommentDto;
+import com.connect.api.comment.dto.QueryCommentResponseDto;
 import com.connect.api.common.APIResponse;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.post.dto.QueryPostDto;
+import com.connect.api.post.dto.QueryPostResponseDto;
 import com.connect.api.project.dto.QueryProjectDto;
+import com.connect.api.project.dto.QueryProjectResponseDto;
 import com.connect.api.user.IUserApi;
 import com.connect.api.user.dto.UserDto;
 import com.connect.api.user.request.*;
@@ -105,8 +109,11 @@ public class UserController implements IUserApi {
             @RequestBody EditUserRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
-        userService.editUser(authentication.getName(), request);
+        userService.editUser(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
@@ -116,6 +123,10 @@ public class UserController implements IUserApi {
             @RequestBody EditProfileRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
         if (!authentication.getName().equals(userId) &&
                 !authentication.getAuthorities()
                         .stream()
@@ -127,7 +138,7 @@ public class UserController implements IUserApi {
             );
         }
 
-        userService.editUserProfile(authentication.getName(), request);
+        userService.editUserProfile(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
@@ -154,7 +165,11 @@ public class UserController implements IUserApi {
     @Override
     public APIResponse<Void> uploadProfileImage(@RequestParam("file") MultipartFile profileImage) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        userService.editProfileImage(authentication.getName(), profileImage);
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        userService.editProfileImage(profileImage, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }
@@ -162,7 +177,7 @@ public class UserController implements IUserApi {
     @Override
     public APIResponse<QueryUserResponse> queryPersonalInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDto userDto = userService.queryUserByUserId(authentication.getName());
+        UserDto userDto = userService.internalQueryUserByUserId(authentication.getName());
         List<UserDto> userDtoList = new ArrayList<>();
         userDtoList.add(userDto);
 
@@ -175,7 +190,12 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<QueryUserResponse> queryUser(String userId) {
-        UserDto userDto = userService.queryUserByUserId(userId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        UserDto userDto = userService.queryUserByUserId(userId, requestMetaInfo);
         List<UserDto> userDtoList = new ArrayList<>();
         userDtoList.add(userDto);
 
@@ -190,7 +210,12 @@ public class UserController implements IUserApi {
     public APIResponse<QueryUserResponse> queryUserWithFilter(
             @Validated QueryUserRequest request
     ) {
-        List<UserDto> userDtoList = userService.queryUser(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        List<UserDto> userDtoList = userService.queryUser(request, requestMetaInfo);
 
         QueryUserResponse response = new QueryUserResponse()
                 .setItems(userDtoList)
@@ -201,13 +226,16 @@ public class UserController implements IUserApi {
     @Override
     public APIResponse<QueryStarListResponse> queryPersonalStarList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = authentication.getName();
-        List<QueryProjectDto> projectDtoList =
-                userService.queryUserStarList(userId, StarTargetType.PROJECT, QueryProjectDto.class);
-        List<QueryPostDto> postDtoList =
-                userService.queryUserStarList(userId, StarTargetType.POST, QueryPostDto.class);
-        List<QueryCommentDto> commentDtoList =
-                userService.queryUserStarList(userId, StarTargetType.COMMENT, QueryCommentDto.class);
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        List<QueryProjectResponseDto> projectDtoList =
+                userService.queryUserStarList(StarTargetType.PROJECT, requestMetaInfo, QueryProjectResponseDto.class);
+        List<QueryPostResponseDto> postDtoList =
+                userService.queryUserStarList(StarTargetType.POST, requestMetaInfo, QueryPostResponseDto.class);
+        List<QueryCommentResponseDto> commentDtoList =
+                userService.queryUserStarList(StarTargetType.COMMENT, requestMetaInfo, QueryCommentResponseDto.class);
 
         QueryStarListResponse response = new QueryStarListResponse()
                 .setProjects(projectDtoList)
@@ -244,7 +272,7 @@ public class UserController implements IUserApi {
     @Override
     public APIResponse<QueryFollowerListResponse> queryPersonalPendingList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDto userDto = userService.queryUserByUserId(authentication.getName());
+        UserDto userDto = userService.internalQueryUserByUserId(authentication.getName());
         if (userDto.getStatus() != UserStatus.SEMI.getCode()) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION,

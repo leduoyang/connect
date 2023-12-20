@@ -26,24 +26,27 @@ public class CommentRepositoryImpl implements ICommentRepository {
         this.commentDao = commentDao;
     }
 
-    public Comment queryCommentById(long id) {
-        return commentDao.queryCommentById(id);
+    public Comment queryCommentById(long id, String userId) {
+        return commentDao.queryCommentById(id, userId);
     }
 
-    public List<Comment> queryComment(QueryCommentParam param) {
+    public List<Comment> queryComment(QueryCommentParam param, String userId) {
         return commentDao.queryComment(
                 param.getPostId(),
                 param.getUserId(),
                 param.getKeyword(),
-                param.getTags()
+                param.getTags(),
+                userId
         );
     }
 
-    public void createComment(Comment comment) {
+    public long createComment(Comment comment) {
         int affected = commentDao.createComment(comment);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.COMMENT_CREATE_EXCEPTION);
         }
+
+        return comment.getId();
     }
 
     public void updateComment(Comment comment) {

@@ -66,21 +66,30 @@
     </delete>
 
     <select id="queryPostById" resultMap="postResultMap">
-        SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time,
+        db_modify_time
 
-        FROM post WHERE id = #{id} AND status != 3
+        FROM post
+        WHERE id = #{id}
+        AND (
+        status = 0
+        OR (status = 1
+        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (status != 3 AND created_user = #{userId} )
+        )
     </select>
 
     <select id="queryPost" resultMap="postResultMap">
-        SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time, db_modify_time
+        SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time,
+        db_modify_time
 
         FROM post
         WHERE 1=1
         <if test="postId != null">
             AND id = #{postId}
         </if>
-        <if test="userId != null and userId != ''">
-            AND created_user = #{userId}
+        <if test="createdUserId != null and createdUserId != ''">
+            AND created_user = #{createdUserId}
         </if>
         <if test="keyword != null and keyword != ''">
             AND content LIKE CONCAT('%', #{keyword}, '%')
@@ -88,7 +97,12 @@
         <if test="tags != null and tags != ''">
             AND find_in_set(#{tags}, tags) &gt; 0
         </if>
-        AND status != 3
+        AND (
+        status = 0
+        OR (status = 1
+        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (status != 3 AND created_user = #{userId} )
+        )
         ORDER BY db_modify_time DESC, db_create_time DESC
     </select>
 

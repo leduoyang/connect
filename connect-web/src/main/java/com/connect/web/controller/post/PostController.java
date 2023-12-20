@@ -1,15 +1,18 @@
 package com.connect.web.controller.post;
 
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.post.IPostApi;
-import com.connect.api.post.dto.CreatePostDto;
-import com.connect.api.post.dto.DeletePostDto;
-import com.connect.api.post.dto.QueryPostDto;
-import com.connect.api.post.dto.UpdatePostDto;
+import com.connect.api.post.dto.*;
 import com.connect.api.post.response.QueryPostResponse;
 import com.connect.api.common.APIResponse;
 import com.connect.api.post.request.CreatePostRequest;
 import com.connect.api.post.request.QueryPostRequest;
 import com.connect.api.post.request.UpdatePostRequest;
+import com.connect.common.enums.FollowStatus;
+import com.connect.common.enums.PostStatus;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
+import com.connect.core.service.follow.IFollowService;
 import com.connect.core.service.post.IPostService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,20 +32,34 @@ import java.util.List;
 public class PostController implements IPostApi {
     private final IPostService postService;
 
-    public PostController(IPostService postService) {
+    private IFollowService followService;
+
+    public PostController(IPostService postService, IFollowService followService) {
         this.postService = postService;
+        this.followService = followService;
     }
 
     @Override
     public APIResponse<QueryPostResponse> queryPost(Long postId) {
-        QueryPostDto postDto = postService.queryPostById(postId);
-        List<QueryPostDto> postDtoList = new ArrayList<>();
-        postDtoList.add(postDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        QueryPostResponseDto postResponseDto = postService.queryPostById(postId, requestMetaInfo);
+        if (postResponseDto == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    "target post not found or not authorized to retrieve"
+            );
+        }
+
+        List<QueryPostResponseDto> postDtoList = new ArrayList<>();
+        postDtoList.add(postResponseDto);
 
         QueryPostResponse response = new QueryPostResponse()
                 .setItems(postDtoList)
                 .setTotal(postDtoList.size());
-
         return APIResponse.getOKJsonResult(response);
     }
 
@@ -50,27 +67,49 @@ public class PostController implements IPostApi {
     public APIResponse<QueryPostResponse> queryPostWithFilter(
             QueryPostRequest request
     ) {
-        List<QueryPostDto> postDtoList = postService.queryPost(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        QueryPostDto postDto = new QueryPostDto()
+                .setPostId(request.getPostId())
+                .setKeyword(request.getKeyword())
+                .setUserId(request.getUserId())
+                .setTags(request.getTags())
+                .setPageSize(request.getPageSize())
+                .setPageIndex(request.getPageIndex());
+
+        List<QueryPostResponseDto> postResponseDto = postService.queryPost(postDto, requestMetaInfo);
 
         QueryPostResponse response = new QueryPostResponse()
-                .setItems(postDtoList)
-                .setTotal(postDtoList.size());
+                .setItems(postResponseDto)
+                .setTotal(postResponseDto.size());
         return APIResponse.getOKJsonResult(response);
     }
 
     @Override
-    public APIResponse<Void> createPost(
+    public APIResponse<Long> createPost(
             @RequestBody CreatePostRequest request
     ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
         CreatePostDto createPostDto = new CreatePostDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, createPostDto);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        createPostDto.setCreatedUser(authentication.getName());
 
-        postService.createPost(createPostDto);
+        if (request.getContent() == null && request.getReferenceId() == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "Invalid payload (post content and referenceId can not both be absent)"
+            );
+        }
+        Long id = postService.createPost(createPostDto, requestMetaInfo);
 
-        return APIResponse.getOKJsonResult(null);
+        return APIResponse.getOKJsonResult(id);
     }
 
     @Override
@@ -78,14 +117,23 @@ public class PostController implements IPostApi {
             @PathVariable Long postId,
             @RequestBody UpdatePostRequest request
     ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
         UpdatePostDto updatePostDto = new UpdatePostDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, updatePostDto);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        updatePostDto.setUpdatedUser(authentication.getName());
         updatePostDto.setId(postId);
 
-        postService.updatePost(updatePostDto);
+        if (request.getContent() != null && request.getContent().equals("")) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "Invalid payload (post content can not be blank)"
+            );
+        }
+        postService.updatePost(updatePostDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }
@@ -95,11 +143,13 @@ public class PostController implements IPostApi {
             @PathVariable Long postId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
         DeletePostDto deletePostDto = new DeletePostDto()
-                .setId(postId)
-                .setUpdatedUser(authentication.getName());
-        postService.deletePost(deletePostDto);
+                .setId(postId);
+        postService.deletePost(deletePostDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }

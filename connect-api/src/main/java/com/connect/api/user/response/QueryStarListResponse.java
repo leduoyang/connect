@@ -1,8 +1,8 @@
 package com.connect.api.user.response;
 
-import com.connect.api.comment.dto.QueryCommentDto;
-import com.connect.api.post.dto.QueryPostDto;
-import com.connect.api.project.dto.QueryProjectDto;
+import com.connect.api.comment.dto.QueryCommentResponseDto;
+import com.connect.api.post.dto.QueryPostResponseDto;
+import com.connect.api.project.dto.QueryProjectResponseDto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -11,11 +11,11 @@ import java.util.List;
 @Accessors(chain = true)
 @Data
 public class QueryStarListResponse {
-    private List<QueryPostDto> posts;
+    private List<QueryPostResponseDto> posts;
 
-    private List<QueryProjectDto> projects;
+    private List<QueryProjectResponseDto> projects;
 
-    private List<QueryCommentDto> comments;
+    private List<QueryCommentResponseDto> comments;
 
     private int totalPosts = 0;
 

@@ -7,6 +7,4 @@ import lombok.experimental.Accessors;
 @Data
 public class DeleteCommentDto {
     private Long id;
-
-    private String updatedUser;
 }

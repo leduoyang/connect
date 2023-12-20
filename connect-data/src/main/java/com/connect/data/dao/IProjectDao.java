@@ -15,9 +15,9 @@ public interface IProjectDao {
 
     int deleteProject(long id, String userId);
 
-    Project queryProjectById(long id);
+    Project queryProjectById(long id, String userId);
 
-    List<Project> queryProject(Long projectId, String userId, String keyword, String tags);
+    List<Project> queryProject(Long projectId, String createdUserId, String keyword, String tags, String userId);
 
     boolean projectExisting(long id, String userId);
 }

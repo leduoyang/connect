@@ -23,22 +23,32 @@ public class PostRepositoryImpl implements IPostRepository {
         this.postDao = postDao;
     }
 
-    public Post queryPostById(long id) {
-        return postDao.queryPostById(id);
+    public Post queryPostById(long id, String userId) {
+        log.info(String.format("param: %s, userId %s", id, userId));
+
+        return postDao.queryPostById(id, userId);
     }
 
-    public List<Post> queryPost(QueryPostParam param) {
+    public List<Post> queryPost(QueryPostParam param, String userId) {
+        log.info(String.format("param: %s, userId %s", param, userId));
+
         return postDao.queryPost(
                 param.getPostId(),
                 param.getUserId(),
                 param.getKeyword(),
-                param.getTags()
+                param.getTags(),
+                userId
         );
     }
 
-    public void createPost(Post post) {
+    public long createPost(Post post) {
+        log.info(String.format("param: %s, userId %s", post, post.getCreatedUser()));
+
         if (post.getReferenceId() != null) {
-            Post referencePost = postDao.queryPostById(post.getReferenceId());
+            Post referencePost = postDao.queryPostById(
+                    post.getReferenceId(),
+                    post.getCreatedUser()
+            );
             if (referencePost == null) {
                 throw new ConnectDataException(
                         ConnectErrorCode.POST_NOT_EXISTED_EXCEPTION,
@@ -54,9 +64,13 @@ public class PostRepositoryImpl implements IPostRepository {
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.POST_CREATE_EXCEPTION);
         }
+
+        return post.getId();
     }
 
     public void updatePost(Post post) {
+        log.info(String.format("param: %s, userId %s", post, post.getUpdatedUser()));
+
         long targetId = post.getId();
         String userId = post.getUpdatedUser();
         boolean existed = postDao.postExisting(targetId, userId);
@@ -75,19 +89,23 @@ public class PostRepositoryImpl implements IPostRepository {
 
     public void incrementViews(long id, int version) {
         int affected = postDao.incrementViews(id, version);
+
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "update viewCounts failed");
+            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "increase views failed");
         }
     }
 
     public void refreshStars(long id, int version, int stars) {
         int affected = postDao.refreshStars(id, version, stars);
+
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "update likesCount failed");
+            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "refresh stars failed");
         }
     }
 
     public void deletePost(Post post) {
+        log.info(String.format("param: %s, userId %s", post, post.getUpdatedUser()));
+
         long targetId = post.getId();
         String userId = post.getUpdatedUser();
         boolean existed = postDao.postExisting(targetId, userId);
@@ -100,7 +118,7 @@ public class PostRepositoryImpl implements IPostRepository {
 
         int affected = postDao.deletePost(targetId, userId);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION);
+            throw new ConnectDataException(ConnectErrorCode.POST_DELETE_EXCEPTION);
         }
     }
 }

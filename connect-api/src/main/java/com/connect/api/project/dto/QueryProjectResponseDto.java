@@ -1,4 +1,4 @@
-package com.connect.data.entity;
+package com.connect.api.project.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -7,22 +7,22 @@ import java.util.Date;
 
 @Accessors(chain = true)
 @Data
-public class Post {
+public class QueryProjectResponseDto {
     private Long id;
+
+    private String title;
+
+    private String description;
 
     private Integer status;
 
-    private String content;
-
-    private Long referenceId;
-
     private String tags;
+
+    private Integer boosted;
 
     private Integer stars;
 
     private Integer views;
-
-    private Integer version;
 
     private String createdUser;
 

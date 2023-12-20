@@ -17,6 +17,4 @@ public class UpdateProjectDto {
     private String tags;
 
     private Integer boosted;
-
-    private String updatedUser;
 }

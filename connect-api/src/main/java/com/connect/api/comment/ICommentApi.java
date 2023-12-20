@@ -22,7 +22,7 @@ public interface ICommentApi {
     );
 
     @PostMapping(value = "/comment")
-    APIResponse<Void> createComment(
+    APIResponse<Long> createComment(
             @Validated @RequestBody CreateCommentRequest request
     );
 

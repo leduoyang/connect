@@ -1,7 +1,6 @@
 package com.connect.core.service.follow.iml;
 
 import com.connect.api.follow.dto.FollowDto;
-import com.connect.api.follow.dto.UnFollowDto;
 import com.connect.common.enums.FollowStatus;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
@@ -31,13 +30,13 @@ public class FollowServiceImpl implements IFollowService {
 
     @Override
     public void follow(FollowDto request) {
-        if (userRepository.queryUserByUserId(request.getFollowerId()) == null) {
+        if (userRepository.internalQueryUserByUserId(request.getFollowerId()) == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
                     "follower not existed: " + request.getFollowingId()
             );
         }
-        User targetUser = userRepository.queryUserByUserId(request.getFollowingId());
+        User targetUser = userRepository.internalQueryUserByUserId(request.getFollowingId());
         if (targetUser == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -153,20 +152,15 @@ public class FollowServiceImpl implements IFollowService {
 
     @Override
     public void approveAll(FollowDto request) {
-        String followingId = request.getFollowingId();
-
-        List<String> pendingList = followRepository.queryPendingIdList(followingId);
-        if (pendingList == null || pendingList.size() == 0) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
-                    String.format("nothing to approve for user %s", followingId)
-            );
-        }
-
         Follow follow = new Follow()
                 .setFollowingId(request.getFollowingId())
                 .setStatus(FollowStatus.APPROVED.getCode());
         followRepository.updateFollow(follow);
+    }
+
+    @Override
+    public List<String> queryPendingIdList(String followingId) {
+        return followRepository.queryPendingIdList(followingId);
     }
 
     private void updateTargetStatus(Follow follow) {
@@ -184,7 +178,7 @@ public class FollowServiceImpl implements IFollowService {
 
     private void updateFollowingCount(String followerId) {
         int followings = followRepository.countFollowing(followerId);
-        User user = userRepository.queryUserByUserId(followerId);
+        User user = userRepository.internalQueryUserByUserId(followerId);
         user.setFollowings(followings);
         userRepository.refreshFollowings(
                 user.getUserId(),
@@ -195,7 +189,7 @@ public class FollowServiceImpl implements IFollowService {
 
     private void updateFollowerCount(String followingId) {
         int followers = followRepository.countFollower(followingId);
-        User user = userRepository.queryUserByUserId(followingId);
+        User user = userRepository.internalQueryUserByUserId(followingId);
         user.setFollowings(followers);
         userRepository.refreshFollowers(
                 user.getUserId(),

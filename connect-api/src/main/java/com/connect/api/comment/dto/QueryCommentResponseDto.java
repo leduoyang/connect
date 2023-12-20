@@ -1,4 +1,4 @@
-package com.connect.data.entity;
+package com.connect.api.comment.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -7,22 +7,18 @@ import java.util.Date;
 
 @Accessors(chain = true)
 @Data
-public class Post {
+public class QueryCommentResponseDto {
     private Long id;
 
     private Integer status;
 
+    private Long postId;
+
     private String content;
-
-    private Long referenceId;
-
-    private String tags;
 
     private Integer stars;
 
     private Integer views;
-
-    private Integer version;
 
     private String createdUser;
 

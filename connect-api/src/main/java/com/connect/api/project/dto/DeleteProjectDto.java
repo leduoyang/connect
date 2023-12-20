@@ -7,6 +7,4 @@ import lombok.experimental.Accessors;
 @Data
 public class DeleteProjectDto {
     private Long id;
-
-    private String updatedUser;
 }

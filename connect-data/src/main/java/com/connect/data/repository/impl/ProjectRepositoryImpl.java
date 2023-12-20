@@ -23,24 +23,27 @@ public class ProjectRepositoryImpl implements IProjectRepository {
         this.projectDao = projectDao;
     }
 
-    public Project queryProjectById(long id) {
-        return projectDao.queryProjectById(id);
+    public Project queryProjectById(long id, String userId) {
+        return projectDao.queryProjectById(id, userId);
     }
 
-    public List<Project> queryProject(QueryProjectParam param) {
+    public List<Project> queryProject(QueryProjectParam param, String userId) {
         return projectDao.queryProject(
                 param.getProjectId(),
                 param.getUserId(),
                 param.getKeyword(),
-                param.getTags()
+                param.getTags(),
+                userId
         );
     }
 
-    public void createProject(Project project) {
+    public long createProject(Project project) {
         int affected = projectDao.createProject(project);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.PROJECT_CREATE_EXCEPTION);
         }
+
+        return project.getId();
     }
 
     public void updateProject(Project project) {

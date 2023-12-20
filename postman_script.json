@@ -12,93 +12,26 @@
 			"name": "connect API",
 			"item": [
 				{
-					"name": "Comment",
+					"name": "PrivacyTest",
 					"item": [
 						{
-							"name": "getComment",
+							"name": "0. testLogin with john",
 							"event": [
 								{
-									"listen": "test",
+									"listen": "prerequest",
 									"script": {
 										"exec": [
 											""
 										],
 										"type": "text/javascript"
 									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://localhost:8080/api/connect/v1/comment?userId=yangming",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"connect",
-										"v1",
-										"comment"
-									],
-									"query": [
-										{
-											"key": "userId",
-											"value": "yangming"
-										}
-									]
 								},
-								"description": "This test is to validate the response status code. This Snippet is also available on the right sidebar under `Status code: Code in 200`."
-							},
-							"response": []
-						},
-						{
-							"name": "getCommentById",
-							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"url": "http://localhost:8080/api/connect/v1/comment/13",
-								"description": "This test is written to validate that response payloads returned from the server are well-formed. It uses the [Tiny Validator for JSON Schema v4](http://geraintluff.github.io/tv4/).\n\nThe Postman sandbox offers a built-in tv4 validator to simplify your assertions. Use [JSON-schema](http://json-schema.org/) [draft v4](http://json-schema.org/latest/json-schema-core.html) to validate simple values and complex objects using a rich [validation vocabulary](http://json-schema.org/latest/json-schema-validation.html) ([examples](http://json-schema.org/examples.html))."
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Post",
-					"item": [
-						{
-							"name": "addPost with referenceId",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
+											"let token = pm.response.json().data;",
+											"pm.globals.set('Authorization', token);",
 											""
 										],
 										"type": "text/javascript"
@@ -109,133 +42,13 @@
 								"method": "POST",
 								"header": [
 									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "// status default set to 0\n{\n    \"referenceId\": 1\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "http://localhost:8080/api/connect/v1/post",
-								"description": "This test is written to validate the server performed a function as expected."
-							},
-							"response": []
-						},
-						{
-							"name": "addPost with status and content",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									},
-									{
-										"key": "isRoot",
+										"key": "isroot",
 										"value": "true",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "// status default set to 0\n{\n    //\"status\": -1, // 0 - public, 1 - semi, 2- private\n    \"referenceId\": null,\n    \"content\": \"this is a content for testing adding posts\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "http://localhost:8080/api/connect/v1/post",
-								"description": "This test is written to validate the server performed a function as expected."
-							},
-							"response": []
-						},
-						{
-							"name": "updatePost",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PATCH",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									},
-									{
-										"key": "isRoot",
-										"value": "true",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "// status default set to null\n{\n    \"content\": \"test updating status\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "http://localhost:8080/api/connect/v1/post/1",
-								"description": "This test is written to validate the server performed a function as expected."
-							},
-							"response": []
-						},
-						{
-							"name": "getPost",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
 										"type": "text"
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/connect/v1/post?userId=yangming",
+									"raw": "http://localhost:8080/api/root/test/token?mockId=john_doe",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -243,225 +56,22 @@
 									"port": "8080",
 									"path": [
 										"api",
-										"connect",
-										"v1",
-										"post"
+										"root",
+										"test",
+										"token"
 									],
 									"query": [
 										{
-											"key": "userId",
-											"value": "yangming"
+											"key": "mockId",
+											"value": "john_doe"
 										}
 									]
-								},
-								"description": "This test is to validate the response status code. This Snippet is also available on the right sidebar under `Status code: Code in 200`."
+								}
 							},
 							"response": []
 						},
 						{
-							"name": "getPostById",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"url": "http://localhost:8080/api/connect/v1/post/1",
-								"description": "This test is written to validate that response payloads returned from the server are well-formed. It uses the [Tiny Validator for JSON Schema v4](http://geraintluff.github.io/tv4/).\n\nThe Postman sandbox offers a built-in tv4 validator to simplify your assertions. Use [JSON-schema](http://json-schema.org/) [draft v4](http://json-schema.org/latest/json-schema-core.html) to validate simple values and complex objects using a rich [validation vocabulary](http://json-schema.org/latest/json-schema-validation.html) ([examples](http://json-schema.org/examples.html))."
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "User",
-					"item": [
-						{
-							"name": "getPersonalFollwerList",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": "http://localhost:8080/api/connect/v1/user/me/followerList",
-								"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
-							},
-							"response": []
-						},
-						{
-							"name": "getPersonalFollowingList",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": "http://localhost:8080/api/connect/v1/user/me/followingList",
-								"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
-							},
-							"response": []
-						},
-						{
-							"name": "getPersonalPendingList",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": "http://localhost:8080/api/connect/v1/user/me/pendingList",
-								"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
-							},
-							"response": []
-						},
-						{
-							"name": "getUserByUserId",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": "http://localhost:8080/api/connect/v1/user/ROOT",
-								"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
-							},
-							"response": []
-						},
-						{
-							"name": "queryPersonalInfo",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": "http://localhost:8080/api/connect/v1/user/me",
-								"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
-							},
-							"response": []
-						},
-						{
-							"name": "editUserProfile",
+							"name": "0.5 john editUserProfile to semi public",
 							"event": [
 								{
 									"listen": "test",
@@ -490,7 +100,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "// user profile of the current token will be updated\n// status default set to null\n{\n    \"description\": \"description\",\n    \"status\": 1\n}",
+									"raw": "{\n    \"description\": \"update status to semi public\",\n    \"status\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -501,14 +111,9 @@
 								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
 							},
 							"response": []
-						}
-					]
-				},
-				{
-					"name": "Project",
-					"item": [
+						},
 						{
-							"name": "getProjectWithTags",
+							"name": "1. john add semi-public post",
 							"event": [
 								{
 									"listen": "test",
@@ -520,82 +125,37 @@
 									}
 								}
 							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
 							"request": {
-								"method": "GET",
+								"method": "POST",
 								"header": [
 									{
 										"key": "Authorization",
 										"value": "{{Authorization}}",
 										"type": "text"
+									},
+									{
+										"key": "isRoot",
+										"value": "true",
+										"type": "text",
+										"disabled": true
 									}
 								],
 								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": {
-									"raw": "http://localhost:8080/api/connect/v1/project?tags=科技",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"connect",
-										"v1",
-										"project"
-									],
-									"query": [
-										{
-											"key": "tags",
-											"value": "科技"
+									"mode": "raw",
+									"raw": "// status default set to 0\n{\n    \"status\": 1, // 0 - public, 1 - semi, 2- private\n    \"referenceId\": null,\n    \"content\": \"this is a content for testing adding posts\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
 										}
-									]
+									}
 								},
-								"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
+								"url": "http://localhost:8080/api/connect/v1/post",
+								"description": "This test is written to validate the server performed a function as expected."
 							},
 							"response": []
 						},
 						{
-							"name": "getProjectById",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": "http://localhost:8080/api/connect/v1/project/1",
-								"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
-							},
-							"response": []
-						},
-						{
-							"name": "addProject",
+							"name": "1.5 john addPost with referenceId",
 							"event": [
 								{
 									"listen": "test",
@@ -618,20 +178,1386 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "// status default set to 0\n{\n    \"title\": \"test project\",\n    \"description\": \"this is a test project\",\n    \"tags\": \"test\"\n}",
+									"raw": "{\n    \"status\": 1, // 0 - public, 1 - semi, 2- private\n    \"referenceId\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "http://localhost:8080/api/connect/v1/project",
+								"url": "http://localhost:8080/api/connect/v1/post",
 								"description": "This test is written to validate the server performed a function as expected."
 							},
 							"response": []
 						},
 						{
-							"name": "updateProject",
+							"name": "2. testLogin with Root",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let token = pm.response.json().data;",
+											"pm.globals.set('Authorization', token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "isroot",
+										"value": "true",
+										"type": "text"
+									}
+								],
+								"url": "http://localhost:8080/api/root/test/token"
+							},
+							"response": []
+						},
+						{
+							"name": "3. ROOT unfollow john",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									}
+								],
+								"url": "http://localhost:8080/api/connect/v1/unfollow/john_doe",
+								"description": "This test is written to validate the server performed a function as expected."
+							},
+							"response": []
+						},
+						{
+							"name": "4. getPost with userId = john_doe (should be empty)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/connect/v1/post?userId=john_doe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"connect",
+										"v1",
+										"post"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "john_doe"
+										}
+									]
+								},
+								"description": "This test is to validate the response status code. This Snippet is also available on the right sidebar under `Status code: Code in 200`."
+							},
+							"response": []
+						},
+						{
+							"name": "5. ROOT follow john",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/connect/v1/follow/john_doe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"connect",
+										"v1",
+										"follow",
+										"john_doe"
+									],
+									"query": [
+										{
+											"key": null,
+											"value": "",
+											"disabled": true
+										}
+									]
+								},
+								"description": "This test is written to validate the server performed a function as expected."
+							},
+							"response": []
+						},
+						{
+							"name": "6. getPost with userId = john_doe (post should be retrieved)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/connect/v1/post?userId=john_doe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"connect",
+										"v1",
+										"post"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "john_doe"
+										}
+									]
+								},
+								"description": "This test is to validate the response status code. This Snippet is also available on the right sidebar under `Status code: Code in 200`."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Entity",
+					"item": [
+						{
+							"name": "Follow",
+							"item": [
+								{
+									"name": "followExisting",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": "http://localhost:8080/api/connect/v1/isFollowing/bob_smith",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "follow",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/follow/ROOT",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"follow",
+												"ROOT"
+											],
+											"query": [
+												{
+													"key": null,
+													"value": "",
+													"disabled": true
+												}
+											]
+										},
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "unfollow",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": "http://localhost:8080/api/connect/v1/unfollow/bob_smith",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "approve",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/follow/request/approve/john_doe",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"follow",
+												"request",
+												"approve",
+												"john_doe"
+											],
+											"query": [
+												{
+													"key": null,
+													"value": "",
+													"disabled": true
+												}
+											]
+										},
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "reject",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/follow/request/reject/alice_smith",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"follow",
+												"request",
+												"reject",
+												"alice_smith"
+											],
+											"query": [
+												{
+													"key": null,
+													"value": "",
+													"disabled": true
+												}
+											]
+										},
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "remove",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/follow/request/remove/john_doe",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"follow",
+												"request",
+												"remove",
+												"john_doe"
+											],
+											"query": [
+												{
+													"key": null,
+													"value": "",
+													"disabled": true
+												}
+											]
+										},
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "approveAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/follow/request/approveAll",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"follow",
+												"request",
+												"approveAll"
+											],
+											"query": [
+												{
+													"key": null,
+													"value": "",
+													"disabled": true
+												}
+											]
+										},
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Star",
+							"item": [
+								{
+									"name": "starExisting",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/starExisting?targetId=2&targetType=1",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"starExisting"
+											],
+											"query": [
+												{
+													"key": "targetId",
+													"value": "2"
+												},
+												{
+													"key": "targetType",
+													"value": "1"
+												}
+											]
+										},
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "star",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"targetId\": 14,\n    \"targetType\": 2\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "http://localhost:8080/api/connect/v1/star",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "unstar",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"targetId\": 1,\n    \"targetType\": 0\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "http://localhost:8080/api/connect/v1/unStar",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Project",
+							"item": [
+								{
+									"name": "getProjectWithTags",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/project?tags=科技",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"project"
+											],
+											"query": [
+												{
+													"key": "tags",
+													"value": "科技"
+												}
+											]
+										},
+										"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
+									},
+									"response": []
+								},
+								{
+									"name": "getProjectById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": "http://localhost:8080/api/connect/v1/project/1",
+										"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
+									},
+									"response": []
+								},
+								{
+									"name": "addProject",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "// status default set to 0\n{\n    \"title\": \"test project\",\n    \"description\": \"this is a test project\",\n    \"tags\": \"test\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "http://localhost:8080/api/connect/v1/project",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "updateProject",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											},
+											{
+												"key": "isRoot",
+												"value": "true",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"title\": \"test update project\",\n    \"description\": \"this is a project for testing update\",\n    \"tags\": \"test,updated\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "http://localhost:8080/api/connect/v1/project/38",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "User",
+							"item": [
+								{
+									"name": "getPersonalFollwerList",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": "http://localhost:8080/api/connect/v1/user/me/followerList",
+										"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
+									},
+									"response": []
+								},
+								{
+									"name": "getPersonalFollowingList",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": "http://localhost:8080/api/connect/v1/user/me/followingList",
+										"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
+									},
+									"response": []
+								},
+								{
+									"name": "getPersonalPendingList",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": "http://localhost:8080/api/connect/v1/user/me/pendingList",
+										"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
+									},
+									"response": []
+								},
+								{
+									"name": "getUserByUserId",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": "http://localhost:8080/api/connect/v1/user/ROOT",
+										"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
+									},
+									"response": []
+								},
+								{
+									"name": "queryPersonalInfo",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": "http://localhost:8080/api/connect/v1/user/me",
+										"description": "This test checks if it is possible to inject malicious strings as a request parameter. If your server is not handling user input properly, these strings can be interpreted by your server as SQL commands that result in leaking sensitive information or general mayhem."
+									},
+									"response": []
+								},
+								{
+									"name": "editUserProfile",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											},
+											{
+												"key": "",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "// user profile of the current token will be updated\n// status default set to null\n{\n    \"description\": \"description\",\n    \"status\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+										"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Post",
+							"item": [
+								{
+									"name": "addPost with referenceId",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "// status default set to 0\n{\n    \"referenceId\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "http://localhost:8080/api/connect/v1/post",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "addPost with status and content",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											},
+											{
+												"key": "isRoot",
+												"value": "true",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "// status default set to 0\n{\n    \"status\": 1, // 0 - public, 1 - semi, 2- private\n    \"referenceId\": null,\n    \"content\": \"this is a content for testing adding posts\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "http://localhost:8080/api/connect/v1/post",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "updatePost",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											},
+											{
+												"key": "isRoot",
+												"value": "true",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "// status default set to null\n{\n    \"content\": \"test updating status\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "http://localhost:8080/api/connect/v1/post/1",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "getPost",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/post?userId=john_doe",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"post"
+											],
+											"query": [
+												{
+													"key": "userId",
+													"value": "john_doe"
+												}
+											]
+										},
+										"description": "This test is to validate the response status code. This Snippet is also available on the right sidebar under `Status code: Code in 200`."
+									},
+									"response": []
+								},
+								{
+									"name": "getPostById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": "http://localhost:8080/api/connect/v1/post/47",
+										"description": "This test is written to validate that response payloads returned from the server are well-formed. It uses the [Tiny Validator for JSON Schema v4](http://geraintluff.github.io/tv4/).\n\nThe Postman sandbox offers a built-in tv4 validator to simplify your assertions. Use [JSON-schema](http://json-schema.org/) [draft v4](http://json-schema.org/latest/json-schema-core.html) to validate simple values and complex objects using a rich [validation vocabulary](http://json-schema.org/latest/json-schema-validation.html) ([examples](http://json-schema.org/examples.html))."
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Comment",
+							"item": [
+								{
+									"name": "getComment",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/comment?userId=yangming",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"comment"
+											],
+											"query": [
+												{
+													"key": "userId",
+													"value": "yangming"
+												}
+											]
+										},
+										"description": "This test is to validate the response status code. This Snippet is also available on the right sidebar under `Status code: Code in 200`."
+									},
+									"response": []
+								},
+								{
+									"name": "getCommentById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": "http://localhost:8080/api/connect/v1/comment/13",
+										"description": "This test is written to validate that response payloads returned from the server are well-formed. It uses the [Tiny Validator for JSON Schema v4](http://geraintluff.github.io/tv4/).\n\nThe Postman sandbox offers a built-in tv4 validator to simplify your assertions. Use [JSON-schema](http://json-schema.org/) [draft v4](http://json-schema.org/latest/json-schema-core.html) to validate simple values and complex objects using a rich [validation vocabulary](http://json-schema.org/latest/json-schema-validation.html) ([examples](http://json-schema.org/examples.html))."
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "referencePostTest (for semi-public post)",
+					"item": [
+						{
+							"name": "0. testLogin with john",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let token = pm.response.json().data;",
+											"pm.globals.set('Authorization', token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "isroot",
+										"value": "true",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/root/test/token?mockId=john_doe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"root",
+										"test",
+										"token"
+									],
+									"query": [
+										{
+											"key": "mockId",
+											"value": "john_doe"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1. john editUserProfile to semi public",
 							"event": [
 								{
 									"listen": "test",
@@ -652,6 +1578,52 @@
 										"type": "text"
 									},
 									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"description\": \"update status to semi public\",\n    \"status\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
+							},
+							"response": []
+						},
+						{
+							"name": "2. john add semi-public post",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let id = pm.response.json().data;",
+											"let parsedId = parseFloat(id);",
+											"",
+											"pm.globals.set('postId', parsedId);",
+											"console.log(parsedId)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									},
+									{
 										"key": "isRoot",
 										"value": "true",
 										"type": "text",
@@ -660,25 +1632,57 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"title\": \"test update project\",\n    \"description\": \"this is a project for testing update\",\n    \"tags\": \"test,updated\"\n}",
+									"raw": "// status default set to 0\n{\n    \"status\": 1, // 0 - public, 1 - semi, 2- private\n    \"referenceId\": null,\n    \"content\": \"this is a content for testing adding posts\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "http://localhost:8080/api/connect/v1/project/38",
+								"url": "http://localhost:8080/api/connect/v1/post",
 								"description": "This test is written to validate the server performed a function as expected."
 							},
 							"response": []
-						}
-					]
-				},
-				{
-					"name": "Star",
-					"item": [
+						},
 						{
-							"name": "starExisting",
+							"name": "3. testLogin with Root",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let token = pm.response.json().data;",
+											"pm.globals.set('Authorization', token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "isroot",
+										"value": "true",
+										"type": "text"
+									}
+								],
+								"url": "http://localhost:8080/api/root/test/token"
+							},
+							"response": []
+						},
+						{
+							"name": "4. ROOT unfollow john",
 							"event": [
 								{
 									"listen": "test",
@@ -691,7 +1695,7 @@
 								}
 							],
 							"request": {
-								"method": "GET",
+								"method": "POST",
 								"header": [
 									{
 										"key": "Authorization",
@@ -699,36 +1703,13 @@
 										"type": "text"
 									}
 								],
-								"url": {
-									"raw": "http://localhost:8080/api/connect/v1/starExisting?targetId=2&targetType=1",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"connect",
-										"v1",
-										"starExisting"
-									],
-									"query": [
-										{
-											"key": "targetId",
-											"value": "2"
-										},
-										{
-											"key": "targetType",
-											"value": "1"
-										}
-									]
-								},
+								"url": "http://localhost:8080/api/connect/v1/unfollow/john_doe",
 								"description": "This test is written to validate the server performed a function as expected."
 							},
 							"response": []
 						},
 						{
-							"name": "star",
+							"name": "5. ROOT addPost with referenceId set to the previous post (should failed)",
 							"event": [
 								{
 									"listen": "test",
@@ -751,20 +1732,20 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"targetId\": 14,\n    \"targetType\": 2\n}",
+									"raw": "{\n    \"status\": 1, // 0 - public, 1 - semi, 2- private\n    \"referenceId\": {{postId}}\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "http://localhost:8080/api/connect/v1/star",
+								"url": "http://localhost:8080/api/connect/v1/post",
 								"description": "This test is written to validate the server performed a function as expected."
 							},
 							"response": []
 						},
 						{
-							"name": "unstar",
+							"name": "6. ROOT follow john",
 							"event": [
 								{
 									"listen": "test",
@@ -785,27 +1766,209 @@
 										"type": "text"
 									}
 								],
+								"url": {
+									"raw": "http://localhost:8080/api/connect/v1/follow/john_doe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"connect",
+										"v1",
+										"follow",
+										"john_doe"
+									],
+									"query": [
+										{
+											"key": null,
+											"value": "",
+											"disabled": true
+										}
+									]
+								},
+								"description": "This test is written to validate the server performed a function as expected."
+							},
+							"response": []
+						},
+						{
+							"name": "7. testLogin with john",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let token = pm.response.json().data;",
+											"pm.globals.set('Authorization', token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "isroot",
+										"value": "true",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/root/test/token?mockId=john_doe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"root",
+										"test",
+										"token"
+									],
+									"query": [
+										{
+											"key": "mockId",
+											"value": "john_doe"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "8. john editUserProfile to public (ROOT should follow john afterwards)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"targetId\": 1,\n    \"targetType\": 0\n}",
+									"raw": "{\n    \"description\": \"update status to public\",\n    \"status\": 0\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "http://localhost:8080/api/connect/v1/unStar",
+								"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
+							},
+							"response": []
+						},
+						{
+							"name": "9. testLogin with Root",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let token = pm.response.json().data;",
+											"pm.globals.set('Authorization', token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "isroot",
+										"value": "true",
+										"type": "text"
+									}
+								],
+								"url": "http://localhost:8080/api/root/test/token"
+							},
+							"response": []
+						},
+						{
+							"name": "10. ROOT addPost with referenceId set to the previous post (should passed)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let id = pm.response.json().data;",
+											"let parsedId = parseFloat(id);",
+											"",
+											"pm.globals.set('postId', parsedId);",
+											"console.log(parsedId)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{Authorization}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": 1, // 0 - public, 1 - semi, 2- private\n    \"referenceId\": {{postId}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "http://localhost:8080/api/connect/v1/post",
 								"description": "This test is written to validate the server performed a function as expected."
 							},
 							"response": []
-						}
-					]
-				},
-				{
-					"name": "Follow",
-					"item": [
+						},
 						{
-							"name": "followExisting",
+							"name": "11. getPostById of the previous post (reference post should be retrieved)",
 							"event": [
 								{
 									"listen": "test",
@@ -826,282 +1989,8 @@
 										"type": "text"
 									}
 								],
-								"url": "http://localhost:8080/api/connect/v1/isFollowing/bob_smith",
-								"description": "This test is written to validate the server performed a function as expected."
-							},
-							"response": []
-						},
-						{
-							"name": "follow",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://localhost:8080/api/connect/v1/follow/ROOT",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"connect",
-										"v1",
-										"follow",
-										"ROOT"
-									],
-									"query": [
-										{
-											"key": null,
-											"value": "",
-											"disabled": true
-										}
-									]
-								},
-								"description": "This test is written to validate the server performed a function as expected."
-							},
-							"response": []
-						},
-						{
-							"name": "unfollow",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"url": "http://localhost:8080/api/connect/v1/unfollow/bob_smith",
-								"description": "This test is written to validate the server performed a function as expected."
-							},
-							"response": []
-						},
-						{
-							"name": "approve",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://localhost:8080/api/connect/v1/follow/request/approve/john_doe",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"connect",
-										"v1",
-										"follow",
-										"request",
-										"approve",
-										"john_doe"
-									],
-									"query": [
-										{
-											"key": null,
-											"value": "",
-											"disabled": true
-										}
-									]
-								},
-								"description": "This test is written to validate the server performed a function as expected."
-							},
-							"response": []
-						},
-						{
-							"name": "reject",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://localhost:8080/api/connect/v1/follow/request/reject/alice_smith",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"connect",
-										"v1",
-										"follow",
-										"request",
-										"reject",
-										"alice_smith"
-									],
-									"query": [
-										{
-											"key": null,
-											"value": "",
-											"disabled": true
-										}
-									]
-								},
-								"description": "This test is written to validate the server performed a function as expected."
-							},
-							"response": []
-						},
-						{
-							"name": "remove",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://localhost:8080/api/connect/v1/follow/request/remove/john_doe",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"connect",
-										"v1",
-										"follow",
-										"request",
-										"remove",
-										"john_doe"
-									],
-									"query": [
-										{
-											"key": null,
-											"value": "",
-											"disabled": true
-										}
-									]
-								},
-								"description": "This test is written to validate the server performed a function as expected."
-							},
-							"response": []
-						},
-						{
-							"name": "approveAll",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{Authorization}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "http://localhost:8080/api/connect/v1/follow/request/approveAll",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"connect",
-										"v1",
-										"follow",
-										"request",
-										"approveAll"
-									],
-									"query": [
-										{
-											"key": null,
-											"value": "",
-											"disabled": true
-										}
-									]
-								},
-								"description": "This test is written to validate the server performed a function as expected."
+								"url": "http://localhost:8080/api/connect/v1/post/{{postId}}",
+								"description": "This test is to validate the response status code. This Snippet is also available on the right sidebar under `Status code: Code in 200`."
 							},
 							"response": []
 						}

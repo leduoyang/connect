@@ -1,15 +1,15 @@
 package com.connect.web.controller.comment;
 
 import com.connect.api.comment.ICommentApi;
-import com.connect.api.comment.dto.CreateCommentDto;
-import com.connect.api.comment.dto.DeleteCommentDto;
-import com.connect.api.comment.dto.QueryCommentDto;
-import com.connect.api.comment.dto.UpdateCommentDto;
+import com.connect.api.comment.dto.*;
 import com.connect.api.comment.request.CreateCommentRequest;
 import com.connect.api.comment.request.QueryCommentRequest;
 import com.connect.api.comment.request.UpdateCommentRequest;
 import com.connect.api.comment.response.QueryCommentResponse;
 import com.connect.api.common.APIResponse;
+import com.connect.api.common.RequestMetaInfo;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.comment.ICommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -33,11 +33,25 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<QueryCommentResponse> queryComment(Long commentId) {
-        QueryCommentDto commentDto = commentService.queryCommentById(commentId);
-        List<QueryCommentDto> commentDtoList = new ArrayList<>();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        QueryCommentResponseDto commentDto = commentService.queryCommentById(commentId, requestMetaInfo);
+        if (commentDto == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    "target comment not found or not authorized to retrieve"
+            );
+        }
+
+        List<QueryCommentResponseDto> commentDtoList = new ArrayList<>();
         commentDtoList.add(commentDto);
 
-        QueryCommentResponse response = new QueryCommentResponse().setItems(commentDtoList).setTotal(commentDtoList.size());
+        QueryCommentResponse response = new QueryCommentResponse()
+                .setItems(commentDtoList)
+                .setTotal(commentDtoList.size());
 
         return APIResponse.getOKJsonResult(response);
     }
@@ -46,7 +60,12 @@ public class CommentController implements ICommentApi {
     public APIResponse<QueryCommentResponse> queryCommentWithFilter(
             QueryCommentRequest request
     ) {
-        List<QueryCommentDto> commentDtoList = commentService.queryComment(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        List<QueryCommentResponseDto> commentDtoList = commentService.queryComment(request, requestMetaInfo);
 
         QueryCommentResponse response = new QueryCommentResponse()
                 .setItems(commentDtoList)
@@ -55,18 +74,21 @@ public class CommentController implements ICommentApi {
     }
 
     @Override
-    public APIResponse<Void> createComment(
+    public APIResponse<Long> createComment(
             @RequestBody CreateCommentRequest request
     ) {
         CreateCommentDto createCommentDto = new CreateCommentDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, createCommentDto);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        createCommentDto.setCreatedUser(authentication.getName());
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
-        commentService.createComment(createCommentDto);
+        Long id = commentService.createComment(createCommentDto, requestMetaInfo);
 
-        return APIResponse.getOKJsonResult(null);
+        return APIResponse.getOKJsonResult(id);
     }
 
     @Override
@@ -77,11 +99,14 @@ public class CommentController implements ICommentApi {
         UpdateCommentDto updateCommentDto = new UpdateCommentDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, updateCommentDto);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        updateCommentDto.setUpdatedUser(authentication.getName());
         updateCommentDto.setId(commentId);
 
-        commentService.updateComment(updateCommentDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        commentService.updateComment(updateCommentDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }
@@ -91,10 +116,13 @@ public class CommentController implements ICommentApi {
             @PathVariable Long commentId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
         DeleteCommentDto deleteCommentDto = new DeleteCommentDto()
-                .setId(commentId)
-                .setUpdatedUser(authentication.getName());
-        commentService.deleteComment(deleteCommentDto);
+                .setId(commentId);
+        commentService.deleteComment(deleteCommentDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }

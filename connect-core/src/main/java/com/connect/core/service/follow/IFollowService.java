@@ -4,6 +4,8 @@ import com.connect.api.follow.dto.FollowDto;
 import com.connect.api.follow.dto.UnFollowDto;
 import com.connect.common.enums.FollowStatus;
 
+import java.util.List;
+
 public interface IFollowService {
     void follow(FollowDto request);
 
@@ -18,4 +20,6 @@ public interface IFollowService {
     void remove(FollowDto request);
 
     void approveAll(FollowDto request);
+
+    List<String> queryPendingIdList(String followingId);
 }

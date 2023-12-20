@@ -1,5 +1,6 @@
 package com.connect.api.post;
 
+import com.connect.api.post.dto.QueryPostDto;
 import com.connect.api.post.response.QueryPostResponse;
 import com.connect.api.common.APIResponse;
 import com.connect.api.post.request.CreatePostRequest;
@@ -21,7 +22,7 @@ public interface IPostApi {
     );
 
     @PostMapping(value = "/post")
-    APIResponse<Void> createPost(
+    APIResponse<Long> createPost(
             @Validated @RequestBody CreatePostRequest request
     );
 

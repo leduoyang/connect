@@ -1,4 +1,4 @@
-package com.connect.data.entity;
+package com.connect.api.post.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Accessors(chain = true)
 @Data
-public class Post {
+public class QueryPostResponseDto {
     private Long id;
 
     private Integer status;
@@ -22,8 +22,6 @@ public class Post {
 
     private Integer views;
 
-    private Integer version;
-
     private String createdUser;
 
     private String updatedUser;
@@ -31,4 +29,6 @@ public class Post {
     private Date dbCreateTime;
 
     private Date dbModifyTime;
+
+    private QueryPostResponseDto referencePost;
 }

@@ -1,15 +1,16 @@
 package com.connect.web.controller.project;
 
 import com.connect.api.common.APIResponse;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.project.IProjectApi;
-import com.connect.api.project.dto.CreateProjectDto;
-import com.connect.api.project.dto.DeleteProjectDto;
-import com.connect.api.project.dto.QueryProjectDto;
-import com.connect.api.project.dto.UpdateProjectDto;
+import com.connect.api.project.dto.*;
 import com.connect.api.project.request.CreateProjectRequest;
 import com.connect.api.project.request.QueryProjectRequest;
 import com.connect.api.project.request.UpdateProjectRequest;
 import com.connect.api.project.response.QueryProjectResponse;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
+import com.connect.core.service.follow.IFollowService;
 import com.connect.core.service.project.IProjectService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,16 +30,30 @@ import java.util.List;
 public class ProjectController implements IProjectApi {
     private final IProjectService projectService;
 
-    public ProjectController(IProjectService projectService) {
+    private IFollowService followService;
+
+    public ProjectController(IProjectService projectService, IFollowService followService) {
         this.projectService = projectService;
+        this.followService = followService;
     }
 
     @Override
     public APIResponse<QueryProjectResponse> queryProject(Long projectId) {
-        QueryProjectDto projectDto = projectService.queryProjectById(projectId);
-        List<QueryProjectDto> projectDtoList = new ArrayList<>();
-        projectDtoList.add(projectDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
+        QueryProjectResponseDto projectDto = projectService.queryProjectById(projectId, requestMetaInfo);
+        if (projectDto == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                    "target project not found or not authorized to retrieve"
+            );
+        }
+
+        List<QueryProjectResponseDto> projectDtoList = new ArrayList<>();
+        projectDtoList.add(projectDto);
         QueryProjectResponse response = new QueryProjectResponse()
                 .setItems(projectDtoList)
                 .setTotal(projectDtoList.size());
@@ -50,7 +65,11 @@ public class ProjectController implements IProjectApi {
     public APIResponse<QueryProjectResponse> queryProjectWithFilter(
             QueryProjectRequest request
     ) {
-        List<QueryProjectDto> projectDtoList = projectService.queryProject(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+        List<QueryProjectResponseDto> projectDtoList = projectService.queryProject(request, requestMetaInfo);
 
         QueryProjectResponse response = new QueryProjectResponse()
                 .setItems(projectDtoList)
@@ -59,18 +78,21 @@ public class ProjectController implements IProjectApi {
     }
 
     @Override
-    public APIResponse<Void> createProject(
+    public APIResponse<Long> createProject(
             @RequestBody CreateProjectRequest request
     ) {
         CreateProjectDto createProjectDto = new CreateProjectDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, createProjectDto);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        createProjectDto.setCreatedUser(authentication.getName());
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
-        projectService.createProject(createProjectDto);
+        Long id = projectService.createProject(createProjectDto, requestMetaInfo);
 
-        return APIResponse.getOKJsonResult(null);
+        return APIResponse.getOKJsonResult(id);
     }
 
     @Override
@@ -81,11 +103,14 @@ public class ProjectController implements IProjectApi {
         UpdateProjectDto updateProjectDto = new UpdateProjectDto();
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.map(request, updateProjectDto);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        updateProjectDto.setUpdatedUser(authentication.getName());
         updateProjectDto.setId(projectId);
 
-        projectService.updateProject(updateProjectDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
+
+        projectService.updateProject(updateProjectDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }
@@ -95,11 +120,14 @@ public class ProjectController implements IProjectApi {
             @PathVariable Long projectId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(authentication.getName())
+                .setDetails(authentication.getDetails());
 
         DeleteProjectDto deleteProjectDto = new DeleteProjectDto()
-                .setId(projectId)
-                .setUpdatedUser(authentication.getName());
-        projectService.deleteProject(deleteProjectDto);
+                .setId(projectId);
+
+        projectService.deleteProject(deleteProjectDto, requestMetaInfo);
 
         return APIResponse.getOKJsonResult(null);
     }
