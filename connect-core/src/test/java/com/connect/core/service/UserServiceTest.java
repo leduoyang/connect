@@ -5,8 +5,14 @@ import com.connect.api.user.request.EditUserRequest;
 import com.connect.api.user.request.SignUpRequest;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
+import com.connect.common.util.ImageUploadUtil;
+import com.connect.core.service.comment.ICommentService;
+import com.connect.core.service.post.IPostService;
+import com.connect.core.service.project.IProjectService;
 import com.connect.core.service.user.iml.UserServiceImpl;
 import com.connect.data.entity.User;
+import com.connect.data.repository.IFollowRepository;
+import com.connect.data.repository.IStarRepository;
 import com.connect.data.repository.IUserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,7 +33,25 @@ public class UserServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @MockBean
+    private ImageUploadUtil imageUploadUtil;
+
+    @MockBean
     private IUserRepository userRepository;
+
+    @MockBean
+    private IStarRepository starRepository;
+
+    @MockBean
+    private IFollowRepository followRepository;
+
+    @MockBean
+    private IProjectService projectService;
+
+    @MockBean
+    private IPostService postService;
+
+    @MockBean
+    private ICommentService commentService;
 
     @Autowired
     private UserServiceImpl userService;

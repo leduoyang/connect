@@ -57,7 +57,7 @@ public class CommentServiceTest {
             commentService.createComment(createCommentDto, requestMetaInfo);
         });
 
-        assertEquals("Parameters error:Invalid payload (status should be between 0 and 3)", expectedException.getErrorMsg());
+        assertEquals("Parameters error:Invalid payload (status should be between 0 and 2)", expectedException.getErrorMsg());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class CommentServiceTest {
             commentService.updateComment(updateCommentDto, requestMetaInfo);
         });
 
-        assertEquals("Parameters error:Invalid payload (status should be between 0 and 3)", expectedException.getErrorMsg());
+        assertEquals("Parameters error:Invalid payload (status should be between 0 and 2)", expectedException.getErrorMsg());
     }
 
     @Test
