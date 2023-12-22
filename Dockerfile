@@ -1,5 +1,5 @@
 # Use an official Maven image with OpenJDK 17
-FROM maven:3.8.3-openjdk-17 AS builder
+FROM openjdk:17-jdk-slim AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -35,8 +35,8 @@ RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.
 # Copy the Filebeat configuration
 COPY filebeat.yml /usr/share/filebeat/filebeat.yml
 
-# Set Filebeat as the entry point
-ENTRYPOINT ["/usr/share/filebeat/filebeat", "-c", "/usr/share/filebeat/filebeat.yml"]
+# Start Filebeat in the background
+RUN nohup /usr/share/filebeat/filebeat -e -c /usr/share/filebeat/filebeat.yml &
 
 # Define the command to run the application
 CMD ["java", "-jar", "app.jar", "--spring.profiles.active=dev"]
