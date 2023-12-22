@@ -123,8 +123,7 @@ public class UserServiceImpl implements IUserService {
                 .setPassword(request.getPassword())
                 .setDescription(request.getDescription())
                 .setEmail(request.getEmail())
-                .setPhone(request.getPhone())
-                .setProfileImage(request.getProfileImage());
+                .setPhone(request.getPhone());
 
         if (request.getStatus() != null) {
             if (request.getStatus() < 0 || request.getStatus() > 3) {

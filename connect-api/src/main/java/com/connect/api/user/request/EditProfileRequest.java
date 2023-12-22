@@ -16,4 +16,6 @@ public class EditProfileRequest {
 
     @Size(max = 200)
     private String description;
+
+    private String profileImage;
 }
