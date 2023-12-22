@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Component
-public class TraceIdFilter implements OncePerRequestFilter {
+public class TraceIdFilter extends OncePerRequestFilter {
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
