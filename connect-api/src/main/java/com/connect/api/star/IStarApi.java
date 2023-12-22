@@ -17,8 +17,8 @@ public interface IStarApi {
             @Validated @RequestBody StarRequest request
     );
 
-    @PostMapping(value = "/unStar")
-    APIResponse<Void> unStar(
+    @DeleteMapping(value = "/star")
+    APIResponse<Void> removeStar(
             @Validated @RequestBody UnStarRequest request
     );
 

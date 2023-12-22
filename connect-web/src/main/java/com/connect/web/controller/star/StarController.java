@@ -38,7 +38,7 @@ public class StarController implements IStarApi {
     }
 
     @Override
-    public APIResponse<Void> unStar(UnStarRequest request) {
+    public APIResponse<Void> removeStar(UnStarRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UnStarDto unStarDto = new UnStarDto()
                 .setUserId(authentication.getName())
