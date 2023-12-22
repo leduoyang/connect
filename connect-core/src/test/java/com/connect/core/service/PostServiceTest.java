@@ -56,7 +56,7 @@ public class PostServiceTest {
             postService.createPost(createPostDto, requestMetaInfo);
         });
 
-        assertEquals("Parameters error:Invalid payload (status should be between 0 and 3)", expectedException.getErrorMsg());
+        assertEquals("Parameters error:Invalid payload (status should be between 0 and 2)", expectedException.getErrorMsg());
     }
 
     @Test
@@ -100,7 +100,7 @@ public class PostServiceTest {
             postService.updatePost(updatePostDto, requestMetaInfo);
         });
 
-        assertEquals("Parameters error:Invalid payload (status should be between 0 and 3)", expectedException.getErrorMsg());
+        assertEquals("Parameters error:Invalid payload (status should be between 0 and 2)", expectedException.getErrorMsg());
     }
 
     @Test

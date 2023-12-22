@@ -459,19 +459,23 @@ public class FollowServiceTest {
         assertEquals(FollowStatus.APPROVED.getCode(), follow.getStatus());
     }
 
-    @Test
-    public void test_approve_all_empty_pending_request_should_failed() {
-        String followingId = "followingId";
-        Mockito.when(followRepository.queryPendingIdList(followingId)).thenReturn(null);
 
-        FollowDto followDto = new FollowDto().setFollowingId(followingId);
-        ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            followService.approveAll(followDto);
-        });
-        assertEquals(
-                String.format("Follow not existed.:nothing to approve for user %s", followingId),
-                expectedException.getErrorMsg()
-        );
-    }
+    /**
+     * Update: followService.approveAll no longer check if pending list is empty
+     */
+//    @Test
+//    public void test_approve_all_empty_pending_request_should_failed() {
+//        String followingId = "followingId";
+//        Mockito.when(followRepository.queryPendingIdList(followingId)).thenReturn(null);
+//
+//        FollowDto followDto = new FollowDto().setFollowingId(followingId);
+//        ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
+//            followService.approveAll(followDto);
+//        });
+//        assertEquals(
+//                String.format("Follow not existed.:nothing to approve for user %s", followingId),
+//                expectedException.getErrorMsg()
+//        );
+//    }
 }
 

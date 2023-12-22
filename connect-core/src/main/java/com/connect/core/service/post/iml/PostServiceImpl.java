@@ -82,6 +82,13 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public long createPost(CreatePostDto request, RequestMetaInfo requestMetaInfo) {
+        if (request.getStatus() < 0 || request.getStatus() > 2) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "Invalid payload (status should be between 0 and 2)"
+            );
+        }
+
         Post post = new Post()
                 .setStatus(request.getStatus())
                 .setCreatedUser(requestMetaInfo.getUserId())
@@ -90,8 +97,8 @@ public class PostServiceImpl implements IPostService {
         if (request.getContent() != null) {
             post.setContent(request.getContent());
         }
-        if (request.getReferenceId() != null){
-            if(checkReferencePost(request.getReferenceId(), requestMetaInfo.getUserId()) == null) {
+        if (request.getReferenceId() != null) {
+            if (checkReferencePost(request.getReferenceId(), requestMetaInfo.getUserId()) == null) {
                 throw new ConnectDataException(
                         ConnectErrorCode.PARAM_EXCEPTION,
                         "Invalid payload (targetReferenceId not existed or unauthorized to retrieve)"
@@ -107,9 +114,17 @@ public class PostServiceImpl implements IPostService {
     public void updatePost(UpdatePostDto request, RequestMetaInfo requestMetaInfo) {
         Post post = new Post()
                 .setId(request.getId())
-                .setStatus(request.getStatus())
                 .setUpdatedUser(requestMetaInfo.getUserId());
 
+        if (request.getStatus() != null) {
+            if (request.getStatus() < 0 || request.getStatus() > 2) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.PARAM_EXCEPTION,
+                        "Invalid payload (status should be between 0 and 2)"
+                );
+            }
+            post.setStatus(request.getStatus());
+        }
         if (request.getReferenceId() != null
                 && checkReferencePost(request.getReferenceId(), requestMetaInfo.getUserId()) != null
         ) {

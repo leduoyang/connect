@@ -137,7 +137,7 @@ public class UserServiceImpl implements IUserService {
 
         userRepository.editUser(requestMetaInfo.getUserId(), user);
 
-        if(UserStatus.getStatus(user.getStatus()).equals(UserStatus.PUBLIC)) {
+        if (user.getStatus() != null && UserStatus.getStatus(user.getStatus()).equals(UserStatus.PUBLIC)) {
             Follow follow = new Follow()
                     .setFollowingId(requestMetaInfo.getUserId())
                     .setStatus(FollowStatus.APPROVED.getCode());
@@ -164,7 +164,7 @@ public class UserServiceImpl implements IUserService {
 
         userRepository.editUserProfile(requestMetaInfo.getUserId(), profile);
 
-        if(UserStatus.getStatus(profile.getStatus()).equals(UserStatus.PUBLIC)) {
+        if (UserStatus.getStatus(profile.getStatus()).equals(UserStatus.PUBLIC)) {
             Follow follow = new Follow()
                     .setFollowingId(requestMetaInfo.getUserId())
                     .setStatus(FollowStatus.APPROVED.getCode());
