@@ -24,7 +24,7 @@ public interface IFollowApi {
             @NotNull @PathVariable String followingId
     );
 
-    @PostMapping(value = "/follow/remove/{followerId}")
+    @DeleteMapping(value = "/follow/remove/{followerId}")
     APIResponse<Void> remove(
             @NotNull @PathVariable String followerId
     );
