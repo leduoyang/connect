@@ -25,8 +25,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(1)
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertTrue(violations.isEmpty(), "Validation should pass for a valid editUser request");
     }
@@ -38,8 +37,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(1)
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertTrue(violations.isEmpty(), "Validation should pass for a valid editUser request");
     }
@@ -52,8 +50,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(1)
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertEquals(1, violations.size(), "Validation should fail for a invalid editUser request");
     }
@@ -65,8 +62,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(1)
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertTrue(violations.isEmpty(), "Validation should pass for a valid editUser request");
     }
@@ -79,8 +75,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(1)
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertEquals(1, violations.size(), "Validation should fail for a invalid editUser request");
     }
@@ -93,8 +88,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(1)
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertEquals(1, violations.size(), "Validation should fail for a invalid editUser request");
     }
@@ -107,8 +101,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(1)
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(201))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertEquals(1, violations.size(), "Validation should fail for a invalid editUser request");
     }
@@ -120,8 +113,7 @@ public class EditUserRequestValidationTest {
                 .setPassword("1".repeat(8))
                 .setStatus(1)
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertTrue(violations.isEmpty(), "Validation should pass for a valid editUser request");
     }
@@ -134,8 +126,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(1)
                 .setEmail("1234")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertEquals(1, violations.size(), "Validation should fail for a invalid editUser request");
     }
@@ -147,8 +138,7 @@ public class EditUserRequestValidationTest {
                 .setPassword("1".repeat(8))
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertTrue(violations.isEmpty(), "Validation should pass for a valid editProfile request");
     }
@@ -161,8 +151,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(-1)
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertEquals(1, violations.size(), "Validation should fail for a invalid editProfile request");
     }
@@ -175,8 +164,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(1)
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertEquals(1, violations.size(), "Validation should fail for a invalid editProfile request");
     }
@@ -189,8 +177,7 @@ public class EditUserRequestValidationTest {
                 .setStatus(1)
                 .setEmail("1234@123.123")
                 .setDescription("1".repeat(200))
-                .setPhone("123")
-                .setProfileImage("123");
+                .setPhone("123");
         Set<ConstraintViolation<EditUserRequest>> violations = validator.validate(editUserRequest);
         assertEquals(1, violations.size(), "Validation should fail for a invalid editProfile request");
     }
