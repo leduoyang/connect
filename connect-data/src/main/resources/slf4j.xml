@@ -3,17 +3,18 @@
     <Appenders>
         <!-- Console Appender -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} [%X{traceId}] - %msg%n"/>
+            <PatternLayout
+                    pattern="%d{yyyy-HH:mm:ss.SSS} %-5level [%X{traceId}] - %class{0}.%method:%line - %msg%n"/>
         </Console>
 
         <!-- File Appender -->
         <File name="File" fileName="logs/app.log">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} [%X{traceId}] - %msg%n"/>
+            <PatternLayout
+                    pattern="%d{yyyy-HH:mm:ss.SSS} %-5level [%X{traceId}] - %class{0}.%method:%line - %msg%n"/>
         </File>
     </Appenders>
 
     <Loggers>
-        <!-- Root Logger -->
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
