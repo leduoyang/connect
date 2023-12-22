@@ -16,6 +16,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: poorguy
       SPRING_DATA_REDIS_HOST: connect-redis
       SPRING_DATA_REDIS_PASSWORD: poorguy
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: connect-kafka:9093
+#      SPRING_DATA_ELASTICSEARCH_CLUSTER_NODES: connect-elasticsearch:9200
     networks:
       - inner_network
 
@@ -42,7 +44,6 @@ services:
     volumes:
       - "./mysql8.0/my.cnf:/etc/mysql/my.cnf"
       - "./mysql8.0/data:/var/lib/mysql"
-      #      - "./mysql/conf.d:/etc/mysql/conf.d"
       - "./mysql8.0/mysql-files:/var/lib/mysql-files"
       - "./mysql8.0/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
     environment:
@@ -53,6 +54,78 @@ services:
       - "3306:3306"
     networks:
       - inner_network
+
+  connect-elasticsearch:
+    build:
+      context: elasticsearch/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: connect-elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - "./elasticsearch/init.sh:/usr/share/elasticsearch/config/init.sh"
+      - "./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
+    #    command: /bin/bash -c "chmod +x /usr/share/elasticsearch/config/init.sh && /usr/share/elasticsearch/config/init.sh"
+    environment:
+      - discovery.type=single-node
+    networks:
+      - inner_network
+
+  connect-logstash:
+    build:
+      context: logstash/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: connect-logstash
+    ports:
+      - "5044:5044"
+    depends_on:
+      - connect-elasticsearch
+    volumes:
+      - "./logstash/config:/usr/share/logstash/config"
+      - "./logstash/pipeline:/usr/share/logstash/pipeline"
+    environment:
+      - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
+    networks:
+      - inner_network
+
+  connect-kibana:
+    build:
+      context: kibana/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    container_name: connect-kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - connect-elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://connect-elasticsearch:9200
+    networks:
+      - inner_network
+
+#  connect-kafka:
+#    image: confluentinc/cp-kafka:latest
+#    container_name: connect-kafka
+#    depends_on:
+#      - connect-zookeeper
+#    ports:
+#      - "9092:9092"
+#    environment:
+#      KAFKA_ADVERTISED_LISTENERS: INSIDE://connect-kafka:9093,OUTSIDE://localhost:9092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+#      KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+#      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+#      KAFKA_ZOOKEEPER_CONNECT: connect-zookeeper:2181
+#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+#
+#  connect-zookeeper:
+#    container_name: connect-zookeeper
+#    image: wurstmeister/zookeeper:latest
+#    ports:
+#      - "2181:2181"
 
 networks:
   inner_network:

@@ -10,6 +10,7 @@ public class FilterConfig {
     @Bean
     public FilterRegistrationBean<TraceIdFilter> traceFilter() {
         FilterRegistrationBean<TraceIdFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setOrder(1);
         registrationBean.setFilter(new TraceIdFilter());
         registrationBean.addUrlPatterns("/*");
         return registrationBean;

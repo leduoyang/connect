@@ -1,5 +1,5 @@
 # Use an official Maven image with OpenJDK 17
-FROM maven:3.8.3-openjdk-17 AS builder
+FROM openjdk:17-jdk-slim AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -25,6 +25,18 @@ COPY --from=builder /app/connect-web/target/connect-web-1.0.0-SNAPSHOT.jar /app/
 
 # Expose the port that the Spring Boot application will run on
 EXPOSE 8080
+
+# Download and install Filebeat
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.15.2-linux-x86_64.tar.gz \
+    && tar xzvf filebeat-7.15.2-linux-x86_64.tar.gz \
+    && mv filebeat-7.15.2-linux-x86_64 /usr/share/filebeat \
+    && rm filebeat-7.15.2-linux-x86_64.tar.gz
+
+# Copy the Filebeat configuration
+COPY filebeat.yml /usr/share/filebeat/filebeat.yml
+
+# Start Filebeat in the background
+RUN nohup /usr/share/filebeat/filebeat -e -c /usr/share/filebeat/filebeat.yml &
 
 # Define the command to run the application
 CMD ["java", "-jar", "app.jar", "--spring.profiles.active=dev"]
