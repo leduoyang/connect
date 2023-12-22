@@ -424,7 +424,7 @@
 												"type": "text"
 											}
 										],
-										"url": "http://localhost:8080/api/connect/v1/isFollowing/bob_smith",
+										"url": "http://localhost:8080/api/connect/v1/follow/isFollowing/bob_smith",
 										"description": "This test is written to validate the server performed a function as expected."
 									},
 									"response": []
@@ -491,7 +491,7 @@
 										}
 									],
 									"request": {
-										"method": "POST",
+										"method": "DELETE",
 										"header": [
 											{
 												"key": "Authorization",
@@ -499,7 +499,7 @@
 												"type": "text"
 											}
 										],
-										"url": "http://localhost:8080/api/connect/v1/unfollow/bob_smith",
+										"url": "http://localhost:8080/api/connect/v1/follow/bob_smith",
 										"description": "This test is written to validate the server performed a function as expected."
 									},
 									"response": []
@@ -527,7 +527,7 @@
 											}
 										],
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/follow/request/approve/john_doe",
+											"raw": "http://localhost:8080/api/connect/v1/follow/approve/john_doe",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -538,7 +538,6 @@
 												"connect",
 												"v1",
 												"follow",
-												"request",
 												"approve",
 												"john_doe"
 											],
@@ -577,7 +576,7 @@
 											}
 										],
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/follow/request/reject/alice_smith",
+											"raw": "http://localhost:8080/api/connect/v1/follow/reject/alice_smith",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -588,7 +587,6 @@
 												"connect",
 												"v1",
 												"follow",
-												"request",
 												"reject",
 												"alice_smith"
 											],
@@ -627,7 +625,7 @@
 											}
 										],
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/follow/request/remove/john_doe",
+											"raw": "http://localhost:8080/api/connect/v1/follow/remove/john_doe",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -638,7 +636,6 @@
 												"connect",
 												"v1",
 												"follow",
-												"request",
 												"remove",
 												"john_doe"
 											],
@@ -677,7 +674,7 @@
 											}
 										],
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/follow/request/approveAll",
+											"raw": "http://localhost:8080/api/connect/v1/follow/approveAll",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -688,7 +685,6 @@
 												"connect",
 												"v1",
 												"follow",
-												"request",
 												"approveAll"
 											],
 											"query": [
@@ -808,7 +804,7 @@
 										}
 									],
 									"request": {
-										"method": "POST",
+										"method": "DELETE",
 										"header": [
 											{
 												"key": "Authorization",
@@ -825,7 +821,7 @@
 												}
 											}
 										},
-										"url": "http://localhost:8080/api/connect/v1/unStar",
+										"url": "http://localhost:8080/api/connect/v1/star",
 										"description": "This test is written to validate the server performed a function as expected."
 									},
 									"response": []
@@ -1695,7 +1691,7 @@
 								}
 							],
 							"request": {
-								"method": "POST",
+								"method": "DELETE",
 								"header": [
 									{
 										"key": "Authorization",
@@ -1703,7 +1699,7 @@
 										"type": "text"
 									}
 								],
-								"url": "http://localhost:8080/api/connect/v1/unfollow/john_doe",
+								"url": "http://localhost:8080/api/connect/v1/follow/john_doe",
 								"description": "This test is written to validate the server performed a function as expected."
 							},
 							"response": []
@@ -2113,7 +2109,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"leduoyoung@gmail.com\",\n    \"code\": \"abacc\"\n}",
+							"raw": "{\n    \"email\": \"leduoyoung@gmail.com\",\n    \"code\": \"c2474\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
