@@ -1,27 +1,25 @@
 version: '3'
 services:
-  #  backend-app:
-  #    build:
-  #      context: ..
-  #      dockerfile: Dockerfile
-  #    container_name: connect-backend
-  #    ports:
-  #      - "8080:8080"
-  #    depends_on:
-  #      - connect-mysql
-  #      - connect-redis
-  #      - connect-kafka
-  #      - connect-elasticsearch
-  #    environment:
-  #      SPRING_DATASOURCE_URL: jdbc:mysql://connect-mysql:3306/connect_base
-  #      SPRING_DATASOURCE_USERNAME: root
-  #      SPRING_DATASOURCE_PASSWORD: poorguy
-  #      SPRING_DATA_REDIS_HOST: connect-redis
-  #      SPRING_DATA_REDIS_PASSWORD: poorguy
-  #      SPRING_KAFKA_BOOTSTRAP_SERVERS: connect-kafka:9093
-  #      SPRING_DATA_ELASTICSEARCH_CLUSTER_NODES: connect-elasticsearch:9200
-  #    networks:
-  #      - inner_network
+  backend-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: connect-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - connect-mysql
+      - connect-redis
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://connect-mysql:3306/connect_base
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: poorguy
+      SPRING_DATA_REDIS_HOST: connect-redis
+      SPRING_DATA_REDIS_PASSWORD: poorguy
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: connect-kafka:9093
+#      SPRING_DATA_ELASTICSEARCH_CLUSTER_NODES: connect-elasticsearch:9200
+    networks:
+      - inner_network
 
   connect-redis:
     image: redis:6.0.8
