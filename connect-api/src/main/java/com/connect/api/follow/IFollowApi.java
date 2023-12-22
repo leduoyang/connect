@@ -14,31 +14,31 @@ public interface IFollowApi {
             @NotNull @PathVariable String followingId
     );
 
-    @PostMapping(value = "/unfollow/{followingId}")
+    @DeleteMapping(value = "/follow/{followingId}")
     APIResponse<Void> unfollow(
             @NotNull @PathVariable String followingId
     );
 
-    @GetMapping(value = "/isFollowing/{followingId}")
+    @GetMapping(value = "/follow/isFollowing/{followingId}")
     APIResponse<Map<String, Boolean>> isFollowing(
             @NotNull @PathVariable String followingId
     );
 
-    @PostMapping(value = "/follow/request/approve/{followerId}")
-    APIResponse<Void> approve(
-            @NotNull @PathVariable String followerId
-    );
-
-    @PostMapping(value = "/follow/request/reject/{followerId}")
-    APIResponse<Void> reject(
-            @NotNull @PathVariable String followerId
-    );
-
-    @PostMapping(value = "/follow/request/remove/{followerId}")
+    @PostMapping(value = "/follow/remove/{followerId}")
     APIResponse<Void> remove(
             @NotNull @PathVariable String followerId
     );
 
-    @PostMapping(value = "/follow/request/approveAll")
+    @PostMapping(value = "/follow/approve/{followerId}")
+    APIResponse<Void> approve(
+            @NotNull @PathVariable String followerId
+    );
+
+    @PostMapping(value = "/follow/reject/{followerId}")
+    APIResponse<Void> reject(
+            @NotNull @PathVariable String followerId
+    );
+
+    @PostMapping(value = "/follow/approveAll")
     APIResponse<Void> approveAll();
 }
