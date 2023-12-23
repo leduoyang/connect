@@ -33,12 +33,8 @@ RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.
     && mv filebeat-7.15.2-linux-arm64 /usr/share/filebeat \
     && rm filebeat-7.15.2-linux-arm64.tar.gz
 
-# Copy the Filebeat configuration
 COPY filebeat.yml /usr/share/filebeat/filebeat.yml
+COPY start.sh /usr/share/start.sh
+RUN chmod +x /usr/share/start.sh
 
-# Start Filebeat in the background
-RUN mkdir -p /usr/share/filebeat/logs && \
-    nohup /usr/share/filebeat/filebeat -e -c /usr/share/filebeat/filebeat.yml >> /usr/share/filebeat/logs/filebeat.log 2>&1 &
-
-# Define the command to run the application
-CMD ["java", "-jar", "app.jar", "--spring.profiles.active=dev"]
+CMD ["/usr/share/start.sh"]
