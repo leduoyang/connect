@@ -1,0 +1,34 @@
+name: CI docker compose testing
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Compose
+      run: |
+        sudo apt-get install -y docker-compose
+
+    - name: Build and run Docker Compose
+      run: |
+        cd docker-compose && docker-compose build
+        docker-compose up -d
+
+    - name: Test backend service connect-backend is up and running
+      run: |
+        docker exec connect-backend sh -c "ps aux | grep app.jar"
+
+    - name: Stop and remove containers
+      run: |
+        cd docker-compose && docker-compose down
