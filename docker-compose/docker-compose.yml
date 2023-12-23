@@ -10,6 +10,7 @@ services:
     depends_on:
       - connect-mysql
       - connect-redis
+      - connect-logstash
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://connect-mysql:3306/connect_base
       SPRING_DATASOURCE_USERNAME: root
@@ -71,7 +72,8 @@ services:
     environment:
       - discovery.type=single-node
     networks:
-      - inner_network
+      - elk
+    restart: unless-stopped
 
   connect-logstash:
     build:
@@ -90,6 +92,8 @@ services:
       - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
     networks:
       - inner_network
+      - elk
+    restart: unless-stopped
 
   connect-kibana:
     build:
@@ -104,7 +108,8 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://connect-elasticsearch:9200
     networks:
-      - inner_network
+      - elk
+    restart: unless-stopped
 
 #  connect-kafka:
 #    image: confluentinc/cp-kafka:latest
@@ -128,4 +133,6 @@ services:
 #      - "2181:2181"
 
 networks:
+  elk:
+    driver: bridge
   inner_network:
