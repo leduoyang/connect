@@ -22,12 +22,12 @@ jobs:
 
     - name: Build and run Docker Compose
       run: |
-        docker-compose build
+        cd docker-compose && docker-compose build
         docker-compose up -d
 
-    - name: Test your application (replace with your actual test command)
+    - name: Test backend service connect-backend is up and running
       run: |
-        docker-compose exec your-service-name sh -c "your-test-command"
+        docker-compose exec connect-backend sh -c "ps aux | grep app.jar"
 
     - name: Stop and remove containers
       run: docker-compose down
