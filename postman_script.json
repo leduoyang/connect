@@ -1527,6 +1527,11 @@
 										"key": "isroot",
 										"value": "true",
 										"type": "text"
+									},
+									{
+										"key": "traceId",
+										"value": "{{traceId}}",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -1574,10 +1579,9 @@
 										"type": "text"
 									},
 									{
-										"key": "",
-										"value": "",
-										"type": "text",
-										"disabled": true
+										"key": "traceId",
+										"value": "{{testTraceId}}",
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2181,6 +2185,40 @@
 						"url": "http://localhost:8080/api/connect/v1/user/upload/profileImage"
 					},
 					"response": []
+				},
+				{
+					"name": "999. generate UUID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" // Get the response body as text",
+									"var responseText = pm.response.text();",
+									"",
+									"// Extract the UUID using a regular expression",
+									"var uuidMatch = responseText.match(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/);",
+									"",
+									"// Check if a match is found",
+									"if (uuidMatch) {",
+									"    var uuidValue = uuidMatch[0];",
+									"    pm.collectionVariables.set('traceId', uuidValue);",
+									"",
+									"    console.log(pm.collectionVariables.get('traceId'));",
+									"} else {",
+									"    console.log('UUID not found in the response');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://www.uuidgenerator.net/api/version4"
+					},
+					"response": []
 				}
 			],
 			"description": "This folder contains examples of testing a single HTTP API request.\n\nIn the Postman app, under the \"Tests\" tab for each request, notice the test(s) written to validate specific assertions. Some of these tests are available as a \"Snippet\" on the right sidebar.\n\nSend each request to see the results under the \"Test Results\" tab in the response viewer.",
@@ -2301,10 +2339,20 @@
 					"response": []
 				},
 				{
-					"name": "createDocument",
+					"name": "createDocument (create data to given index connect-logs)",
 					"request": {
 						"method": "POST",
-						"header": []
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"trace_id\": \"123\",\n  \"message\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9200/connect-logs/_doc"
 					},
 					"response": []
 				}
@@ -2333,10 +2381,9 @@
 	],
 	"variable": [
 		{
-			"key": "Authorization",
-			"value": "",
-			"type": "string",
-			"disabled": true
+			"key": "traceId",
+			"value": "993b31f6-a7e6-4145-8887-5d77b8332dca",
+			"type": "string"
 		}
 	]
 }
