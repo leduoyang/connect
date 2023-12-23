@@ -30,4 +30,5 @@ jobs:
         docker exec connect-backend sh -c "ps aux | grep app.jar"
 
     - name: Stop and remove containers
-      run: docker-compose down
+      run: |
+        cd docker-compose && docker-compose down
