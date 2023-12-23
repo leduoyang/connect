@@ -15,7 +15,8 @@ FROM openjdk:17-jdk-slim
 
 RUN apt-get update && \
     apt-get install -y procps && \
-    apt-get install -y curl
+    apt-get install -y curl && \
+    apt-get install libc6
 
 # Set the working directory
 WORKDIR /app
@@ -26,11 +27,11 @@ COPY --from=builder /app/connect-web/target/connect-web-1.0.0-SNAPSHOT.jar /app/
 # Expose the port that the Spring Boot application will run on
 EXPOSE 8080
 
-# Download and install Filebeat
-RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.15.2-linux-x86_64.tar.gz \
-    && tar xzvf filebeat-7.15.2-linux-x86_64.tar.gz \
-    && mv filebeat-7.15.2-linux-x86_64 /usr/share/filebeat \
-    && rm filebeat-7.15.2-linux-x86_64.tar.gz
+# Download and install Filebeat (ARM64 version)
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.15.2-linux-arm64.tar.gz \
+    && tar xzvf filebeat-7.15.2-linux-arm64.tar.gz \
+    && mv filebeat-7.15.2-linux-arm64 /usr/share/filebeat \
+    && rm filebeat-7.15.2-linux-arm64.tar.gz
 
 # Copy the Filebeat configuration
 COPY filebeat.yml /usr/share/filebeat/filebeat.yml
