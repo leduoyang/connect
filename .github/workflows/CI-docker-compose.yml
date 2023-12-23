@@ -27,7 +27,7 @@ jobs:
 
     - name: Test backend service connect-backend is up and running
       run: |
-        docker-compose exec connect-backend sh -c "ps aux | grep app.jar"
+        docker exec connect-backend sh -c "ps aux | grep app.jar"
 
     - name: Stop and remove containers
       run: docker-compose down
