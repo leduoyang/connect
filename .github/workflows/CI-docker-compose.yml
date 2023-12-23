@@ -1,0 +1,33 @@
+name: CI docker compose testing
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Compose
+      run: |
+        sudo apt-get install -y docker-compose
+
+    - name: Build and run Docker Compose
+      run: |
+        docker-compose build
+        docker-compose up -d
+
+    - name: Test your application (replace with your actual test command)
+      run: |
+        docker-compose exec your-service-name sh -c "your-test-command"
+
+    - name: Stop and remove containers
+      run: docker-compose down
