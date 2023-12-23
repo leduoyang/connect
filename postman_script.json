@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "5e99831b-4010-4123-98d9-169d7939cfb2",
-		"name": "API testing basics",
+		"name": "Connect",
 		"description": "# 🧪 Get started here\n\nPostman's powerful [scripting feature](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) helps you to write a range of API tests in JavaScript, including integration, regression, and contract tests.\n\nThis template demonstrates how to work with the Postman basic test syntax to test a single HTTP API request.\n\n## 🔖 How to use this template?\n\n#### Step 1: Send requests\n\nSend the sample requests and view the response and test results.\n\n#### Step 2: Update the sample request URL\n\nReplace the sample request URLs with your desired API endpoints.\n\n#### Step 3: Customize tests\n\nCustomize the tests in the \"Tests\" tab if needed. Don't forget to save your changes.\n\n## 💪 Quick tips for writing tests\n\n- Organize your test scenarios by grouping your requests in [collections](https://www.getpostman.com/docs/v6/postman/collections/intro_to_collections) and [folders](https://www.getpostman.com/docs/v6/postman/collections/managing_collections#adding-folders), and naming them descriptively\n- Document your API’s requirements using [markdown in the descriptions](https://www.getpostman.com/docs/v6/postman/collections/using_markdown_for_descriptions)\n- Use [variables](https://www.getpostman.com/docs/v6/postman/environments_and_globals/variables) to simulate more sophisticated user flows\n- Common tests that will be run after every request can be added to collection-level tests or folder-level tests\n    \n\n## 💡Related templates\n\n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54)  \n[REST API basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=ddb19591-3097-41cf-82af-c84273e56719&sourceTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54)  \n[Integration testing](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=fe506090-ca91-4340-bea9-82d2c3d2bb9a&sourceTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54)  \n[Regression testing](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=7ab0f80e-a964-46ee-b948-4a4e3a85809c&sourceTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "23172151",
@@ -2205,6 +2205,108 @@
 							""
 						]
 					}
+				}
+			]
+		},
+		{
+			"name": "elasticsearch",
+			"item": [
+				{
+					"name": "isServiceRunning",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:9200"
+					},
+					"response": []
+				},
+				{
+					"name": "isIndexExisting",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:9200/connect-logs"
+					},
+					"response": []
+				},
+				{
+					"name": "getIndices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9200/_cat/indices?v",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_cat",
+								"indices"
+							],
+							"query": [
+								{
+									"key": "v",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:9200/connect-logs/_search"
+					},
+					"response": []
+				},
+				{
+					"name": "searchByQuery",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": {\n    \"match_all\": {}\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9200/connect-logs/_search"
+					},
+					"response": []
+				},
+				{
+					"name": "createIndex",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mappings\": {\n        \"properties\": {\n            \"@timestamp\": {\n                \"type\": \"date\"\n            },\n            \"log_level\": {\n                \"type\": \"keyword\"\n            },\n            \"trace_id\": {\n                \"type\": \"keyword\"\n            },\n            \"logger_name\": {\n                \"type\": \"keyword\"\n            },\n            \"class_name\": {\n                \"type\": \"keyword\"\n            },\n            \"method_name\": {\n                \"type\": \"keyword\"\n            },\n            \"line_number\": {\n                \"type\": \"integer\"\n            },\n            \"message\": {\n                \"type\": \"text\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:9200/connect-logs"
+					},
+					"response": []
+				},
+				{
+					"name": "createDocument",
+					"request": {
+						"method": "POST",
+						"header": []
+					},
+					"response": []
 				}
 			]
 		}
