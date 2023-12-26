@@ -2,6 +2,15 @@
 
 Connect is a social networking platform designed to be a hub where users can share and showcase their side projects and ideas. Built on a robust technology stack and equipped with various services, Connect aims to foster a community of creative minds.
 
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.5-brightgreen)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-6.1.5-brightgreen)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
+![Redis](https://img.shields.io/badge/Redis-6.0.8-red)
+![Elasticsearch](https://img.shields.io/badge/Elasticsearch-8.11.3-blue)
+[![Docker](https://img.shields.io/badge/Docker-✔-blue)](https://www.docker.com/)
+
+
 ## Technology Stack
 
 - Java Spring Boot
