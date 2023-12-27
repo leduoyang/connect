@@ -49,7 +49,7 @@ public class RootController implements IRootApi {
                 );
             }
             userId = mockUser.getUserId();
-            role = UserRole.getRole(mockUser.getRole());
+            role = UserRole.ESSENTIAL.toString();
         }
         String token = jwtTokenUtil.generateToken(userId, role);
 
