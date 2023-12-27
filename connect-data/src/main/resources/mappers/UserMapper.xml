@@ -34,12 +34,11 @@
 
     <insert id="signUp" parameterType="com.connect.data.entity.User" useGeneratedKeys="true"
             keyProperty="id" keyColumn="id">
-        INSERT INTO user(userId, password, status, role, description, email, phone, profileImage)
+        INSERT INTO user(userId, password, status, description, email, phone, profileImage)
         VALUES (
         #{userId, jdbcType=VARCHAR},
         #{password,jdbcType=VARCHAR},
         #{status,jdbcType=TINYINT},
-        #{role,jdbcType=TINYINT},
         #{description, jdbcType=VARCHAR},
         #{email,jdbcType=VARCHAR},
         #{phone,jdbcType=VARCHAR},
