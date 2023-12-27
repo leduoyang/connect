@@ -16,15 +16,16 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        try {
-            String contentType = request.getContentType();
-            if (contentType != null && !contentType.startsWith("multipart/form-data")) {
-                HttpServletRequest customRequestWrapper = new CustomHttpRequestWrapper(request);
+        String contentType = request.getContentType();
+        if (contentType != null && contentType.startsWith("multipart/form-data")) {
+            return true;
+        }
 
-                log.info("Request URI: " + customRequestWrapper.getRequestURI());
-                log.info("Request Headers: " + customRequestWrapper.getHeaderNames());
-                log.info("Request Body: " + customRequestWrapper.getReader().lines().collect(Collectors.joining()));
-            }
+        try {
+            HttpServletRequest customRequestWrapper = new CustomHttpRequestWrapper(request);
+            log.info("Request URI: " + customRequestWrapper.getRequestURI());
+            log.info("Request Headers: " + customRequestWrapper.getHeaderNames());
+            log.info("Request Body: " + customRequestWrapper.getReader().lines().collect(Collectors.joining()));
         } catch (Exception e) {
             e.printStackTrace();
         }
