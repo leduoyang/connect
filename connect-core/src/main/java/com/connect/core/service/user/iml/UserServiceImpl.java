@@ -164,7 +164,7 @@ public class UserServiceImpl implements IUserService {
 
         userRepository.editUserProfile(requestMetaInfo.getUserId(), profile);
 
-        if (UserStatus.getStatus(profile.getStatus()).equals(UserStatus.PUBLIC)) {
+        if (profile.getStatus() != null && UserStatus.getStatus(profile.getStatus()).equals(UserStatus.PUBLIC)) {
             Follow follow = new Follow()
                     .setFollowingId(requestMetaInfo.getUserId())
                     .setStatus(FollowStatus.APPROVED.getCode());
