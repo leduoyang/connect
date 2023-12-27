@@ -56,7 +56,7 @@ public interface IUserApi {
     @GetMapping(value = "/user/me/followingList")
     APIResponse<QueryFollowingListResponse> queryPersonalFollowingList();
 
-    @GetMapping(value = "/user/{userId}")
+    @GetMapping(value = {"/user/{userId}", "/public/user/{userId}"})
     APIResponse<QueryUserResponse> queryUser(@NotNull @PathVariable String userId);
 
     @GetMapping(value = "/user")
