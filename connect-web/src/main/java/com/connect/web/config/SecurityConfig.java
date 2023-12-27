@@ -55,7 +55,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
-                .addFilter(corsFilter())
+                .addFilterBefore(corsFilter(), JwtAuthenticationFilter.class)
                 .addFilter(
                         jwtAuthenticationFilter(
                                 authenticationManager(http)
