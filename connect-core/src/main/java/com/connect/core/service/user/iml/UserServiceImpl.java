@@ -202,14 +202,11 @@ public class UserServiceImpl implements IUserService {
         UserDto userDto = new UserDto()
                 .setUserId(user.getUserId())
                 .setStatus(user.getStatus())
-                .setRole(user.getRole())
                 .setDescription(user.getDescription())
                 .setProfileImage(user.getProfileImage())
                 .setViews(user.getViews())
                 .setFollowers(user.getFollowers())
-                .setFollowings(user.getFollowings())
-                .setDbCreateTime(user.getDbCreateTime())
-                .setDbModifyTime(user.getDbModifyTime());
+                .setFollowings(user.getFollowings());
         return userDto;
     }
 
@@ -223,14 +220,11 @@ public class UserServiceImpl implements IUserService {
                 .map(x -> new UserDto()
                         .setUserId(x.getUserId())
                         .setStatus(x.getStatus())
-                        .setRole(x.getRole())
                         .setDescription(x.getDescription())
                         .setProfileImage(x.getProfileImage())
                         .setViews(x.getViews())
                         .setFollowers(x.getFollowers())
                         .setFollowings(x.getFollowings())
-                        .setDbCreateTime(x.getDbCreateTime())
-                        .setDbModifyTime(x.getDbModifyTime())
                 )
                 .collect(Collectors.toList());
     }

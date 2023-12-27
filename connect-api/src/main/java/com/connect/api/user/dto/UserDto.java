@@ -14,8 +14,6 @@ public class UserDto {
 
     private Integer status;
 
-    private Integer role;
-
     private String profileImage;
 
     private Integer views;
@@ -23,8 +21,4 @@ public class UserDto {
     private Integer followers;
 
     private Integer followings;
-
-    private Date dbCreateTime;
-
-    private Date dbModifyTime;
 }
