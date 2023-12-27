@@ -97,8 +97,7 @@ public class UserServiceImpl implements IUserService {
 
         return new UserDto()
                 .setUserId(user.getUserId())
-                .setStatus(user.getStatus())
-                .setRole(user.getRole());
+                .setStatus(user.getStatus());
     }
 
     @Override
@@ -268,14 +267,11 @@ public class UserServiceImpl implements IUserService {
         UserDto userDto = new UserDto()
                 .setUserId(user.getUserId())
                 .setStatus(user.getStatus())
-                .setRole(user.getRole())
                 .setDescription(user.getDescription())
                 .setProfileImage(user.getProfileImage())
                 .setViews(user.getViews())
                 .setFollowers(user.getFollowers())
-                .setFollowings(user.getFollowings())
-                .setDbCreateTime(user.getDbCreateTime())
-                .setDbModifyTime(user.getDbModifyTime());
+                .setFollowings(user.getFollowings());
         return userDto;
     }
 
