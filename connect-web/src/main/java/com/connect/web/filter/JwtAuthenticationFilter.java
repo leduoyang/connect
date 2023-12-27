@@ -32,7 +32,9 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        request = new CustomHttpRequestWrapper(request);
+        if (request.getContentType() == null || !request.getContentType().startsWith("multipart/form-data")) {
+            request = new CustomHttpRequestWrapper(request);
+        }
 
         log.info("enter jwt filter for " + request.getRequestURI());
 
