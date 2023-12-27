@@ -9,6 +9,7 @@ public enum ConnectErrorCode {
     ILLEGAL_REQUESTER_ERROR("100002", "Not permitted for this request"),
     PARAM_EXCEPTION("100003", "Parameters error"),
     UNAUTHORIZED_EXCEPTION("100004", "Not authorized for this action."),
+    OPTIMISTIC_LOCK_CONFLICT_EXCEPTION("100005", "Optimistic lock conflict arises."),
 
     /**
      * User
