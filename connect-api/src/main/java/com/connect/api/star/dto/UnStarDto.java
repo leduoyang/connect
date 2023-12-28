@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class UnStarDto {
-    private String userId;
+    private String username;
 
     private Long targetId;
 

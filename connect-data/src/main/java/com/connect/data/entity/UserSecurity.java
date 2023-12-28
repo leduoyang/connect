@@ -14,7 +14,7 @@ import java.util.Collections;
 @Accessors(chain = true)
 @Data
 public class UserSecurity implements UserDetails {
-    private Long id;
+    private Long userId;
 
     private String username;
 

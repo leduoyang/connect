@@ -8,8 +8,8 @@
         <result property="status" column="status"/>
         <result property="tags" column="tags"/>
         <result property="boosted" column="boosted"/>
-        <result property="likesCount" column="likesCount"/>
-        <result property="viewsCount" column="viewsCount"/>
+        <result property="stars" column="stars"/>
+        <result property="views" column="views"/>
         <result property="version" column="version"/>
         <result property="createdUser" column="created_user"/>
         <result property="updatedUser" column="updated_user"/>
@@ -26,15 +26,15 @@
         #{status,jdbcType=TINYINT},
         #{tags,jdbcType=VARCHAR},
         #{boosted, jdbcType=TINYINT},
-        #{createdUser,jdbcType=VARCHAR},
-        #{updatedUser,jdbcType=VARCHAR}
+        #{createdUser,jdbcType=BIGINT},
+        #{updatedUser,jdbcType=BIGINT}
         )
     </insert>
 
     <update id="updateProject" parameterType="com.connect.data.entity.Project">
         UPDATE project
         <trim prefix="set" suffixOverrides=",">
-            updated_user = #{updatedUser, jdbcType=VARCHAR},
+            updated_user = #{updatedUser, jdbcType=BIGINT},
             <if test="title != null and title != ''">
                 title = #{title, jdbcType=VARCHAR},
             </if>
@@ -49,12 +49,6 @@
             </if>
             <if test="boosted != null and boosted >= 0">
                 boosted = #{boosted, jdbcType=TINYINT},
-            </if>
-            <if test="viewsCount != null and viewsCount > 0">
-                viewsCount = #{viewsCount, jdbcType=BIGINT},
-            </if>
-            <if test="likesCount != null and likesCount > 0">
-                likesCount = #{likesCount, jdbcType=BIGINT},
             </if>
         </trim>
         WHERE id = #{id, jdbcType=BIGINT}
@@ -77,7 +71,7 @@
     <delete id="deleteProject">
         UPDATE project
         SET `status` = 3,
-        updated_user = #{updatedUser, jdbcType=VARCHAR}
+        updated_user = #{updatedUser, jdbcType=BIGINT}
         WHERE id = #{id, jdbcType=BIGINT}
     </delete>
 
@@ -95,18 +89,20 @@
         )
     </select>
 
+    <select id="internalQueryProjectById" resultMap="projectResultMap">
+        SELECT id, title, description, status, tags, boosted, stars, views, version, created_user,
+        updated_user, db_create_time, db_modify_time
+
+        FROM project
+        WHERE id = #{id}
+    </select>
+
     <select id="queryProject" resultMap="projectResultMap">
         SELECT id, title, description, status, tags, boosted, stars, views, version, created_user,
         updated_user, db_create_time, db_modify_time
 
         FROM project
         WHERE 1=1
-        <if test="projectId != null">
-            AND id = #{projectId}
-        </if>
-        <if test="userId != null and userId != ''">
-            AND created_user = #{userId}
-        </if>
         <if test="keyword != null and keyword != ''">
             AND title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%')
         </if>
@@ -126,7 +122,7 @@
         SELECT EXISTS(
         SELECT id
         FROM project
-        WHERE id = #{id, jdbcType=BIGINT} AND created_user = #{userId, jdbcType=VARCHAR} AND status != 3
+        WHERE id = #{id, jdbcType=BIGINT} AND created_user = #{userId, jdbcType=BIGINT} AND status != 3
         )
     </select>
 </mapper>

@@ -7,10 +7,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class SignUpRequest {
-    @NotNull(message = "userId can not be null")
-    @NotBlank(message = "userId can not be blank")
-    @Size(max = 20, message = "userId must be at most 20")
-    private String userId;
+    @NotNull(message = "username can not be null")
+    @NotBlank(message = "username can not be blank")
+    @Size(max = 20, message = "username must be at most 20")
+    private String username;
 
     @NotNull(message = "password can not be null")
     @Size(min = 8, max = 20, message = "password must be between 8 to 20")

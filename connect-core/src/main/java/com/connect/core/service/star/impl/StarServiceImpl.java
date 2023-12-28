@@ -1,11 +1,15 @@
 package com.connect.core.service.star.impl;
 
-import com.connect.api.star.dto.StarDto;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.star.dto.UnStarDto;
+import com.connect.api.star.request.StarRequest;
+import com.connect.api.star.request.UnStarRequest;
 import com.connect.common.enums.StarTargetType;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.star.IStarService;
+import com.connect.core.service.user.IUserService;
+import com.connect.core.service.user.dto.UserDto;
 import com.connect.data.entity.*;
 import com.connect.data.repository.*;
 import lombok.extern.log4j.Log4j2;
@@ -22,20 +26,24 @@ public class StarServiceImpl implements IStarService {
 
     private ICommentRepository commentRepository;
 
+    private IUserService userService;
+
     public StarServiceImpl(
             IStarRepository starRepository,
             IProjectRepository projectRepository,
             IPostRepository postRepository,
-            ICommentRepository commentRepository
+            ICommentRepository commentRepository,
+            IUserService userService
     ) {
         this.starRepository = starRepository;
         this.projectRepository = projectRepository;
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
+        this.userService = userService;
     }
 
     @Override
-    public void star(StarDto request) {
+    public void star(StarRequest request, RequestMetaInfo requestMetaInfo) {
         if (StarTargetType.getType(request.getTargetType()) == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -44,21 +52,21 @@ public class StarServiceImpl implements IStarService {
         }
 
         Star star = new Star()
-                .setUserId(request.getUserId())
+                .setUserId(requestMetaInfo.getUserId())
                 .setTargetId(request.getTargetId())
                 .setTargetType(request.getTargetType())
-                .setIsActive(request.isActive());
+                .setIsActive(Boolean.TRUE);
 
         if (starRepository.starExisting(star.getUserId(), star.getTargetId(), star.getTargetType())) {
             starRepository.updateStar(star);
         } else {
             starRepository.createStar(star);
         }
-        updateStarsForTarget(star.getTargetId(), star.getTargetType(), request.getUserId());
+        updateStarsForTarget(star.getTargetId(), star.getTargetType());
     }
 
     @Override
-    public void unStar(UnStarDto request) {
+    public void unStar(UnStarRequest request, RequestMetaInfo requestMetaInfo) {
         if (StarTargetType.getType(request.getTargetType()) == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -67,36 +75,38 @@ public class StarServiceImpl implements IStarService {
         }
 
         Star star = new Star()
-                .setUserId(request.getUserId())
+                .setUserId(requestMetaInfo.getUserId())
                 .setTargetId(request.getTargetId())
                 .setTargetType(request.getTargetType())
-                .setIsActive(request.isActive());
+                .setIsActive(Boolean.FALSE);
 
         if (starRepository.starExisting(star.getUserId(), star.getTargetId(), star.getTargetType())) {
             starRepository.updateStar(star);
         } else {
             starRepository.createStar(star);
         }
-        updateStarsForTarget(star.getTargetId(), star.getTargetType(), request.getUserId());
+        updateStarsForTarget(star.getTargetId(), star.getTargetType());
     }
 
     @Override
-    public boolean starExisting(String userId, long targetId, int targetType, Boolean isActive) {
+    public boolean starExisting(long targetId, int targetType, RequestMetaInfo requestMetaInfo) {
+        UserDto userDto = userService.internalQueryUserByUserId(requestMetaInfo.getUserId());
+
         return starRepository.starExisting(
-                userId,
+                userDto.getUserId(),
                 targetId,
                 targetType,
-                isActive
+                true
         );
     }
 
-    private void updateStarsForTarget(long targetId, int targetType, String userId) {
+    private void updateStarsForTarget(long targetId, int targetType) {
         int stars = starRepository.countStars(targetId, targetType);
 
         StarTargetType target = StarTargetType.getType(targetType);
         switch (target) {
             case PROJECT:
-                Project project = projectRepository.queryProjectById(targetId, userId);
+                Project project = projectRepository.internalQueryProjectById(targetId);
                 project.setStars(stars);
                 projectRepository.refreshStars(
                         project.getId(),
@@ -105,7 +115,7 @@ public class StarServiceImpl implements IStarService {
                 );
                 break;
             case POST:
-                Post post = postRepository.queryPostById(targetId, userId);
+                Post post = postRepository.internalQueryPostById(targetId);
                 post.setStars(stars);
                 postRepository.refreshStars(
                         post.getId(),
@@ -114,7 +124,7 @@ public class StarServiceImpl implements IStarService {
                 );
                 break;
             case COMMENT:
-                Comment comment = commentRepository.queryCommentById(targetId, userId);
+                Comment comment = commentRepository.internalQueryCommentById(targetId);
                 comment.setStars(stars);
                 commentRepository.refreshStars(
                         comment.getId(),

@@ -2,11 +2,12 @@ package com.connect.web.controller.root;
 
 import com.connect.api.common.APIResponse;
 import com.connect.api.root.IRootApi;
-import com.connect.api.user.dto.UserDto;
+import com.connect.api.user.vo.UserVo;
 import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.user.IUserService;
+import com.connect.core.service.user.dto.UserDto;
 import com.connect.web.util.JwtTokenUtil;
 import com.connect.web.common.AppContext;
 import lombok.extern.slf4j.Slf4j;
@@ -31,27 +32,29 @@ public class RootController implements IRootApi {
     }
 
     @Override
-    public APIResponse queryTestToken(@RequestHeader String isRoot, @Validated String mockId) {
+    public APIResponse<String> queryTestToken(@RequestHeader String isRoot, @Validated String mockUsername) {
         if (isRoot == null || !Boolean.parseBoolean(isRoot)) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION
             );
         }
 
-        String role = UserRole.ADMIN.toString();
-        String userId = UserRole.ROOT.toString();
-        if (mockId != null) {
-            UserDto mockUser = userService.internalQueryUserByUserId(mockId);
+        UserDto mockUser;
+        String role;
+        if (mockUsername == null) {
+            mockUser = userService.internalQueryUserByUsername(UserRole.ROOT.toString());
+            role = UserRole.getRole(mockUser.getRole());
+        } else {
+            mockUser = userService.internalQueryUserByUsername(mockUsername);
             if (mockUser == null) {
                 throw new ConnectDataException(
                         ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
-                        "mockId not found"
+                        "mockUser not found"
                 );
             }
-            userId = mockUser.getUserId();
             role = UserRole.getRole(mockUser.getRole());
         }
-        String token = jwtTokenUtil.generateToken(userId, role);
+        String token = jwtTokenUtil.generateToken(mockUser.getUserId(), role);
 
         return APIResponse.getOKJsonResult(token);
     }

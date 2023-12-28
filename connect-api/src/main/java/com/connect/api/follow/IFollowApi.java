@@ -9,34 +9,34 @@ import java.util.Map;
 
 @RequestMapping(value = "/api/connect/v1")
 public interface IFollowApi {
-    @PostMapping(value = "/follow/{followingId}")
+    @PostMapping(value = "/follow/{following}")
     APIResponse<Void> follow(
-            @NotNull @PathVariable String followingId
+            @NotNull @PathVariable String following
     );
 
-    @DeleteMapping(value = "/follow/{followingId}")
+    @DeleteMapping(value = "/follow/{following}")
     APIResponse<Void> unfollow(
-            @NotNull @PathVariable String followingId
+            @NotNull @PathVariable String following
     );
 
-    @GetMapping(value = "/follow/isFollowing/{followingId}")
+    @GetMapping(value = "/follow/isFollowing/{following}")
     APIResponse<Map<String, Boolean>> isFollowing(
-            @NotNull @PathVariable String followingId
+            @NotNull @PathVariable String following
     );
 
-    @DeleteMapping(value = "/follow/remove/{followerId}")
+    @DeleteMapping(value = "/follow/remove/{follower}")
     APIResponse<Void> remove(
-            @NotNull @PathVariable String followerId
+            @NotNull @PathVariable String follower
     );
 
-    @PostMapping(value = "/follow/approve/{followerId}")
+    @PostMapping(value = "/follow/approve/{follower}")
     APIResponse<Void> approve(
-            @NotNull @PathVariable String followerId
+            @NotNull @PathVariable String follower
     );
 
-    @PostMapping(value = "/follow/reject/{followerId}")
+    @PostMapping(value = "/follow/reject/{follower}")
     APIResponse<Void> reject(
-            @NotNull @PathVariable String followerId
+            @NotNull @PathVariable String follower
     );
 
     @PostMapping(value = "/follow/approveAll")

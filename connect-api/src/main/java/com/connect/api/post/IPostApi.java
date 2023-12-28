@@ -1,7 +1,6 @@
 package com.connect.api.post;
 
-import com.connect.api.post.dto.QueryPostDto;
-import com.connect.api.post.response.QueryPostResponse;
+import com.connect.api.post.response.QueryPostVo;
 import com.connect.api.common.APIResponse;
 import com.connect.api.post.request.CreatePostRequest;
 import com.connect.api.post.request.QueryPostRequest;
@@ -14,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 public interface IPostApi {
 
     @GetMapping(value = "/post/{postId}")
-    APIResponse<QueryPostResponse> queryPost(@NotNull @PathVariable Long postId);
+    APIResponse<QueryPostVo> queryPost(@NotNull @PathVariable Long postId);
 
     @GetMapping(value = "/post")
-    APIResponse<QueryPostResponse> queryPostWithFilter(
+    APIResponse<QueryPostVo> queryPostWithFilter(
             @Validated QueryPostRequest request
     );
 

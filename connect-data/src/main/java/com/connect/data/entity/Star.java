@@ -10,7 +10,7 @@ import java.util.Date;
 public class Star {
     private Long id;
 
-    private String userId;
+    private Long userId;
 
     private Long targetId;
 

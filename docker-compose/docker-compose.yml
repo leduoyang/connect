@@ -5,6 +5,8 @@ services:
       context: ..
       dockerfile: Dockerfile
     container_name: connect-backend
+    volumes:
+      - "./static/profileImage:/app/static/profileImage"
     ports:
       - "8080:8080"
     depends_on:

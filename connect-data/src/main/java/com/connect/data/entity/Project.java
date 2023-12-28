@@ -26,9 +26,9 @@ public class Project {
 
     private Integer version;
 
-    private String createdUser;
+    private Long createdUser;
 
-    private String updatedUser;
+    private Long updatedUser;
 
     private Date dbCreateTime;
 

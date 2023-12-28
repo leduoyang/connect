@@ -1,5 +1,6 @@
 package com.connect.web.util;
 
+import com.connect.common.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,16 +25,21 @@ public class JwtTokenUtil {
     @Value("${jwt.expiration:864000000}")
     private long EXPIRATION_TIME; // 10 days in milliseconds
 
-    public String generateToken(String userId, String role) {
+    public String generateToken(Long userId) {
+        String role = UserRole.ESSENTIAL.toString();
+        return generateToken(userId, role);
+    }
+
+    public String generateToken(Long userId, String role) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("sub", userId);
+        claims.put("sub", userId.toString());
         claims.put("role", role);
         claims.put("created", new Date());
 
         log.info("generating token for " + claims);
         log.info("expiration time : " + EXPIRATION_TIME);
         return PREFIX + Jwts.builder()
-                .setSubject(userId)
+                .setSubject(userId.toString()) // TODO change to uuid
                 .setClaims(claims)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)

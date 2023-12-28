@@ -13,11 +13,13 @@ public interface IProjectDao {
 
     int refreshStars(long id, int version, int stars);
 
-    int deleteProject(long id, String userId);
+    int deleteProject(long id, long userId);
 
-    Project queryProjectById(long id, String userId);
+    Project queryProjectById(long id, long userId);
 
-    List<Project> queryProject(Long projectId, String createdUserId, String keyword, String tags, String userId);
+    Project internalQueryProjectById(long id);
 
-    boolean projectExisting(long id, String userId);
+    List<Project> queryProject(String keyword, String tags, long userId);
+
+    boolean projectExisting(long id, long userId);
 }

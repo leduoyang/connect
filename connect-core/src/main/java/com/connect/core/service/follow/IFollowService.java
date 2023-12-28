@@ -1,25 +1,23 @@
 package com.connect.core.service.follow;
 
-import com.connect.api.follow.dto.FollowDto;
-import com.connect.api.follow.dto.UnFollowDto;
-import com.connect.common.enums.FollowStatus;
+import com.connect.api.common.RequestMetaInfo;
 
 import java.util.List;
 
 public interface IFollowService {
-    void follow(FollowDto request);
+    void follow(String following, RequestMetaInfo requestMetaInfo);
 
-    void unfollow(FollowDto request);
+    void unfollow(String following, RequestMetaInfo requestMetaInfo);
 
-    boolean isFollowing(String followerId, String followingId, FollowStatus status);
+    boolean isFollowing(String following, RequestMetaInfo requestMetaInfo);
 
-    void approve(FollowDto request);
+    void approve(String follower, RequestMetaInfo requestMetaInfo);
 
-    void reject(FollowDto request);
+    void reject(String follower, RequestMetaInfo requestMetaInfo);
 
-    void remove(FollowDto request);
+    void remove(String follower, RequestMetaInfo requestMetaInfo);
 
-    void approveAll(FollowDto request);
+    void approveAll(RequestMetaInfo requestMetaInfo);
 
-    List<String> queryPendingIdList(String followingId);
+    List<Long> queryPendingIdList(RequestMetaInfo requestMetaInfo);
 }

@@ -2,20 +2,16 @@ package com.connect.web.controller.post;
 
 import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.post.IPostApi;
-import com.connect.api.post.dto.*;
-import com.connect.api.post.response.QueryPostResponse;
 import com.connect.api.common.APIResponse;
 import com.connect.api.post.request.CreatePostRequest;
 import com.connect.api.post.request.QueryPostRequest;
 import com.connect.api.post.request.UpdatePostRequest;
-import com.connect.common.enums.FollowStatus;
-import com.connect.common.enums.PostStatus;
+import com.connect.api.post.vo.QueryPostVo;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.follow.IFollowService;
 import com.connect.core.service.post.IPostService;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -40,13 +36,13 @@ public class PostController implements IPostApi {
     }
 
     @Override
-    public APIResponse<QueryPostResponse> queryPost(Long postId) {
+    public APIResponse<com.connect.api.post.response.QueryPostVo> queryPost(Long postId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        QueryPostResponseDto postResponseDto = postService.queryPostById(postId, requestMetaInfo);
+        QueryPostVo postResponseDto = postService.queryPostById(postId, requestMetaInfo);
         if (postResponseDto == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
@@ -54,35 +50,27 @@ public class PostController implements IPostApi {
             );
         }
 
-        List<QueryPostResponseDto> postDtoList = new ArrayList<>();
+        List<QueryPostVo> postDtoList = new ArrayList<>();
         postDtoList.add(postResponseDto);
 
-        QueryPostResponse response = new QueryPostResponse()
+        com.connect.api.post.response.QueryPostVo response = new com.connect.api.post.response.QueryPostVo()
                 .setItems(postDtoList)
                 .setTotal(postDtoList.size());
         return APIResponse.getOKJsonResult(response);
     }
 
     @Override
-    public APIResponse<QueryPostResponse> queryPostWithFilter(
+    public APIResponse<com.connect.api.post.response.QueryPostVo> queryPostWithFilter(
             QueryPostRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        QueryPostDto postDto = new QueryPostDto()
-                .setPostId(request.getPostId())
-                .setKeyword(request.getKeyword())
-                .setUserId(request.getUserId())
-                .setTags(request.getTags())
-                .setPageSize(request.getPageSize())
-                .setPageIndex(request.getPageIndex());
+        List<QueryPostVo> postResponseDto = postService.queryPost(request, requestMetaInfo);
 
-        List<QueryPostResponseDto> postResponseDto = postService.queryPost(postDto, requestMetaInfo);
-
-        QueryPostResponse response = new QueryPostResponse()
+        com.connect.api.post.response.QueryPostVo response = new com.connect.api.post.response.QueryPostVo()
                 .setItems(postResponseDto)
                 .setTotal(postResponseDto.size());
         return APIResponse.getOKJsonResult(response);
@@ -94,12 +82,8 @@ public class PostController implements IPostApi {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
-
-        CreatePostDto createPostDto = new CreatePostDto();
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.map(request, createPostDto);
 
         if (request.getContent() == null && request.getReferenceId() == null) {
             throw new ConnectDataException(
@@ -107,8 +91,7 @@ public class PostController implements IPostApi {
                     "Invalid payload (post content and referenceId can not both be absent)"
             );
         }
-        Long id = postService.createPost(createPostDto, requestMetaInfo);
-
+        Long id = postService.createPost(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(id);
     }
 
@@ -119,13 +102,8 @@ public class PostController implements IPostApi {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
-
-        UpdatePostDto updatePostDto = new UpdatePostDto();
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.map(request, updatePostDto);
-        updatePostDto.setId(postId);
 
         if (request.getContent() != null && request.getContent().equals("")) {
             throw new ConnectDataException(
@@ -133,8 +111,7 @@ public class PostController implements IPostApi {
                     "Invalid payload (post content can not be blank)"
             );
         }
-        postService.updatePost(updatePostDto, requestMetaInfo);
-
+        postService.updatePost(postId, request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
@@ -144,13 +121,10 @@ public class PostController implements IPostApi {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        DeletePostDto deletePostDto = new DeletePostDto()
-                .setId(postId);
-        postService.deletePost(deletePostDto, requestMetaInfo);
-
+        postService.deletePost(postId, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 }

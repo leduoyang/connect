@@ -1,7 +1,9 @@
 package com.connect.core.service.comment.impl;
 
-import com.connect.api.comment.dto.*;
+import com.connect.api.comment.request.CreateCommentRequest;
 import com.connect.api.comment.request.QueryCommentRequest;
+import com.connect.api.comment.request.UpdateCommentRequest;
+import com.connect.api.comment.vo.QueryCommentVo;
 import com.connect.api.common.RequestMetaInfo;
 import com.connect.core.service.comment.ICommentService;
 import com.connect.common.exception.ConnectDataException;
@@ -25,7 +27,7 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public QueryCommentResponseDto queryCommentById(long id, RequestMetaInfo requestMetaInfo) {
+    public QueryCommentVo queryCommentById(long id, RequestMetaInfo requestMetaInfo) {
         Comment comment = commentRepository.queryCommentById(id, requestMetaInfo.getUserId());
         if (comment == null) {
             log.error("query comment not found or not authorized to retrieve");
@@ -37,7 +39,7 @@ public class CommentServiceImpl implements ICommentService {
                 comment.getVersion()
         );
 
-        QueryCommentResponseDto commentDto = new QueryCommentResponseDto()
+        QueryCommentVo commentDto = new QueryCommentVo()
                 .setId(comment.getId())
                 .setPostId(comment.getPostId())
                 .setStatus(comment.getStatus())
@@ -53,10 +55,8 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public List<QueryCommentResponseDto> queryComment(QueryCommentRequest request, RequestMetaInfo requestMetaInfo) {
+    public List<QueryCommentVo> queryComment(QueryCommentRequest request, RequestMetaInfo requestMetaInfo) {
         QueryCommentParam param = new QueryCommentParam()
-                .setPostId(request.getPostId())
-                .setUserId(request.getUserId())
                 .setKeyword(request.getKeyword())
                 .setTags(request.getTags());
 
@@ -64,7 +64,7 @@ public class CommentServiceImpl implements ICommentService {
 
         return commentList
                 .stream()
-                .map(x -> new QueryCommentResponseDto()
+                .map(x -> new QueryCommentVo()
                         .setId(x.getId())
                         .setPostId(x.getPostId())
                         .setStatus(x.getStatus())
@@ -79,7 +79,7 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public long createComment(CreateCommentDto request, RequestMetaInfo requestMetaInfo) {
+    public long createComment(CreateCommentRequest request, RequestMetaInfo requestMetaInfo) {
         if (request.getStatus() < 0 || request.getStatus() > 2) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -104,9 +104,9 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public void updateComment(UpdateCommentDto request, RequestMetaInfo requestMetaInfo) {
+    public void updateComment(long id, UpdateCommentRequest request, RequestMetaInfo requestMetaInfo) {
         Comment comment = new Comment()
-                .setId(request.getId())
+                .setId(id)
                 .setUpdatedUser(requestMetaInfo.getUserId());
         if (request.getStatus() != null) {
             if (request.getStatus() < 0 || request.getStatus() > 2) {
@@ -131,9 +131,9 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public void deleteComment(DeleteCommentDto request, RequestMetaInfo requestMetaInfo) {
+    public void deleteComment(long id, RequestMetaInfo requestMetaInfo) {
         Comment comment = new Comment()
-                .setId(request.getId())
+                .setId(id)
                 .setUpdatedUser(requestMetaInfo.getUserId());
 
         commentRepository.deleteComment(comment);

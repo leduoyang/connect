@@ -15,7 +15,7 @@
             keyProperty="id" keyColumn="id">
         INSERT INTO star(userId, targetId, targetType, isActive)
         VALUES (
-        #{userId,jdbcType=VARCHAR},
+        #{userId,jdbcType=BIGINT},
         #{targetId, jdbcType=BIGINT},
         #{targetType, jdbcType=BIGINT},
         #{isActive,jdbcType=BOOLEAN}
@@ -31,7 +31,7 @@
         </trim>
         WHERE targetType = #{targetType, jdbcType=TINYINT}
         AND targetId = #{targetId, jdbcType=BIGINT}
-        AND userId = #{userId, jdbcType=VARCHAR}
+        AND userId = #{userId, jdbcType=BIGINT}
     </update>
 
     <select id="starExisting" resultType="java.lang.Boolean">
@@ -40,7 +40,7 @@
         FROM star
         WHERE targetType = #{targetType, jdbcType=TINYINT}
         AND targetId = #{targetId, jdbcType=BIGINT}
-        AND userId = #{userId, jdbcType=VARCHAR}
+        AND userId = #{userId, jdbcType=BIGINT}
         )
     </select>
 
@@ -51,7 +51,7 @@
         WHERE targetType = #{targetType, jdbcType=TINYINT}
         AND targetId = #{targetId, jdbcType=BIGINT}
         AND isActive = #{isActive, jdbcType=BOOLEAN}
-        AND userId = #{userId, jdbcType=VARCHAR}
+        AND userId = #{userId, jdbcType=BIGINT}
         )
     </select>
 
@@ -68,7 +68,7 @@
 
         FROM Star
         WHERE targetType = #{targetType, jdbcType=TINYINT}
-        AND userId = #{userId, jdbcType=VARCHAR}
+        AND userId = #{userId, jdbcType=BIGINT}
         AND isActive = TRUE
     </select>
 </mapper>

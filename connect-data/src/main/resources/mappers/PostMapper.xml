@@ -6,6 +6,8 @@
         <result property="content" column="content"/>
         <result property="referenceId" column="referenceId"/>
         <result property="tags" column="tag"/>
+        <result property="stars" column="stars"/>
+        <result property="views" column="views"/>
         <result property="createdUser" column="created_user"/>
         <result property="updatedUser" column="updated_user"/>
         <result property="dbCreateTime" column="db_create_time"/>
@@ -19,15 +21,15 @@
         #{referenceId,jdbcType=BIGINT},
         #{tags,jdbcType=VARCHAR},
         #{status,jdbcType=TINYINT},
-        #{createdUser,jdbcType=VARCHAR},
-        #{updatedUser,jdbcType=VARCHAR}
+        #{createdUser,jdbcType=BIGINT},
+        #{updatedUser,jdbcType=BIGINT}
         )
     </insert>
 
     <update id="updatePost" parameterType="com.connect.data.entity.Post">
         UPDATE post
         <trim prefix="set" suffixOverrides=",">
-            updated_user = #{updatedUser, jdbcType=VARCHAR},
+            updated_user = #{updatedUser, jdbcType=BIGINT},
             <if test="content != null and content != ''">
                 content = #{content, jdbcType=VARCHAR},
             </if>
@@ -61,7 +63,7 @@
     <delete id="deletePost">
         UPDATE post
         SET `status` = 3,
-        updated_user = #{updatedUser, jdbcType=VARCHAR}
+        updated_user = #{updatedUser, jdbcType=BIGINT}
         WHERE id = #{id, jdbcType=BIGINT}
     </delete>
 
@@ -79,18 +81,20 @@
         )
     </select>
 
+    <select id="internalQueryPostById" resultMap="postResultMap">
+        SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time,
+        db_modify_time
+
+        FROM post
+        WHERE id = #{id}
+    </select>
+
     <select id="queryPost" resultMap="postResultMap">
         SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time,
         db_modify_time
 
         FROM post
         WHERE 1=1
-        <if test="postId != null">
-            AND id = #{postId}
-        </if>
-        <if test="createdUserId != null and createdUserId != ''">
-            AND created_user = #{createdUserId}
-        </if>
         <if test="keyword != null and keyword != ''">
             AND content LIKE CONCAT('%', #{keyword}, '%')
         </if>
@@ -110,7 +114,7 @@
         SELECT EXISTS(
         SELECT id
         FROM post
-        WHERE id = #{id, jdbcType=BIGINT} AND created_user = #{userId, jdbcType=VARCHAR} AND status != 3
+        WHERE id = #{id, jdbcType=BIGINT} AND created_user = #{userId, jdbcType=BIGINT} AND status != 3
         )
     </select>
 </mapper>

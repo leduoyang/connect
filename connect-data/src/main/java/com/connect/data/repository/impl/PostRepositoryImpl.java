@@ -23,18 +23,20 @@ public class PostRepositoryImpl implements IPostRepository {
         this.postDao = postDao;
     }
 
-    public Post queryPostById(long id, String userId) {
+    public Post queryPostById(long id, long userId) {
         log.info(String.format("param: %s, userId %s", id, userId));
 
         return postDao.queryPostById(id, userId);
     }
 
-    public List<Post> queryPost(QueryPostParam param, String userId) {
+    public Post internalQueryPostById(long id) {
+        return postDao.internalQueryPostById(id);
+    }
+
+    public List<Post> queryPost(QueryPostParam param, long userId) {
         log.info(String.format("param: %s, userId %s", param, userId));
 
         return postDao.queryPost(
-                param.getPostId(),
-                param.getUserId(),
                 param.getKeyword(),
                 param.getTags(),
                 userId
@@ -72,7 +74,7 @@ public class PostRepositoryImpl implements IPostRepository {
         log.info(String.format("param: %s, userId %s", post, post.getUpdatedUser()));
 
         long targetId = post.getId();
-        String userId = post.getUpdatedUser();
+        long userId = post.getUpdatedUser();
         boolean existed = postDao.postExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
@@ -91,7 +93,7 @@ public class PostRepositoryImpl implements IPostRepository {
         int affected = postDao.incrementViews(id, version);
 
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "increase views failed");
+            log.error(ConnectErrorCode.OPTIMISTIC_LOCK_CONFLICT_EXCEPTION + "post incrementViews failed");
         }
     }
 
@@ -99,7 +101,7 @@ public class PostRepositoryImpl implements IPostRepository {
         int affected = postDao.refreshStars(id, version, stars);
 
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.POST_UPDATE_EXCEPTION, "refresh stars failed");
+            log.error(ConnectErrorCode.OPTIMISTIC_LOCK_CONFLICT_EXCEPTION + "post refreshStars failed");
         }
     }
 
@@ -107,7 +109,7 @@ public class PostRepositoryImpl implements IPostRepository {
         log.info(String.format("param: %s, userId %s", post, post.getUpdatedUser()));
 
         long targetId = post.getId();
-        String userId = post.getUpdatedUser();
+        long userId = post.getUpdatedUser();
         boolean existed = postDao.postExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(

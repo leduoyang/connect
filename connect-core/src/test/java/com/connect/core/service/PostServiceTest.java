@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.connect.api.common.RequestMetaInfo;
-import com.connect.api.post.dto.CreatePostDto;
-import com.connect.api.post.dto.UpdatePostDto;
+import com.connect.api.post.request.CreatePostRequest;
+import com.connect.api.post.request.UpdatePostRequest;
 import com.connect.common.enums.PostStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.core.service.post.iml.PostServiceImpl;
@@ -32,11 +32,11 @@ public class PostServiceTest {
     @Test
     public void test_create_post_without_status_should_use_default_value() {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId("ROOT");
-        CreatePostDto createPostDto = new CreatePostDto();
-        createPostDto.setContent("test post service");
+                .setUserId(1L);
+        CreatePostRequest createPostRequest = new CreatePostRequest();
+        createPostRequest.setContent("test post service");
 
-        postService.createPost(createPostDto, requestMetaInfo);
+        postService.createPost(createPostRequest, requestMetaInfo);
 
         verify(postRepository, times(1)).createPost(postCaptor.capture());
         Post capturedPost = postCaptor.getValue();
@@ -47,13 +47,13 @@ public class PostServiceTest {
     @Test
     public void test_create_post_with_invalid_status_should_raise_exception() {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId("ROOT");
-        CreatePostDto createPostDto = new CreatePostDto();
-        createPostDto.setContent("test post service");
-        createPostDto.setStatus(-1);
+                .setUserId(1L);
+        CreatePostRequest createPostRequest = new CreatePostRequest();
+        createPostRequest.setContent("test post service");
+        createPostRequest.setStatus(-1);
 
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            postService.createPost(createPostDto, requestMetaInfo);
+            postService.createPost(createPostRequest, requestMetaInfo);
         });
 
         assertEquals("Parameters error:Invalid payload (status should be between 0 and 2)", expectedException.getErrorMsg());
@@ -62,13 +62,13 @@ public class PostServiceTest {
     @Test
     public void test_create_post_with_valid_status_should_create_with_target_status() {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId("ROOT");
+                .setUserId(1L);
         int targetStatus = PostStatus.PRIVATE.getCode();
-        CreatePostDto createPostDto = new CreatePostDto();
-        createPostDto.setContent("test post service");
-        createPostDto.setStatus(targetStatus);
+        CreatePostRequest createPostRequest = new CreatePostRequest();
+        createPostRequest.setContent("test post service");
+        createPostRequest.setStatus(targetStatus);
 
-        postService.createPost(createPostDto, requestMetaInfo);
+        postService.createPost(createPostRequest, requestMetaInfo);
 
         verify(postRepository, times(1)).createPost(postCaptor.capture());
         Post capturedPost = postCaptor.getValue();
@@ -79,10 +79,10 @@ public class PostServiceTest {
     @Test
     public void test_update_post_without_status_should_avoid_default_value() {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId("ROOT");
-        UpdatePostDto updatePostDto = new UpdatePostDto();
+                .setUserId(1L);
+        UpdatePostRequest updatePostRequest = new UpdatePostRequest();
 
-        postService.updatePost(updatePostDto, requestMetaInfo);
+        postService.updatePost(1L, updatePostRequest, requestMetaInfo);
 
         verify(postRepository, times(1)).updatePost(postCaptor.capture());
         Post capturedPost = postCaptor.getValue();
@@ -92,12 +92,12 @@ public class PostServiceTest {
     @Test
     public void test_update_post_with_invalid_status_should_raise_exception() {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId("ROOT");
-        UpdatePostDto updatePostDto = new UpdatePostDto();
-        updatePostDto.setStatus(-1);
+                .setUserId(1L);
+        UpdatePostRequest updatePostRequest = new UpdatePostRequest();
+        updatePostRequest.setStatus(-1);
 
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            postService.updatePost(updatePostDto, requestMetaInfo);
+            postService.updatePost(1L, updatePostRequest, requestMetaInfo);
         });
 
         assertEquals("Parameters error:Invalid payload (status should be between 0 and 2)", expectedException.getErrorMsg());
@@ -106,12 +106,12 @@ public class PostServiceTest {
     @Test
     public void test_update_post_with_valid_status_should_update_with_target_status() {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId("ROOT");
+                .setUserId(1L);
         int targetStatus = PostStatus.PRIVATE.getCode();
-        UpdatePostDto updatePostDto = new UpdatePostDto();
-        updatePostDto.setStatus(targetStatus);
+        UpdatePostRequest updatePostRequest = new UpdatePostRequest();
+        updatePostRequest.setStatus(targetStatus);
 
-        postService.updatePost(updatePostDto, requestMetaInfo);
+        postService.updatePost(1L, updatePostRequest, requestMetaInfo);
 
         verify(postRepository, times(1)).updatePost(postCaptor.capture());
         Post capturedPost = postCaptor.getValue();

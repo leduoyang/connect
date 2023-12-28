@@ -43,11 +43,11 @@ public class StarRepositoryImpl implements IStarRepository {
         }
     }
 
-    public boolean starExisting(String userId, long targetId, int targetType) {
+    public boolean starExisting(long userId, long targetId, int targetType) {
         return starDao.starExisting(userId, targetId, targetType);
     }
 
-    public boolean starExisting(String userId, long targetId, int targetType, Boolean isActive) {
+    public boolean starExisting(long userId, long targetId, int targetType, Boolean isActive) {
         return starDao.starExistingWithTargetStatus(userId, targetId, targetType, isActive);
     }
 
@@ -55,7 +55,7 @@ public class StarRepositoryImpl implements IStarRepository {
         return starDao.countStars(targetId, targetType);
     }
 
-    public List<Integer> queryTargetIdList(int targetType, String userId) {
+    public List<Integer> queryTargetIdList(int targetType, long userId) {
         return starDao.queryTargetIdList(targetType, userId);
     }
 }

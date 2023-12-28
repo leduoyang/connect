@@ -9,6 +9,7 @@ public enum ConnectErrorCode {
     ILLEGAL_REQUESTER_ERROR("100002", "Not permitted for this request"),
     PARAM_EXCEPTION("100003", "Parameters error"),
     UNAUTHORIZED_EXCEPTION("100004", "Not authorized for this action."),
+    OPTIMISTIC_LOCK_CONFLICT_EXCEPTION("100005", "Optimistic lock conflict arises."),
 
     /**
      * User
@@ -18,6 +19,15 @@ public enum ConnectErrorCode {
     USER_DELETE_EXCEPTION("300003", "Delete user failed"),
     USER_NOT_EXISTED_EXCEPTION("300004", "User not existed."),
     USER_EXISTED_EXCEPTION("300005", "User has existed."),
+
+    /**
+     * Social Link
+     */
+    SOCIAL_LINK_CREATE_EXCEPTION("300001", "Create social link failed"),
+    SOCIAL_LINK_UPDATE_EXCEPTION("300002", "Update social link failed"),
+    SOCIAL_LINK_DELETE_EXCEPTION("300003", "Delete social link failed"),
+    SOCIAL_LINK_NOT_EXISTED_EXCEPTION("300004", "Social link not existed."),
+    SOCIAL_LINK_EXISTED_EXCEPTION("300005", "Social link has existed."),
 
     /**
      * User Verification

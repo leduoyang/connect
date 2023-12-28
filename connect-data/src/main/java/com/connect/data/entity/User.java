@@ -8,9 +8,11 @@ import java.util.Date;
 @Accessors(chain = true)
 @Data
 public class User {
-    private Long id;
+    private Long userId;
 
-    private String userId;
+    private String uuid;
+
+    private String username;
 
     private String password;
 

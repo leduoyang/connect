@@ -10,25 +10,25 @@ public interface IFollowDao {
 
     int updateFollow(Follow follow);
 
-    boolean isFollowing(String followerId, String followingId);
+    boolean isFollowing(long followerId, long followingId);
 
-    boolean isFollowingWithTargetStatus(String followerId, String followingId, int status);
+    boolean isFollowingWithTargetStatus(long followerId, long followingId, int status);
 
-    int countFollower(String followingId);
+    int countFollower(long followingId);
 
-    int countFollowing(String followerId);
+    int countFollowing(long followerId);
 
-    List<String> queryFollowerIdList(String followingId);
+    List<Long> queryFollowerIdList(long followingId);
 
-    List<String> queryFollowingIdList(String followerId);
+    List<Long> queryFollowingIdList(long followerId);
 
-    List<String> queryPendingIdList(String followingId);
+    List<Long> queryPendingIdList(long followingId);
 
-    int approve(String followingId, String followerId);
+    int approve(long followingId, long followerId);
 
-    int reject(String followingId, String followerId);
+    int reject(long followingId, long followerId);
 
-    int remove(String followingId, String followerId);
+    int remove(long followingId, long followerId);
 
-    int approveAll(String followingId);
+    int approveAll(long followingId);
 }
