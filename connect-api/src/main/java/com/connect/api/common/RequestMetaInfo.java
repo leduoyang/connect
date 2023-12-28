@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class RequestMetaInfo {
-    private String userId;
+    private Long userId;
 
     private Object details;
 }

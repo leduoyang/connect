@@ -1,6 +1,7 @@
 package com.connect.data.repository;
 
 import com.connect.data.entity.Comment;
+import com.connect.data.entity.Post;
 import com.connect.data.param.QueryCommentParam;
 
 import java.util.List;
@@ -16,7 +17,9 @@ public interface ICommentRepository {
 
     void deleteComment(Comment comment);
 
-    Comment queryCommentById(long id, String userId);
+    Comment queryCommentById(long id, long userId);
 
-    List<Comment> queryComment(QueryCommentParam param, String userId);
+    Comment internalQueryCommentById(long id);
+
+    List<Comment> queryComment(QueryCommentParam param, long userId);
 }

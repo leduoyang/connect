@@ -8,10 +8,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class QueryProjectRequest {
-    private Long projectId;
-
-    private String userId;
-
     private String keyword;
 
     private String tags;

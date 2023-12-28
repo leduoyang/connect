@@ -13,11 +13,13 @@ public interface IPostDao {
 
     int refreshStars(long id, int version, int stars);
 
-    int deletePost(long id, String userId);
+    int deletePost(long id, long userId);
 
-    Post queryPostById(long id, String userId);
+    Post queryPostById(long id, long userId);
 
-    List<Post> queryPost(Long postId, String createdUserId, String keyword, String tags, String userId);
+    Post internalQueryPostById(long id);
 
-    boolean postExisting(long id, String userId);
+    List<Post> queryPost(String keyword, String tags, long userId);
+
+    boolean postExisting(long id, long userId);
 }

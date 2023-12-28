@@ -18,7 +18,7 @@ public class UserSecurityRepositoryImpl implements IUserSecurityRepository {
     }
 
     @Override
-    public UserSecurity findByUsername(String userId) {
+    public UserSecurity findByUsername(long userId) {
         return userSecurityDao.findByUsername(userId);
     }
 }

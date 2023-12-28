@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.connect.data.dao.ISocialLinkDao">
+    <resultMap id="socialLinkResultMap" type="com.connect.data.entity.SocialLink">
+        <id property="id" column="id"/>
+        <result property="platform" column="platform"/>
+        <result property="platformId" column="platform_id"/>
+        <result property="userId" column="userId"/>
+        <result property="dbCreateTime" column="db_create_time"/>
+        <result property="dbModifyTime" column="db_modify_time"/>
+    </resultMap>
+
+    <insert id="createSocialLink" parameterType="com.connect.data.entity.SocialLink" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        INSERT INTO social_link(platform, platform_id, userId)
+        VALUES (
+        #{platform, jdbcType=VARCHAR},
+        #{platformId, jdbcType=VARCHAR},
+        #{userId,jdbcType=BIGINT}
+        )
+    </insert>
+
+    <update id="updateSocialLink" parameterType="com.connect.data.entity.SocialLink">
+        UPDATE social_link
+        SET
+        platform_id = #{platformId, jdbcType=VARCHAR}
+        WHERE
+        userId = #{userId, jdbcType=BIGINT} AND platform = #{platform, jdbcType=VARCHAR}
+    </update>
+
+    <select id="platformExisting" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT id
+        FROM social_link
+        WHERE userId = #{userId, jdbcType=BIGINT} AND platform = #{platform, jdbcType=VARCHAR}
+        )
+    </select>
+
+    <select id="platformIdExisting" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT id
+        FROM social_link
+        WHERE userId = #{userId, jdbcType=BIGINT}
+        AND platform = #{platform, jdbcType=VARCHAR}
+        AND platform_id IS NOT NULL
+        )
+    </select>
+</mapper>

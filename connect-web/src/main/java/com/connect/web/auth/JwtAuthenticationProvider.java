@@ -26,7 +26,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             return authentication;
         }
 
-        UserDetails userDetails = userSecurityService.loadUserByUsername(authentication.getPrincipal().toString());
+        UserDetails userDetails = userSecurityService.loadUserByUsername(authentication.getName());
         if (userDetails == null) {
             throw new ConnectDataException(ConnectErrorCode.INTERNAL_SERVER_ERROR, "jwt authenticate failed");
         }

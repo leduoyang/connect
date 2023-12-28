@@ -1,12 +1,11 @@
 package com.connect.core.service.user.iml;
 
-import com.connect.api.comment.dto.QueryCommentResponseDto;
+import com.connect.api.comment.vo.QueryCommentVo;
 import com.connect.api.common.RequestMetaInfo;
-import com.connect.api.post.dto.QueryPostResponseDto;
-import com.connect.api.project.dto.QueryProjectResponseDto;
-import com.connect.api.root.request.RootLoginRequest;
-import com.connect.api.user.dto.UserDto;
+import com.connect.api.post.vo.QueryPostVo;
+import com.connect.api.project.vo.QueryProjectVo;
 import com.connect.api.user.request.*;
+import com.connect.api.user.vo.UserVo;
 import com.connect.common.enums.FollowStatus;
 import com.connect.common.enums.StarTargetType;
 import com.connect.common.enums.UserStatus;
@@ -16,7 +15,9 @@ import com.connect.common.util.ImageUploadUtil;
 import com.connect.core.service.comment.ICommentService;
 import com.connect.core.service.post.IPostService;
 import com.connect.core.service.project.IProjectService;
+import com.connect.core.service.socialLink.ISocialLinkService;
 import com.connect.core.service.user.IUserService;
+import com.connect.core.service.user.dto.UserDto;
 import com.connect.data.entity.Follow;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
@@ -49,6 +50,8 @@ public class UserServiceImpl implements IUserService {
 
     private IFollowRepository followRepository;
 
+    private ISocialLinkService socialLinkService;
+
     private IProjectService projectService;
 
     private IPostService postService;
@@ -58,12 +61,14 @@ public class UserServiceImpl implements IUserService {
     public UserServiceImpl(
             IUserRepository userRepository,
             IStarRepository starRepository,
+            ISocialLinkService socialLinkService,
             IFollowRepository followRepository,
             IProjectService projectService,
             IPostService postService,
             ICommentService commentService
     ) {
         this.userRepository = userRepository;
+        this.socialLinkService = socialLinkService;
         this.starRepository = starRepository;
         this.followRepository = followRepository;
         this.projectService = projectService;
@@ -72,23 +77,9 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public boolean authenticateRootUser(RootLoginRequest request) {
-        if (!userRepository.authenticateRootUser(
-                request.getUserId(),
-                request.getPassword()
-        )) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.PARAM_EXCEPTION,
-                    "Invalid payload for root login"
-            );
-        }
-        return true;
-    }
-
-    @Override
     public UserDto signIn(SignInRequest request) {
         User user = userRepository.signIn(
-                request.getUserId()
+                request.getUsername()
         );
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -106,7 +97,7 @@ public class UserServiceImpl implements IUserService {
 
         User user = new User()
                 .setStatus(UserStatus.PUBLIC.getCode())
-                .setUserId(request.getUserId())
+                .setUsername(request.getUsername())
                 .setPassword(request.getPassword())
                 .setDescription(request.getDescription())
                 .setEmail(request.getEmail())
@@ -118,9 +109,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void editUser(EditUserRequest request, RequestMetaInfo requestMetaInfo) {
         User user = new User()
-                .setUserId(request.getUserId())
                 .setPassword(request.getPassword())
-                .setDescription(request.getDescription())
                 .setEmail(request.getEmail())
                 .setPhone(request.getPhone());
 
@@ -147,27 +136,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void editUserProfile(EditProfileRequest request, RequestMetaInfo requestMetaInfo) {
         Profile profile = new Profile()
-                .setUserId(request.getUserId())
+                .setUsername(request.getUsername())
                 .setDescription(request.getDescription())
                 .setProfileImage(request.getProfileImage());
 
-        if (request.getStatus() != null) {
-            if (request.getStatus() < 0 || request.getStatus() > 3) {
-                throw new ConnectDataException(
-                        ConnectErrorCode.PARAM_EXCEPTION,
-                        "Invalid payload (status should be between 0 and 3)"
-                );
-            }
-            profile.setStatus(request.getStatus());
-        }
-
         userRepository.editUserProfile(requestMetaInfo.getUserId(), profile);
 
-        if (profile.getStatus() != null && UserStatus.getStatus(profile.getStatus()).equals(UserStatus.PUBLIC)) {
-            Follow follow = new Follow()
-                    .setFollowingId(requestMetaInfo.getUserId())
-                    .setStatus(FollowStatus.APPROVED.getCode());
-            followRepository.updateFollow(follow);
+        if (request.getSocialLinks() != null) {
+            socialLinkService.updateUserSocialLink(request.getSocialLinks(), requestMetaInfo);
         }
     }
 
@@ -176,7 +152,7 @@ public class UserServiceImpl implements IUserService {
         User user = userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId());
         String profileImage =
                 imageUploadUtil.profileImage(
-                        user.getId() + "." + imageUploadUtil.getExtension(image),
+                        user.getUserId().toString() + "." + imageUploadUtil.getExtension(image),
                         image
                 );
 
@@ -186,38 +162,74 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void deleteUser(String userId) {
-        userRepository.deleteUser(userId);
+    public void deleteUser(String username) {
+        User targetUser = userRepository.internalQueryUserByUsername(username);
+        userRepository.deleteUser(targetUser.getUserId());
     }
 
     @Override
-    public UserDto queryUserByUserId(String userId, RequestMetaInfo requestMetaInfo) {
-        User user = userRepository.queryUserByUserId(userId, requestMetaInfo.getUserId());
+    public boolean isEmailExisting(String email) {
+        return userRepository.isEmailExisting(email);
+    }
+
+    @Override
+    public UserVo queryUserByUsername(String username, RequestMetaInfo requestMetaInfo) {
+        User targetUser = userRepository.internalQueryUserByUsername(username);
+
+        User user = userRepository.queryUserByUserId(targetUser.getUserId(), requestMetaInfo.getUserId());
         userRepository.incrementViews(
                 user.getUserId(),
                 user.getVersion()
         );
 
-        UserDto userDto = new UserDto()
-                .setUserId(user.getUserId())
+        UserVo userVo = new UserVo()
                 .setStatus(user.getStatus())
                 .setDescription(user.getDescription())
                 .setProfileImage(user.getProfileImage())
                 .setViews(user.getViews())
                 .setFollowers(user.getFollowers())
                 .setFollowings(user.getFollowings());
-        return userDto;
+        return userVo;
     }
 
     @Override
-    public List<UserDto> queryUser(QueryUserRequest request, RequestMetaInfo requestMetaInfo) {
+    public UserDto internalQueryUserByUserId(long userId) {
+        User user = userRepository.internalQueryUserByUserId(userId);
+        return new UserDto()
+                .setUserId(user.getUserId())
+                .setUsername(user.getUsername())
+                .setStatus(user.getStatus())
+                .setRole(user.getRole())
+                .setDescription(user.getDescription())
+                .setProfileImage(user.getProfileImage())
+                .setViews(user.getViews())
+                .setFollowers(user.getFollowers())
+                .setFollowings(user.getFollowings());
+    }
+
+    @Override
+    public UserDto internalQueryUserByUsername(String username) {
+        User user = userRepository.internalQueryUserByUsername(username);
+        return new UserDto()
+                .setUserId(user.getUserId())
+                .setUsername(user.getUsername())
+                .setStatus(user.getStatus())
+                .setRole(user.getRole())
+                .setDescription(user.getDescription())
+                .setProfileImage(user.getProfileImage())
+                .setViews(user.getViews())
+                .setFollowers(user.getFollowers())
+                .setFollowings(user.getFollowings());
+    }
+
+    @Override
+    public List<UserVo> queryUser(QueryUserRequest request, RequestMetaInfo requestMetaInfo) {
         QueryUserParam param = new QueryUserParam().setKeyword(request.getKeyword());
         List<User> userList = userRepository.queryUser(param, requestMetaInfo.getUserId());
 
         return userList
                 .stream()
-                .map(x -> new UserDto()
-                        .setUserId(x.getUserId())
+                .map(x -> new UserVo()
                         .setStatus(x.getStatus())
                         .setDescription(x.getDescription())
                         .setProfileImage(x.getProfileImage())
@@ -233,19 +245,19 @@ public class UserServiceImpl implements IUserService {
         List<Integer> idList = starRepository.queryTargetIdList(targetType.getCode(), requestMetaInfo.getUserId());
         switch (Objects.requireNonNull(targetType)) {
             case PROJECT:
-                List<QueryProjectResponseDto> projectDtoList =
+                List<QueryProjectVo> projectDtoList =
                         idList.stream().map(
                                 x -> projectService.queryProjectById(x, requestMetaInfo)
                         ).collect(Collectors.toList());
                 return (List<T>) projectDtoList;
             case POST:
-                List<QueryPostResponseDto> postDtoList =
+                List<QueryPostVo> postDtoList =
                         idList.stream().map(
                                 x -> postService.queryPostById(x, requestMetaInfo)
                         ).collect(Collectors.toList());
                 return (List<T>) postDtoList;
             case COMMENT:
-                List<QueryCommentResponseDto> commentDtoList = idList.stream().map(
+                List<QueryCommentVo> commentDtoList = idList.stream().map(
                         x -> commentService.queryCommentById(x, requestMetaInfo)
                 ).collect(Collectors.toList());
                 return (List<T>) commentDtoList;
@@ -257,39 +269,57 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    public UserDto internalQueryUserByUserId(String userId) {
-        User user = userRepository.internalQueryUserByUserId(userId);
-        userRepository.incrementViews(
-                user.getUserId(),
-                user.getVersion()
-        );
+    @Override
+    public List<UserVo> queryFollowerList(String username) {
+        User targetUser = userRepository.internalQueryUserByUsername(username);
 
-        UserDto userDto = new UserDto()
-                .setUserId(user.getUserId())
-                .setStatus(user.getStatus())
-                .setDescription(user.getDescription())
-                .setProfileImage(user.getProfileImage())
-                .setViews(user.getViews())
-                .setFollowers(user.getFollowers())
-                .setFollowings(user.getFollowings());
-        return userDto;
+        List<Long> userIdList = followRepository.queryFollowerIdList(targetUser.getUserId());
+        return userIdList.stream().map(x -> {
+                    UserDto userDto = internalQueryUserByUserId(x);
+                    return new UserVo()
+                            .setUsername(userDto.getUsername())
+                            .setDescription(userDto.getDescription())
+                            .setProfileImage(userDto.getProfileImage())
+                            .setViews(userDto.getViews())
+                            .setFollowers(userDto.getFollowers())
+                            .setFollowings(userDto.getFollowings());
+                }
+        ).toList();
     }
 
     @Override
-    public List<UserDto> queryFollowerList(String userId) {
-        List<String> userIdList = followRepository.queryFollowerIdList(userId);
-        return userIdList.stream().map(this::internalQueryUserByUserId).toList();
+    public List<UserVo> queryFollowingList(String username) {
+        User targetUser = userRepository.internalQueryUserByUsername(username);
+
+        List<Long> userIdList = followRepository.queryFollowingIdList(targetUser.getUserId());
+        return userIdList.stream().map(x -> {
+                    UserDto userDto = internalQueryUserByUserId(x);
+                    return new UserVo()
+                            .setUsername(userDto.getUsername())
+                            .setDescription(userDto.getDescription())
+                            .setProfileImage(userDto.getProfileImage())
+                            .setViews(userDto.getViews())
+                            .setFollowers(userDto.getFollowers())
+                            .setFollowings(userDto.getFollowings());
+                }
+        ).toList();
     }
 
     @Override
-    public List<UserDto> queryFollowingList(String userId) {
-        List<String> userIdList = followRepository.queryFollowingIdList(userId);
-        return userIdList.stream().map(this::internalQueryUserByUserId).toList();
-    }
+    public List<UserVo> queryPendingList(String username) {
+        User targetUser = userRepository.internalQueryUserByUsername(username);
 
-    @Override
-    public List<UserDto> queryPendingList(String userId) {
-        List<String> userIdList = followRepository.queryPendingIdList(userId);
-        return userIdList.stream().map(this::internalQueryUserByUserId).toList();
+        List<Long> userIdList = followRepository.queryPendingIdList(targetUser.getUserId());
+        return userIdList.stream().map(x -> {
+                    UserDto userDto = internalQueryUserByUserId(x);
+                    return new UserVo()
+                            .setUsername(userDto.getUsername())
+                            .setDescription(userDto.getDescription())
+                            .setProfileImage(userDto.getProfileImage())
+                            .setViews(userDto.getViews())
+                            .setFollowers(userDto.getFollowers())
+                            .setFollowings(userDto.getFollowings());
+                }
+        ).toList();
     }
 }

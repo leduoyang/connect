@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.connect.data.dao.IUserDao">
     <resultMap id="userResultMap" type="com.connect.data.entity.User">
-        <id property="id" column="id"/>
-        <result property="userId" column="userId"/>
+        <id property="userId" column="userId"/>
+        <result property="username" column="username"/>
         <result property="password" column="password"/>
         <result property="status" column="status"/>
         <result property="role" column="role"/>
@@ -18,25 +18,17 @@
         <result property="dbModifyTime" column="db_modify_time"/>
     </resultMap>
 
-    <select id="authenticateRootUser" resultType="java.lang.Boolean">
-        SELECT EXISTS(
-        SELECT userId
-        FROM user
-        WHERE userId = #{userId,jdbcType=VARCHAR} AND password = #{password,jdbcType=VARCHAR}
-        )
-    </select>
-
     <select id="signIn" resultMap="userResultMap">
-        SELECT userId, status, role, password
+        SELECT userId, username, status, role, password
         FROM user
-        WHERE userId = #{userId,jdbcType=VARCHAR}
+        WHERE username = #{username,jdbcType=VARCHAR}
     </select>
 
     <insert id="signUp" parameterType="com.connect.data.entity.User" useGeneratedKeys="true"
-            keyProperty="id" keyColumn="id">
-        INSERT INTO user(userId, password, status, description, email, phone, profileImage)
+            keyProperty="userId" keyColumn="userId">
+        INSERT INTO user(username, password, status, description, email, phone, profileImage)
         VALUES (
-        #{userId, jdbcType=VARCHAR},
+        #{username, jdbcType=VARCHAR},
         #{password,jdbcType=VARCHAR},
         #{status,jdbcType=TINYINT},
         #{description, jdbcType=VARCHAR},
@@ -49,9 +41,6 @@
     <update id="editUser" parameterType="com.connect.data.entity.User">
         UPDATE user
         <trim prefix="set" suffixOverrides=",">
-            <if test="userId != null and userId != ''">
-                userId = #{userId, jdbcType=VARCHAR},
-            </if>
             <if test="password != null and password != ''">
                 password = #{password, jdbcType=VARCHAR},
             </if>
@@ -61,9 +50,6 @@
             <if test="role != null">
                 role = #{role, jdbcType=TINYINT},
             </if>
-            <if test="description != null and description != ''">
-                description = #{description, jdbcType=VARCHAR},
-            </if>
             <if test="email != null and email != ''">
                 email = #{email, jdbcType=VARCHAR},
             </if>
@@ -71,17 +57,14 @@
                 phone = #{phone, jdbcType=VARCHAR},
             </if>
         </trim>
-        WHERE id = #{id, jdbcType=BIGINT}
+        WHERE userId = #{userId, jdbcType=BIGINT}
     </update>
 
     <update id="editUserProfile" parameterType="com.connect.data.entity.Profile">
         UPDATE user
         <trim prefix="set" suffixOverrides=",">
-            <if test="userId != null and userId != ''">
-                userId = #{userId, jdbcType=VARCHAR},
-            </if>
-            <if test="status != null">
-                status = #{status, jdbcType=TINYINT},
+            <if test="username != null and username != ''">
+                username = #{username, jdbcType=VARCHAR},
             </if>
             <if test="description != null and description != ''">
                 description = #{description, jdbcType=VARCHAR},
@@ -90,31 +73,31 @@
                 profileImage = #{profileImage, jdbcType=VARCHAR},
             </if>
         </trim>
-        WHERE id = #{id, jdbcType=BIGINT}
+        WHERE userId = #{userId, jdbcType=BIGINT}
     </update>
 
     <delete id="deleteUser">
         UPDATE user
         SET `status` = 3,
-        WHERE userId = #{userId, jdbcType=VARCHAR}
+        WHERE userId = #{userId, jdbcType=BIGINT}
     </delete>
 
     <select id="queryUser" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version,
+        SELECT userId, username, status, role, description, email, phone, profileImage, views, followers, followings, version,
         db_create_time, db_modify_time
 
         FROM user
-        WHERE (userId LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
+        WHERE (username LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
         AND (
         status = 0
         OR (status = 1
         AND userId IN (SELECT followingId FROM follow WHERE followerId = #{requesterId} AND status = 2 ) )
-        OR (status != 3 AND userId = #{requesterId} )
+        OR (status != 3 AND username = #{requesterId} )
         )
     </select>
 
     <select id="queryUserByUserId" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version,
+        SELECT userId, username, status, role, description, email, phone, profileImage, views, followers, followings, version,
         db_create_time, db_modify_time
 
         FROM user
@@ -127,8 +110,17 @@
         )
     </select>
 
+    <select id="internalQueryUserByUsername" resultMap="userResultMap">
+        SELECT userId, username, status, role, description, email, phone, profileImage, views, followers, followings, version,
+        db_create_time, db_modify_time
+
+        FROM user
+        WHERE username = #{username}
+        AND status != 3
+    </select>
+
     <select id="internalQueryUserByUserId" resultMap="userResultMap">
-        SELECT id, userId, status, role, description, email, phone, profileImage, views, followers, followings, version,
+        SELECT userId, username, status, role, description, email, phone, profileImage, views, followers, followings, version,
         db_create_time, db_modify_time
 
         FROM user
@@ -138,17 +130,17 @@
 
     <select id="userExisting" resultType="java.lang.Boolean">
         SELECT EXISTS(
-        SELECT userId
+        SELECT username
         FROM user
-        WHERE userId = #{userId,jdbcType=VARCHAR} AND status != 3
+        WHERE userId = #{userId,jdbcType=BIGINT} AND status != 3
         )
     </select>
 
-    <select id="userExistingWithEmail" resultType="java.lang.Boolean">
+    <select id="userExistingWithUsernameAndEmail" resultType="java.lang.Boolean">
         SELECT EXISTS(
-        SELECT userId
+        SELECT username
         FROM user
-        WHERE userId = #{userId,jdbcType=VARCHAR} OR email = #{email,jdbcType=VARCHAR} AND status != 3
+        WHERE username = #{username,jdbcType=VARCHAR} OR email = #{email,jdbcType=VARCHAR} AND status != 3
         )
     </select>
 
@@ -156,20 +148,28 @@
         UPDATE user
         SET version = version + 1,
         views = views + 1
-        WHERE userId = #{userId,jdbcType=VARCHAR} AND version = #{version, jdbcType=BIGINT}
+        WHERE userId = #{userId, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
     </update>
 
     <update id="refreshFollowers">
         UPDATE user
         SET version = version + 1,
         followers = #{followers, jdbcType=BIGINT}
-        WHERE userId = #{userId,jdbcType=VARCHAR} AND version = #{version, jdbcType=BIGINT}
+        WHERE userId = #{userId, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
     </update>
 
     <update id="refreshFollowings">
         UPDATE user
         SET version = version + 1,
         followings = #{followings, jdbcType=BIGINT}
-        WHERE userId = #{userId,jdbcType=VARCHAR} AND version = #{version, jdbcType=BIGINT}
+        WHERE userId = #{userId, jdbcType=BIGINT} AND version = #{version, jdbcType=BIGINT}
     </update>
+
+    <select id="isEmailExisting" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT email
+        FROM user
+        WHERE email = #{email,jdbcType=VARCHAR}
+        )
+    </select>
 </mapper>

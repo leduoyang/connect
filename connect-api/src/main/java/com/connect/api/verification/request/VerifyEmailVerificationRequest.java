@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class VerifyEmailVerificationRequest {
+    @NotNull(message = "email should not be null")
     @Email(message = "email should be in valid format")
     private String email;
 

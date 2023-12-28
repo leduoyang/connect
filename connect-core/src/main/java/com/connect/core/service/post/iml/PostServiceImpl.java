@@ -1,7 +1,10 @@
 package com.connect.core.service.post.iml;
 
 import com.connect.api.common.RequestMetaInfo;
-import com.connect.api.post.dto.*;
+import com.connect.api.post.request.CreatePostRequest;
+import com.connect.api.post.request.QueryPostRequest;
+import com.connect.api.post.request.UpdatePostRequest;
+import com.connect.api.post.vo.QueryPostVo;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.post.IPostService;
@@ -24,7 +27,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public QueryPostResponseDto queryPostById(long id, RequestMetaInfo requestMetaInfo) {
+    public QueryPostVo queryPostById(long id, RequestMetaInfo requestMetaInfo) {
         Post post = postRepository.queryPostById(id, requestMetaInfo.getUserId());
         if (post == null) {
             log.error("query post not found or not authorized to retrieve");
@@ -36,7 +39,7 @@ public class PostServiceImpl implements IPostService {
                 post.getVersion()
         );
 
-        QueryPostResponseDto postDto = new QueryPostResponseDto()
+        QueryPostVo postDto = new QueryPostVo()
                 .setId(post.getId())
                 .setStatus(post.getStatus())
                 .setStars(post.getStars())
@@ -55,18 +58,16 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public List<QueryPostResponseDto> queryPost(QueryPostDto request, RequestMetaInfo requestMetaInfo) {
+    public List<QueryPostVo> queryPost(QueryPostRequest request, RequestMetaInfo requestMetaInfo) {
         QueryPostParam param = new QueryPostParam()
-                .setPostId(request.getPostId())
                 .setKeyword(request.getKeyword())
-                .setUserId(request.getUserId())
                 .setTags(request.getTags());
 
         List<Post> postList = postRepository.queryPost(param, requestMetaInfo.getUserId());
 
         return postList
                 .stream()
-                .map(x -> new QueryPostResponseDto()
+                .map(x -> new QueryPostVo()
                         .setId(x.getId())
                         .setStatus(x.getStatus())
                         .setContent(x.getContent())
@@ -81,7 +82,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public long createPost(CreatePostDto request, RequestMetaInfo requestMetaInfo) {
+    public long createPost(CreatePostRequest request, RequestMetaInfo requestMetaInfo) {
         if (request.getStatus() < 0 || request.getStatus() > 2) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -111,9 +112,9 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public void updatePost(UpdatePostDto request, RequestMetaInfo requestMetaInfo) {
+    public void updatePost(long id, UpdatePostRequest request, RequestMetaInfo requestMetaInfo) {
         Post post = new Post()
-                .setId(request.getId())
+                .setId(id)
                 .setUpdatedUser(requestMetaInfo.getUserId());
 
         if (request.getStatus() != null) {
@@ -138,9 +139,9 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public void deletePost(DeletePostDto request, RequestMetaInfo requestMetaInfo) {
+    public void deletePost(long id, RequestMetaInfo requestMetaInfo) {
         Post post = new Post()
-                .setId(request.getId())
+                .setId(id)
                 .setUpdatedUser(requestMetaInfo.getUserId());
 
         postRepository.deletePost(post);
@@ -153,7 +154,7 @@ public class PostServiceImpl implements IPostService {
      * @param userId      id of the user making the request
      * @return target post
      */
-    private QueryPostResponseDto checkReferencePost(Long referenceId, String userId) {
+    private QueryPostVo checkReferencePost(Long referenceId, Long userId) {
         if (referenceId == null) {
             log.info("referenceId not exist");
             return null;
@@ -166,7 +167,7 @@ public class PostServiceImpl implements IPostService {
             return null;
         }
 
-        return new QueryPostResponseDto()
+        return new QueryPostVo()
                 .setId(referencePost.getId())
                 .setContent(referencePost.getContent())
                 .setUpdatedUser(referencePost.getUpdatedUser())

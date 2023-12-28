@@ -1,6 +1,7 @@
 package com.connect.web.controller.star;
 
 import com.connect.api.common.APIResponse;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.star.IStarApi;
 import com.connect.api.star.dto.StarDto;
 import com.connect.api.star.dto.UnStarDto;
@@ -28,35 +29,36 @@ public class StarController implements IStarApi {
     @Override
     public APIResponse<Void> star(StarRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        StarDto starDto = new StarDto()
-                .setUserId(authentication.getName())
-                .setTargetId(request.getTargetId())
-                .setTargetType(request.getTargetType());
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(Long.parseLong(authentication.getName()))
+                .setDetails(authentication.getDetails());
 
-        starService.star(starDto);
+        starService.star(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
     public APIResponse<Void> removeStar(UnStarRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UnStarDto unStarDto = new UnStarDto()
-                .setUserId(authentication.getName())
-                .setTargetId(request.getTargetId())
-                .setTargetType(request.getTargetType());
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(Long.parseLong(authentication.getName()))
+                .setDetails(authentication.getDetails());
 
-        starService.unStar(unStarDto);
+        starService.unStar(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
     public APIResponse<Map<String, Boolean>> starExisting(QueryStarRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(Long.parseLong(authentication.getName()))
+                .setDetails(authentication.getDetails());
+
         boolean existed = starService.starExisting(
-                authentication.getName(),
                 request.getTargetId(),
                 request.getTargetType(),
-                true
+                requestMetaInfo
         );
 
         Map<String, Boolean> result = new HashMap<>();

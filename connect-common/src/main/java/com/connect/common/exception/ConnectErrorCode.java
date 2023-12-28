@@ -21,6 +21,15 @@ public enum ConnectErrorCode {
     USER_EXISTED_EXCEPTION("300005", "User has existed."),
 
     /**
+     * Social Link
+     */
+    SOCIAL_LINK_CREATE_EXCEPTION("300001", "Create social link failed"),
+    SOCIAL_LINK_UPDATE_EXCEPTION("300002", "Update social link failed"),
+    SOCIAL_LINK_DELETE_EXCEPTION("300003", "Delete social link failed"),
+    SOCIAL_LINK_NOT_EXISTED_EXCEPTION("300004", "Social link not existed."),
+    SOCIAL_LINK_EXISTED_EXCEPTION("300005", "Social link has existed."),
+
+    /**
      * User Verification
      */
     USER_VERIFICATION_CREATE_EXCEPTION("300001", "Create user verification failed"),

@@ -26,14 +26,16 @@ public class CommentRepositoryImpl implements ICommentRepository {
         this.commentDao = commentDao;
     }
 
-    public Comment queryCommentById(long id, String userId) {
+    public Comment queryCommentById(long id, long userId) {
         return commentDao.queryCommentById(id, userId);
     }
 
-    public List<Comment> queryComment(QueryCommentParam param, String userId) {
+    public Comment internalQueryCommentById(long id) {
+        return commentDao.internalQueryCommentById(id);
+    }
+
+    public List<Comment> queryComment(QueryCommentParam param, long userId) {
         return commentDao.queryComment(
-                param.getPostId(),
-                param.getUserId(),
                 param.getKeyword(),
                 param.getTags(),
                 userId
@@ -51,7 +53,7 @@ public class CommentRepositoryImpl implements ICommentRepository {
 
     public void updateComment(Comment comment) {
         long targetId = comment.getId();
-        String userId = comment.getUpdatedUser();
+        Long userId = comment.getUpdatedUser();
         boolean existed = commentDao.commentExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
@@ -82,7 +84,7 @@ public class CommentRepositoryImpl implements ICommentRepository {
 
     public void deleteComment(Comment comment) {
         long targetId = comment.getId();
-        String userId = comment.getUpdatedUser();
+        Long userId = comment.getUpdatedUser();
         boolean existed = commentDao.commentExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(

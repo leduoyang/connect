@@ -23,14 +23,16 @@ public class ProjectRepositoryImpl implements IProjectRepository {
         this.projectDao = projectDao;
     }
 
-    public Project queryProjectById(long id, String userId) {
+    public Project queryProjectById(long id, long userId) {
         return projectDao.queryProjectById(id, userId);
     }
 
-    public List<Project> queryProject(QueryProjectParam param, String userId) {
+    public Project internalQueryProjectById(long id) {
+        return projectDao.internalQueryProjectById(id);
+    }
+
+    public List<Project> queryProject(QueryProjectParam param, long userId) {
         return projectDao.queryProject(
-                param.getProjectId(),
-                param.getUserId(),
                 param.getKeyword(),
                 param.getTags(),
                 userId
@@ -48,7 +50,7 @@ public class ProjectRepositoryImpl implements IProjectRepository {
 
     public void updateProject(Project project) {
         long targetId = project.getId();
-        String userId = project.getUpdatedUser();
+        Long userId = project.getUpdatedUser();
         boolean existed = projectDao.projectExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
@@ -79,7 +81,7 @@ public class ProjectRepositoryImpl implements IProjectRepository {
 
     public void deleteProject(Project project) {
         long targetId = project.getId();
-        String userId = project.getUpdatedUser();
+        Long userId = project.getUpdatedUser();
         boolean existed = projectDao.projectExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(

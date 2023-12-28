@@ -7,27 +7,29 @@ import com.connect.data.param.QueryUserParam;
 import java.util.List;
 
 public interface IUserRepository {
-    boolean authenticateRootUser(String userId, String password);
-
-    User signIn(String userId);
+    User signIn(String username);
 
     void signUp(User user);
 
-    void editUser(String requesterId, User user);
+    void editUser(long requesterId, User user);
 
-    void editUserProfile(String requesterId, Profile profile);
+    void editUserProfile(long requesterId, Profile profile);
 
-    void incrementViews(String userId, int version);
+    void incrementViews(long userId, int version);
 
-    void refreshFollowers(String userId, int version, int followers);
+    void refreshFollowers(long userId, int version, int followers);
 
-    void refreshFollowings(String userId, int version, int followings);
+    void refreshFollowings(long userId, int version, int followings);
 
-    void deleteUser(String userId);
+    void deleteUser(long userId);
 
-    List<User> queryUser(QueryUserParam param, String requesterId);
+    List<User> queryUser(QueryUserParam param, long requesterId);
 
-    User queryUserByUserId(String userId, String requesterId);
+    User queryUserByUserId(long userId, long requesterId);
 
-    User internalQueryUserByUserId(String userId);
+    User internalQueryUserByUserId(long userId);
+
+    User internalQueryUserByUsername(String username);
+
+    boolean isEmailExisting(String email);
 }

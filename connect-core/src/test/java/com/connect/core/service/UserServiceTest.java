@@ -9,6 +9,7 @@ import com.connect.common.util.ImageUploadUtil;
 import com.connect.core.service.comment.ICommentService;
 import com.connect.core.service.post.IPostService;
 import com.connect.core.service.project.IProjectService;
+import com.connect.core.service.socialLink.ISocialLinkService;
 import com.connect.core.service.user.iml.UserServiceImpl;
 import com.connect.data.entity.User;
 import com.connect.data.repository.IFollowRepository;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -53,6 +55,9 @@ public class UserServiceTest {
     @MockBean
     private ICommentService commentService;
 
+    @MockBean
+    private ISocialLinkService socialLinkService;
+
     @Autowired
     private UserServiceImpl userService;
 
@@ -71,23 +76,22 @@ public class UserServiceTest {
     }
 
     @Test
-    public void test_update_post_without_status_should_avoid_default_value() {
+    public void test_update_user_without_status_should_avoid_default_value() {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId("userId");
+                .setUserId(1L);
 
         EditUserRequest editUserRequest = new EditUserRequest();
-
         userService.editUser(editUserRequest, requestMetaInfo);
 
-        verify(userRepository, times(1)).editUser(any(), postCaptor.capture());
+        verify(userRepository, times(1)).editUser(eq(requestMetaInfo.getUserId()), postCaptor.capture());
         User capturedUser = postCaptor.getValue();
         assertNull(capturedUser.getStatus());
     }
 
     @Test
-    public void test_update_post_with_valid_status_should_edit_with_target_value() {
+    public void test_update_user_with_valid_status_should_edit_with_target_value() {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId("userId");
+                .setUserId(1L);
 
         int targetStatus = UserStatus.PRIVATE.getCode();
         EditUserRequest editUserRequest = new EditUserRequest();
@@ -95,15 +99,15 @@ public class UserServiceTest {
 
         userService.editUser(editUserRequest, requestMetaInfo);
 
-        verify(userRepository, times(1)).editUser(any(), postCaptor.capture());
+        verify(userRepository, times(1)).editUser(eq(requestMetaInfo.getUserId()), postCaptor.capture());
         User capturedUser = postCaptor.getValue();
         assertEquals(targetStatus, capturedUser.getStatus());
     }
 
     @Test
-    public void test_update_post_with_invalid_status_should_raise_exception() {
+    public void test_update_user_with_invalid_status_should_raise_exception() {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId("userId");
+                .setUserId(1L);
 
         EditUserRequest editUserRequest = new EditUserRequest();
         editUserRequest.setStatus(-1);

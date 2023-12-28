@@ -8,9 +8,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class SignInRequest {
-    @NotNull(message = "userId can not be null")
-    @NotBlank(message = "userId can not be blank")
-    private String userId;
+    @NotNull(message = "username can not be null")
+    @NotBlank(message = "username can not be blank")
+    private String username;
 
     @NotNull(message = "password can not be null")
     @NotBlank(message = "password can not be blank")

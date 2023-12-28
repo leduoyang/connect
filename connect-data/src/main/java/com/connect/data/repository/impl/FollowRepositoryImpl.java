@@ -49,31 +49,31 @@ public class FollowRepositoryImpl implements IFollowRepository {
         }
     }
 
-    public boolean isFollowing(String followerId, String followingId) {
+    public boolean isFollowing(long followerId, long followingId) {
         return followDao.isFollowing(followerId, followingId);
     }
 
-    public boolean isFollowing(String followerId, String followingId, int status) {
+    public boolean isFollowing(long followerId, long followingId, int status) {
         return followDao.isFollowingWithTargetStatus(followerId, followingId, status);
     }
 
-    public int countFollower(String followingId) {
+    public int countFollower(long followingId) {
         return followDao.countFollower(followingId);
     }
 
-    public int countFollowing(String followerId) {
+    public int countFollowing(long followerId) {
         return followDao.countFollowing(followerId);
     }
 
-    public List<String> queryFollowerIdList(String followingId) {
+    public List<Long> queryFollowerIdList(long followingId) {
         return followDao.queryFollowerIdList(followingId);
     }
 
-    public List<String> queryFollowingIdList(String followerId) {
+    public List<Long> queryFollowingIdList(long followerId) {
         return followDao.queryFollowingIdList(followerId);
     }
 
-    public List<String> queryPendingIdList(String followingId) {
+    public List<Long> queryPendingIdList(long followingId) {
         return followDao.queryPendingIdList(followingId);
     }
 }

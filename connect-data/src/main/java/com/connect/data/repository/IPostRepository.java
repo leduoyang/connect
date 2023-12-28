@@ -17,7 +17,9 @@ public interface IPostRepository {
 
     void deletePost(Post post);
 
-    Post queryPostById(long id, String userId);
+    Post queryPostById(long id, long userId);
 
-    List<Post> queryPost(QueryPostParam param, String userId);
+    Post internalQueryPostById(long id);
+
+    List<Post> queryPost(QueryPostParam param, long userId);
 }

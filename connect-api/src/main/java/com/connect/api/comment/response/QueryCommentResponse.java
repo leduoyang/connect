@@ -1,6 +1,6 @@
 package com.connect.api.comment.response;
 
-import com.connect.api.comment.dto.QueryCommentResponseDto;
+import com.connect.api.comment.vo.QueryCommentVo;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -9,7 +9,7 @@ import java.util.List;
 @Accessors(chain = true)
 @Data
 public class QueryCommentResponse {
-    private List<QueryCommentResponseDto> items;
+    private List<QueryCommentVo> items;
 
     private Integer total = 0;
 }
