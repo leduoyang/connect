@@ -28,7 +28,7 @@ DROP TABLE IF EXISTS `social_link`;
 CREATE TABLE `social_link` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `platform`          VARCHAR(256) NOT NULL,
-    `platform_id`       VARCHAR(256) NOT NULL,
+    `platform_id`       VARCHAR(256),
     `created_user`      INT NOT NULL,
     `updated_user`      INT DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
