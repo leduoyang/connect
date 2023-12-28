@@ -29,14 +29,12 @@ CREATE TABLE `social_link` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
     `platform`          VARCHAR(256) NOT NULL,
     `platform_id`       VARCHAR(256),
-    `created_user`      INT NOT NULL,
-    `updated_user`      INT DEFAULT NULL,
+    `userId`            INT NOT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
-    FOREIGN KEY (created_user) REFERENCES `user`(userId) ON DELETE CASCADE,
-    FOREIGN KEY (updated_user) REFERENCES `user`(userId) ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Project';
-CREATE INDEX idx_userid ON `social_link` (created_user);
+CREATE INDEX idx_userid ON `social_link` (userId);
 
 DROP TABLE IF EXISTS `email_verification`;
 CREATE TABLE `email_verification` (
