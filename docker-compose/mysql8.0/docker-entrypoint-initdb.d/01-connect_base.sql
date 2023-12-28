@@ -3,8 +3,9 @@ USE connect_base;
 -- user table
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-    `id`                INT PRIMARY KEY AUTO_INCREMENT,
-    `userId`            VARCHAR(256) UNIQUE NOT NULL,
+    `userId`            INT PRIMARY KEY AUTO_INCREMENT,
+    `uuid`              VARCHAR(256) UNIQUE,
+    `username`          VARCHAR(256) UNIQUE NOT NULL,
     `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
     `role`              TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - essential, 1 - plus, 2 - premium, 3 - admin',
     `password`          VARCHAR(256) NOT NULL,
@@ -20,7 +21,22 @@ CREATE TABLE `user` (
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='User';
 CREATE INDEX idx_userId ON `user` (userId);
-CREATE INDEX idx_email ON `user` (email);
+CREATE INDEX idx_username ON `user` (username);
+
+-- project table
+DROP TABLE IF EXISTS `social_link`;
+CREATE TABLE `social_link` (
+    `id`                INT PRIMARY KEY AUTO_INCREMENT,
+    `platform`          VARCHAR(256) NOT NULL,
+    `platform_id`       VARCHAR(256) NOT NULL,
+    `created_user`      INT NOT NULL,
+    `updated_user`      INT DEFAULT NULL,
+    `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
+    `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
+    FOREIGN KEY (created_user) REFERENCES `user`(userId) ON DELETE CASCADE,
+    FOREIGN KEY (updated_user) REFERENCES `user`(userId) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Project';
+CREATE INDEX idx_userid ON `social_link` (created_user);
 
 DROP TABLE IF EXISTS `email_verification`;
 CREATE TABLE `email_verification` (
@@ -44,12 +60,12 @@ CREATE TABLE `project` (
     `stars`             INT NOT NULL DEFAULT 0,
     `views`             INT NOT NULL DEFAULT 0,
     `version`           INT NOT NULL DEFAULT 1,
-    `created_user`      VARCHAR(256) NOT NULL,
-    `updated_user`      VARCHAR(256) DEFAULT NULL,
+    `created_user`      INT NOT NULL,
+    `updated_user`      INT DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
-    FOREIGN KEY (created_user) REFERENCES `user`(id) ON DELETE CASCADE,
-    FOREIGN KEY (updated_user) REFERENCES `user`(id) ON DELETE CASCADE
+    FOREIGN KEY (created_user) REFERENCES `user`(userId) ON DELETE CASCADE,
+    FOREIGN KEY (updated_user) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Project';
 CREATE INDEX idx_userid ON `project` (created_user);
 
@@ -62,12 +78,12 @@ CREATE TABLE `project_category` (
     `stars`             INT NOT NULL DEFAULT 0,
     `views`             INT NOT NULL DEFAULT 0,
     `version`           INT NOT NULL DEFAULT 1,
-    `created_user`      VARCHAR(256) NOT NULL,
-    `updated_user`      VARCHAR(256) DEFAULT NULL,
+    `created_user`      INT NOT NULL,
+    `updated_user`      INT DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
-    FOREIGN KEY (created_user) REFERENCES `user`(id) ON DELETE CASCADE,
-    FOREIGN KEY (updated_user) REFERENCES `user`(id) ON DELETE CASCADE
+    FOREIGN KEY (created_user) REFERENCES `user`(userId) ON DELETE CASCADE,
+    FOREIGN KEY (updated_user) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='project_category';
 
 -- post table
@@ -81,12 +97,12 @@ CREATE TABLE `post` (
     `stars`             INT NOT NULL DEFAULT 0,
     `views`             INT NOT NULL DEFAULT 0,
     `version`           INT NOT NULL DEFAULT 1,
-    `created_user`      VARCHAR(256) NOT NULL,
-    `updated_user`      VARCHAR(256) DEFAULT NULL,
+    `created_user`      INT NOT NULL,
+    `updated_user`      INT DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
-    FOREIGN KEY (created_user) REFERENCES `user`(id) ON DELETE CASCADE,
-    FOREIGN KEY (updated_user) REFERENCES `user`(id) ON DELETE CASCADE
+    FOREIGN KEY (created_user) REFERENCES `user`(userId) ON DELETE CASCADE,
+    FOREIGN KEY (updated_user) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Activity';
 CREATE INDEX idx_userid_post ON `post` (created_user);
 
@@ -100,12 +116,12 @@ CREATE TABLE `comment` (
     `stars`             INT NOT NULL DEFAULT 0,
     `views`             INT NOT NULL DEFAULT 0,
     `version`           INT NOT NULL DEFAULT 1,
-    `created_user`      VARCHAR(256) NOT NULL,
-    `updated_user`      VARCHAR(256) DEFAULT NULL,
+    `created_user`      INT NOT NULL,
+    `updated_user`      INT DEFAULT NULL,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
-    FOREIGN KEY (created_user) REFERENCES `user`(id) ON DELETE CASCADE,
-    FOREIGN KEY (updated_user) REFERENCES `user`(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_user) REFERENCES `user`(userId) ON DELETE CASCADE,
+    FOREIGN KEY (updated_user) REFERENCES `user`(userId) ON DELETE CASCADE,
     FOREIGN KEY (postId) REFERENCES `post`(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Comment';
 CREATE INDEX idx_userid_comment ON `comment` (created_user);
@@ -115,13 +131,13 @@ CREATE INDEX idx_postId_comment ON `comment` (postId);
 DROP TABLE IF EXISTS `star`;
 CREATE TABLE `star` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
-    `userId`            VARCHAR(256) NOT NULl,
+    `userId`            INT NOT NULl,
     `targetId`          INT NOT NULL,
     `targetType`        TINYINT(4) NOT NULL COMMENT '0 - project, 1 - post, 2 - comment, 3 - user',
     `isActive`          BOOLEAN NOT NULL DEFAULT TRUE,
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
-    FOREIGN KEY (userId) REFERENCES `user`(id) ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Star';
 CREATE INDEX idx_type_userId_star ON `star` (targetType, userId);
 CREATE INDEX idx_type_targetId_star ON `star` (targetType, targetId);
@@ -131,20 +147,20 @@ CREATE INDEX idx_type_targetId_active_star ON `star` (targetType, targetId, isAc
 DROP TABLE IF EXISTS `follow`;
 CREATE TABLE `follow` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
-    `followerId`        VARCHAR(256) NOT NULl,
-    `followingId`       VARCHAR(256) NOT NULl,
+    `followerId`        INT NOT NULl,
+    `followingId`       INT NOT NULl,
     `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - UNFOLLOW, 1 - PENDING, 2 - APPROVED, 3 - REJECTED',
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
-    FOREIGN KEY (`followerId`) REFERENCES `user`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`followingId`) REFERENCES `user`(`id`) ON DELETE CASCADE
+    FOREIGN KEY (`followerId`) REFERENCES `user`(`userId`) ON DELETE CASCADE,
+    FOREIGN KEY (`followingId`) REFERENCES `user`(`userId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Follow';
 CREATE INDEX idx_followerId_follow ON `follow` (followerId);
 CREATE INDEX idx_followerId_followingId_follow ON `follow` (followerId, followingId);
 CREATE INDEX idx_followerId_followingId_status_follow ON `follow` (followerId, followingId, status);
 
 -- Insert Mock User Data
-INSERT INTO `user` (userId, status, password, email, db_create_time)
+INSERT INTO `user` (username, status, password, email, db_create_time)
 VALUES
     ('ROOT', 1, 'thisisrootpassword', 'connect.sideproject@gmail.com', CURRENT_TIMESTAMP),
     ('john_doe', ROUND(RAND() * 1), 'john123', 'john.doe@email.com', CURRENT_TIMESTAMP),
@@ -333,7 +349,7 @@ VALUES
     (2, 'The community you built around your project is impressive.', 5, 5),
     (3, 'Your news coverage is always reliable.', 5, 5),
     (4, 'I used your travel guide app on my last trip. It was perfect!', 5, 5),
-    (5, 'Your health platform helped me adopt a healthier lifestyle.' 5, 5),
+    (5, 'Your health platform helped me adopt a healthier lifestyle.', 5, 5),
     (6, 'Great playlist on your music sharing platform.', 6, 6),
     (7, 'I appreciate the variety of courses on your online learning platform.', 6, 6),
     (8, 'The art pieces at the exhibition were breathtaking.', 6, 6),
@@ -353,34 +369,35 @@ VALUES
 -- Insert Mock Star Data
 -- likedType 0: Project (targetId 1-20)
 INSERT INTO `star` (userId, targetId, targetType, isActive)
-SELECT id, ROUND(RAND() * 19 + 1), 0, TRUE
+SELECT userId, ROUND(RAND() * 19 + 1), 0, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- likedType 1: User (targetId 1-20)
 INSERT INTO `star` (userId, targetId, targetType, isActive)
-SELECT id, ROUND(RAND() * 19 + 1), 3, TRUE
+SELECT userId, ROUND(RAND() * 19 + 1), 3, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- likedType 2: Post (targetId 1-40, after the first 20 entries)
 INSERT INTO `star` (userId, targetId, targetType, isActive)
-SELECT id, ROUND(RAND() * 39 + 1), 1, TRUE
+SELECT userId, ROUND(RAND() * 39 + 1), 1, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- likedType 3: Comment (targetId 1-20)
 INSERT INTO `star` (userId, targetId, targetType, isActive)
-SELECT id, ROUND(RAND() * 19 + 1), 2, TRUE
+SELECT userId, ROUND(RAND() * 19 + 1), 2, TRUE
 FROM User
 ORDER BY RAND()
 LIMIT 50;
 
 -- Follow
 INSERT INTO `follow` (followerId, followingId, status)
+VALUES
     (2, 1, 1),
     (3, 1, 1),
     (4, 1, 1),
