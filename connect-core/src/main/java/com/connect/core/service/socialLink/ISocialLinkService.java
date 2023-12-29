@@ -6,5 +6,4 @@ import java.util.Map;
 
 public interface ISocialLinkService {
     void updateUserSocialLink(Map<String, String> socialLinkDto, RequestMetaInfo requestMetaInfo);
-
 }

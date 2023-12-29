@@ -71,7 +71,7 @@
 							"response": []
 						},
 						{
-							"name": "0.5 john editUserProfile to semi public",
+							"name": "0.5 john editPersonalInfo to semi public",
 							"event": [
 								{
 									"listen": "test",
@@ -100,14 +100,14 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"description\": \"update status to semi public\",\n    \"status\": 1\n}",
+									"raw": "// update status to semi public\n{\n    \"status\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+								"url": "http://localhost:8080/api/connect/v1/user/me/info",
 								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
 							},
 							"response": []
@@ -1310,14 +1310,56 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "// user profile of the current token will be updated\n// status default set to null\n{\n    \"description\": \"description\",\n    \"status\": 1\n}",
+											"raw": "{\n    \"description\": \"description\",\n    \"socialLinks\": {\"github\": \"123\", \"instagram\": null}\n}",
 											"options": {
 												"raw": {
 													"language": "json"
 												}
 											}
 										},
-										"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+										"url": "http://localhost:8080/api/connect/v1/user/me/profile",
+										"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
+									},
+									"response": []
+								},
+								{
+									"name": "editPersonalInfo",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											},
+											{
+												"key": "",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"password\": \"updatedpassword\",\n    \"status\": 0\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "http://localhost:8080/api/connect/v1/user/me/info",
 										"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
 									},
 									"response": []
@@ -1667,7 +1709,7 @@
 							"response": []
 						},
 						{
-							"name": "1. john editUserProfile to semi public",
+							"name": "1. john editPersonalInfo to semi public",
 							"event": [
 								{
 									"listen": "test",
@@ -1690,14 +1732,14 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"description\": \"update status to semi public\",\n    \"status\": 1\n}",
+									"raw": "// update status to semi public\n{\n    \"status\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+								"url": "http://localhost:8080/api/connect/v1/user/me/info",
 								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
 							},
 							"response": []
@@ -1953,7 +1995,7 @@
 							"response": []
 						},
 						{
-							"name": "8. john editUserProfile to public (ROOT should follow john afterwards)",
+							"name": "8. john editPersonalInfo to public (ROOT should follow john afterwards)",
 							"event": [
 								{
 									"listen": "test",
@@ -1982,14 +2024,14 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"description\": \"update status to public\",\n    \"status\": 0\n}",
+									"raw": "{\n    \"status\": 0\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+								"url": "http://localhost:8080/api/connect/v1/user/me/info",
 								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
 							},
 							"response": []

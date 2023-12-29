@@ -107,12 +107,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void editUser(EditUserRequest request, RequestMetaInfo requestMetaInfo) {
+    public void editUserInfo(EditUserInfoRequest request, RequestMetaInfo requestMetaInfo) {
         User user = new User()
                 .setPassword(request.getPassword())
                 .setEmail(request.getEmail())
                 .setPhone(request.getPhone());
-
+        if(request.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
         if (request.getStatus() != null) {
             if (request.getStatus() < 0 || request.getStatus() > 3) {
                 throw new ConnectDataException(

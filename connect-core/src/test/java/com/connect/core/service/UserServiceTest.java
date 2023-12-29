@@ -1,7 +1,7 @@
 package com.connect.core.service;
 
 import com.connect.api.common.RequestMetaInfo;
-import com.connect.api.user.request.EditUserRequest;
+import com.connect.api.user.request.EditUserInfoRequest;
 import com.connect.api.user.request.SignUpRequest;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
@@ -80,8 +80,8 @@ public class UserServiceTest {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(1L);
 
-        EditUserRequest editUserRequest = new EditUserRequest();
-        userService.editUser(editUserRequest, requestMetaInfo);
+        EditUserInfoRequest editUserInfoRequest = new EditUserInfoRequest();
+        userService.editUserInfo(editUserInfoRequest, requestMetaInfo);
 
         verify(userRepository, times(1)).editUser(eq(requestMetaInfo.getUserId()), postCaptor.capture());
         User capturedUser = postCaptor.getValue();
@@ -94,10 +94,10 @@ public class UserServiceTest {
                 .setUserId(1L);
 
         int targetStatus = UserStatus.PRIVATE.getCode();
-        EditUserRequest editUserRequest = new EditUserRequest();
-        editUserRequest.setStatus(targetStatus);
+        EditUserInfoRequest editUserInfoRequest = new EditUserInfoRequest();
+        editUserInfoRequest.setStatus(targetStatus);
 
-        userService.editUser(editUserRequest, requestMetaInfo);
+        userService.editUserInfo(editUserInfoRequest, requestMetaInfo);
 
         verify(userRepository, times(1)).editUser(eq(requestMetaInfo.getUserId()), postCaptor.capture());
         User capturedUser = postCaptor.getValue();
@@ -109,11 +109,11 @@ public class UserServiceTest {
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(1L);
 
-        EditUserRequest editUserRequest = new EditUserRequest();
-        editUserRequest.setStatus(-1);
+        EditUserInfoRequest editUserInfoRequest = new EditUserInfoRequest();
+        editUserInfoRequest.setStatus(-1);
 
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            userService.editUser(editUserRequest, requestMetaInfo);
+            userService.editUserInfo(editUserInfoRequest, requestMetaInfo);
         });
 
         assertEquals("Parameters error:Invalid payload (status should be between 0 and 3)", expectedException.getErrorMsg());

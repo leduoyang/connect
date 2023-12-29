@@ -101,37 +101,25 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> editPersonalInfo(
-            @RequestBody EditUserRequest request
+            @RequestBody EditUserInfoRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        userService.editUser(request, requestMetaInfo);
+        userService.editUserInfo(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
     public APIResponse<Void> editProfile(
-            @PathVariable String userId,
             @RequestBody EditProfileRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
-
-        if (!authentication.getName().equals(userId) &&
-                !authentication.getAuthorities()
-                        .stream()
-                        .findFirst()
-                        .equals(UserRole.getRole(UserRole.ADMIN.getCode()))) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
-                    "unauthorized request for editing target user " + userId
-            );
-        }
 
         userService.editUserProfile(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
