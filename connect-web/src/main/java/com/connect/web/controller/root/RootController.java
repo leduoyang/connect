@@ -2,12 +2,11 @@ package com.connect.web.controller.root;
 
 import com.connect.api.common.APIResponse;
 import com.connect.api.root.IRootApi;
-import com.connect.api.user.vo.UserVo;
 import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.user.IUserService;
-import com.connect.core.service.user.dto.UserDto;
+import com.connect.data.dto.UserDto;
 import com.connect.web.util.JwtTokenUtil;
 import com.connect.web.common.AppContext;
 import lombok.extern.slf4j.Slf4j;

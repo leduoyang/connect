@@ -4,7 +4,7 @@ import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.user.vo.UserVo;
 import com.connect.api.user.request.*;
 import com.connect.common.enums.StarTargetType;
-import com.connect.core.service.user.dto.UserDto;
+import com.connect.data.dto.UserDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public interface IUserService {
 
     void editProfileImage(MultipartFile image, RequestMetaInfo requestMetaInfo);
 
-    void deleteUser(String username);
+    void deleteUser(RequestMetaInfo requestMetaInfo);
 
     List<UserVo> queryUser(QueryUserRequest request, RequestMetaInfo requestMetaInfo);
 

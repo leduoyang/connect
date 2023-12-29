@@ -965,7 +965,7 @@
 											"urlencoded": []
 										},
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/project?tags=科技",
+											"raw": "http://localhost:8080/api/connect/v1/project?tags=科技&username=alice_smith",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -981,6 +981,10 @@
 												{
 													"key": "tags",
 													"value": "科技"
+												},
+												{
+													"key": "username",
+													"value": "alice_smith"
 												}
 											]
 										},
@@ -1208,7 +1212,7 @@
 									"response": []
 								},
 								{
-									"name": "getUserByUserId",
+									"name": "getUserByUsername",
 									"event": [
 										{
 											"listen": "test",
@@ -1512,7 +1516,7 @@
 											}
 										],
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/post?keyword=john_doe",
+											"raw": "http://localhost:8080/api/connect/v1/post?username=john_doe&keyword=探索",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -1526,8 +1530,12 @@
 											],
 											"query": [
 												{
-													"key": "keyword",
+													"key": "username",
 													"value": "john_doe"
+												},
+												{
+													"key": "keyword",
+													"value": "探索"
 												}
 											]
 										},
@@ -1557,7 +1565,7 @@
 												"type": "text"
 											}
 										],
-										"url": "http://localhost:8080/api/connect/v1/post/47",
+										"url": "http://localhost:8080/api/connect/v1/post/2",
 										"description": "This test is written to validate that response payloads returned from the server are well-formed. It uses the [Tiny Validator for JSON Schema v4](http://geraintluff.github.io/tv4/).\n\nThe Postman sandbox offers a built-in tv4 validator to simplify your assertions. Use [JSON-schema](http://json-schema.org/) [draft v4](http://json-schema.org/latest/json-schema-core.html) to validate simple values and complex objects using a rich [validation vocabulary](http://json-schema.org/latest/json-schema-validation.html) ([examples](http://json-schema.org/examples.html))."
 									},
 									"response": []
@@ -1590,7 +1598,7 @@
 											}
 										],
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/comment?userId=yangming",
+											"raw": "http://localhost:8080/api/connect/v1/comment?username=ROOT&keyword=Great",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -1604,8 +1612,12 @@
 											],
 											"query": [
 												{
-													"key": "userId",
-													"value": "yangming"
+													"key": "username",
+													"value": "ROOT"
+												},
+												{
+													"key": "keyword",
+													"value": "Great"
 												}
 											]
 										},
@@ -1635,7 +1647,7 @@
 												"type": "text"
 											}
 										],
-										"url": "http://localhost:8080/api/connect/v1/comment/13",
+										"url": "http://localhost:8080/api/connect/v1/comment/1",
 										"description": "This test is written to validate that response payloads returned from the server are well-formed. It uses the [Tiny Validator for JSON Schema v4](http://geraintluff.github.io/tv4/).\n\nThe Postman sandbox offers a built-in tv4 validator to simplify your assertions. Use [JSON-schema](http://json-schema.org/) [draft v4](http://json-schema.org/latest/json-schema-core.html) to validate simple values and complex objects using a rich [validation vocabulary](http://json-schema.org/latest/json-schema-validation.html) ([examples](http://json-schema.org/examples.html))."
 									},
 									"response": []

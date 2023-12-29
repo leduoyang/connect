@@ -3,6 +3,7 @@ package com.connect.data.repository.impl;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.data.dao.IUserDao;
+import com.connect.data.dto.UserDto;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
 import com.connect.data.param.QueryUserParam;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Repository
@@ -50,6 +52,7 @@ public class UserRepositoryImpl implements IUserRepository {
             );
         }
 
+        user.setUuid(UUID.randomUUID().toString());
         log.info("payload for creating user - " + user);
         int affected = userDao.signUp(user);
         if (affected <= 0) {
@@ -128,7 +131,7 @@ public class UserRepositoryImpl implements IUserRepository {
         }
     }
 
-    public List<User> queryUser(QueryUserParam param, long requesterId) {
+    public List<UserDto> queryUser(QueryUserParam param, long requesterId) {
         log.info(param.toString());
         return userDao.queryUser(param.getKeyword(), requesterId);
     }
@@ -159,12 +162,12 @@ public class UserRepositoryImpl implements IUserRepository {
         return targetUser;
     }
 
-    public User queryUserByUserId(long userId, long requesterId) {
-        User targetUser = userDao.queryUserByUserId(userId, requesterId);
+    public UserDto queryUserByUsername(String username, long requesterId) {
+        UserDto targetUser = userDao.queryUserByUsername(username, requesterId);
         if (targetUser == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_NOT_EXISTED_EXCEPTION,
-                    String.format("User %s not exited or not authorized to see it", userId)
+                    String.format("User %s not exited or not authorized to see it", username)
             );
         }
         return targetUser;

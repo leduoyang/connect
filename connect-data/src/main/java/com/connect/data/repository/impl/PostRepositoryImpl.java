@@ -1,6 +1,7 @@
 package com.connect.data.repository.impl;
 
 import com.connect.data.dao.IPostDao;
+import com.connect.data.dto.PostDto;
 import com.connect.data.entity.Post;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -23,7 +24,7 @@ public class PostRepositoryImpl implements IPostRepository {
         this.postDao = postDao;
     }
 
-    public Post queryPostById(long id, long userId) {
+    public PostDto queryPostById(long id, long userId) {
         log.info(String.format("param: %s, userId %s", id, userId));
 
         return postDao.queryPostById(id, userId);
@@ -33,12 +34,13 @@ public class PostRepositoryImpl implements IPostRepository {
         return postDao.internalQueryPostById(id);
     }
 
-    public List<Post> queryPost(QueryPostParam param, long userId) {
+    public List<PostDto> queryPost(QueryPostParam param, long userId) {
         log.info(String.format("param: %s, userId %s", param, userId));
 
         return postDao.queryPost(
                 param.getKeyword(),
                 param.getTags(),
+                param.getUsername(),
                 userId
         );
     }
@@ -47,7 +49,7 @@ public class PostRepositoryImpl implements IPostRepository {
         log.info(String.format("param: %s, userId %s", post, post.getCreatedUser()));
 
         if (post.getReferenceId() != null) {
-            Post referencePost = postDao.queryPostById(
+            PostDto referencePost = postDao.queryPostById(
                     post.getReferenceId(),
                     post.getCreatedUser()
             );

@@ -24,11 +24,7 @@ public class QueryProjectVo {
 
     private Integer views;
 
-    private Long createdUser;
-
-    private Long updatedUser;
-
-    private Date dbCreateTime;
+    private String username;
 
     private Date dbModifyTime;
 }

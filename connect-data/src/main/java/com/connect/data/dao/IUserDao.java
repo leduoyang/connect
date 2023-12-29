@@ -1,5 +1,6 @@
 package com.connect.data.dao;
 
+import com.connect.data.dto.UserDto;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
 import com.connect.data.entity.UserVerification;
@@ -25,13 +26,13 @@ public interface IUserDao {
 
     int deleteUser(Long userId);
 
-    List<User> queryUser(String keyword, Long requesterId);
+    List<UserDto> queryUser(String keyword, Long requesterId);
 
     User internalQueryUserByUserId(Long userId);
 
     User internalQueryUserByUsername(String username);
 
-    User queryUserByUserId(Long userId, Long requesterId);
+    UserDto queryUserByUsername(String username, Long requesterId);
 
     boolean userExisting(Long userId);
 

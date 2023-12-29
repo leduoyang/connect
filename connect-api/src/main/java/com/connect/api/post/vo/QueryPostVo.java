@@ -10,6 +10,8 @@ import java.util.Date;
 public class QueryPostVo {
     private Long id;
 
+    private String username;
+
     private Integer status;
 
     private String content;
@@ -21,12 +23,6 @@ public class QueryPostVo {
     private Integer stars;
 
     private Integer views;
-
-    private Long createdUser;
-
-    private Long updatedUser;
-
-    private Date dbCreateTime;
 
     private Date dbModifyTime;
 

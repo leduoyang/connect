@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.connect.data.dao.IProjectDao">
+    <resultMap id="projectDtoResultMap" type="com.connect.data.dto.ProjectDto">
+        <id property="id" column="id"/>
+        <result property="uuid" column="uuid"/>
+        <result property="username" column="username"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="tags" column="tags"/>
+        <result property="boosted" column="boosted"/>
+        <result property="stars" column="stars"/>
+        <result property="views" column="views"/>
+        <result property="version" column="version"/>
+        <result property="dbModifyTime" column="db_modify_time"/>
+    </resultMap>
+
     <resultMap id="projectResultMap" type="com.connect.data.entity.Project">
         <id property="id" column="id"/>
+        <result property="uuid" column="uuid"/>
         <result property="title" column="title"/>
         <result property="description" column="description"/>
         <result property="status" column="status"/>
@@ -19,8 +35,9 @@
 
     <insert id="createProject" parameterType="com.connect.data.entity.Project" useGeneratedKeys="true"
             keyProperty="id" keyColumn="id">
-        INSERT INTO project(title, description, status, tags, boosted, created_user, updated_user)
+        INSERT INTO project(uuid, title, description, status, tags, boosted, created_user, updated_user)
         VALUES (
+        #{uuid, jdbcType=VARCHAR},
         #{title, jdbcType=VARCHAR},
         #{description, jdbcType=VARCHAR},
         #{status,jdbcType=TINYINT},
@@ -75,33 +92,35 @@
         WHERE id = #{id, jdbcType=BIGINT}
     </delete>
 
-    <select id="queryProjectById" resultMap="projectResultMap">
-        SELECT id, title, description, status, tags, boosted, stars, views, version, created_user,
-        updated_user, db_create_time, db_modify_time
+    <select id="queryProjectById" resultMap="projectDtoResultMap">
+        SELECT p.id, p.uuid, u.username, p.title, p.description, p.status, p.tags, p.boosted, p.stars, p.views,
+        p.version, p.db_modify_time
 
-        FROM project
-        WHERE id = #{id}
+        FROM project AS p
+        JOIN user AS u on p.updated_user = u.userId
+        WHERE p.id = #{id}
         AND (
-        status = 0
-        OR (status = 1
-        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
-        OR (status != 3 AND created_user = #{userId} )
+        p.status = 0
+        OR (p.status = 1
+        AND p.updated_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (p.status != 3 AND p.updated_user = #{userId} )
         )
     </select>
 
     <select id="internalQueryProjectById" resultMap="projectResultMap">
-        SELECT id, title, description, status, tags, boosted, stars, views, version, created_user,
+        SELECT id, uuid, title, description, status, tags, boosted, stars, views, version, created_user,
         updated_user, db_create_time, db_modify_time
 
         FROM project
         WHERE id = #{id}
     </select>
 
-    <select id="queryProject" resultMap="projectResultMap">
-        SELECT id, title, description, status, tags, boosted, stars, views, version, created_user,
-        updated_user, db_create_time, db_modify_time
+    <select id="queryProject" resultMap="projectDtoResultMap">
+        SELECT p.id, p.uuid, u.username, p.title, p.description, p.status, p.tags, p.boosted, p.stars, p.views,
+        p.version, p.db_modify_time
 
-        FROM project
+        FROM project AS p
+        JOIN user AS u on p.updated_user = u.userId
         WHERE 1=1
         <if test="keyword != null and keyword != ''">
             AND title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%')
@@ -109,13 +128,16 @@
         <if test="tags != null and tags != ''">
             AND find_in_set(#{tags}, tags) &gt; 0
         </if>
+        <if test="username != null and username != ''">
+            AND u.username = #{username}
+        </if>
         AND (
-        status = 0
-        OR (status = 1
-        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
-        OR (status != 3 AND created_user = #{userId} )
+        p.status = 0
+        OR (p.status = 1
+        AND p.updated_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (p.status != 3 AND updated_user = #{userId} )
         )
-        ORDER BY db_modify_time DESC, db_create_time DESC
+        ORDER BY p.db_modify_time DESC
     </select>
 
     <select id="projectExisting" resultType="java.lang.Boolean">

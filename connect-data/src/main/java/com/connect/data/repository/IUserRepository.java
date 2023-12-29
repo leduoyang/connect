@@ -1,5 +1,6 @@
 package com.connect.data.repository;
 
+import com.connect.data.dto.UserDto;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
 import com.connect.data.param.QueryUserParam;
@@ -23,9 +24,9 @@ public interface IUserRepository {
 
     void deleteUser(long userId);
 
-    List<User> queryUser(QueryUserParam param, long requesterId);
+    List<UserDto> queryUser(QueryUserParam param, long requesterId);
 
-    User queryUserByUserId(long userId, long requesterId);
+    UserDto queryUserByUsername(String username, long requesterId);
 
     User internalQueryUserByUserId(long userId);
 

@@ -17,7 +17,7 @@ import com.connect.core.service.post.IPostService;
 import com.connect.core.service.project.IProjectService;
 import com.connect.core.service.socialLink.ISocialLinkService;
 import com.connect.core.service.user.IUserService;
-import com.connect.core.service.user.dto.UserDto;
+import com.connect.data.dto.UserDto;
 import com.connect.data.entity.Follow;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
@@ -154,7 +154,7 @@ public class UserServiceImpl implements IUserService {
         User user = userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId());
         String profileImage =
                 imageUploadUtil.profileImage(
-                        user.getUserId().toString() + "." + imageUploadUtil.getExtension(image),
+                        user.getUuid() + "." + imageUploadUtil.getExtension(image),
                         image
                 );
 
@@ -164,9 +164,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void deleteUser(String username) {
-        User targetUser = userRepository.internalQueryUserByUsername(username);
-        userRepository.deleteUser(targetUser.getUserId());
+    public void deleteUser(RequestMetaInfo requestMetaInfo) {
+        userRepository.deleteUser(requestMetaInfo.getUserId());
     }
 
     @Override
@@ -176,15 +175,14 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserVo queryUserByUsername(String username, RequestMetaInfo requestMetaInfo) {
-        User targetUser = userRepository.internalQueryUserByUsername(username);
-
-        User user = userRepository.queryUserByUserId(targetUser.getUserId(), requestMetaInfo.getUserId());
+        UserDto user = userRepository.queryUserByUsername(username, requestMetaInfo.getUserId());
         userRepository.incrementViews(
                 user.getUserId(),
                 user.getVersion()
         );
 
         UserVo userVo = new UserVo()
+                .setUsername(user.getUsername())
                 .setStatus(user.getStatus())
                 .setDescription(user.getDescription())
                 .setProfileImage(user.getProfileImage())
@@ -227,7 +225,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<UserVo> queryUser(QueryUserRequest request, RequestMetaInfo requestMetaInfo) {
         QueryUserParam param = new QueryUserParam().setKeyword(request.getKeyword());
-        List<User> userList = userRepository.queryUser(param, requestMetaInfo.getUserId());
+        List<UserDto> userList = userRepository.queryUser(param, requestMetaInfo.getUserId());
 
         return userList
                 .stream()

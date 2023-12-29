@@ -1,5 +1,6 @@
 package com.connect.data.repository;
 
+import com.connect.data.dto.CommentDto;
 import com.connect.data.entity.Comment;
 import com.connect.data.entity.Post;
 import com.connect.data.param.QueryCommentParam;
@@ -17,9 +18,9 @@ public interface ICommentRepository {
 
     void deleteComment(Comment comment);
 
-    Comment queryCommentById(long id, long userId);
+    CommentDto queryCommentById(long id, long userId);
 
     Comment internalQueryCommentById(long id);
 
-    List<Comment> queryComment(QueryCommentParam param, long userId);
+    List<CommentDto> queryComment(QueryCommentParam param, long userId);
 }

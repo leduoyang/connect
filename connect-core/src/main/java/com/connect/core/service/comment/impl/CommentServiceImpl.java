@@ -8,6 +8,7 @@ import com.connect.api.common.RequestMetaInfo;
 import com.connect.core.service.comment.ICommentService;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
+import com.connect.data.dto.CommentDto;
 import com.connect.data.entity.Comment;
 import com.connect.data.param.QueryCommentParam;
 import com.connect.data.repository.ICommentRepository;
@@ -28,7 +29,7 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public QueryCommentVo queryCommentById(long id, RequestMetaInfo requestMetaInfo) {
-        Comment comment = commentRepository.queryCommentById(id, requestMetaInfo.getUserId());
+        CommentDto comment = commentRepository.queryCommentById(id, requestMetaInfo.getUserId());
         if (comment == null) {
             log.error("query comment not found or not authorized to retrieve");
             return null;
@@ -46,9 +47,7 @@ public class CommentServiceImpl implements ICommentService {
                 .setContent(comment.getContent())
                 .setStars(comment.getStars())
                 .setViews(comment.getViews())
-                .setCreatedUser(comment.getCreatedUser())
-                .setUpdatedUser(comment.getUpdatedUser())
-                .setDbCreateTime(comment.getDbCreateTime())
+                .setUsername(comment.getUsername())
                 .setDbModifyTime(comment.getDbModifyTime());
 
         return commentDto;
@@ -57,10 +56,11 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public List<QueryCommentVo> queryComment(QueryCommentRequest request, RequestMetaInfo requestMetaInfo) {
         QueryCommentParam param = new QueryCommentParam()
+                .setUsername(request.getUsername())
                 .setKeyword(request.getKeyword())
                 .setTags(request.getTags());
 
-        List<Comment> commentList = commentRepository.queryComment(param, requestMetaInfo.getUserId());
+        List<CommentDto> commentList = commentRepository.queryComment(param, requestMetaInfo.getUserId());
 
         return commentList
                 .stream()
@@ -71,9 +71,7 @@ public class CommentServiceImpl implements ICommentService {
                         .setContent(x.getContent())
                         .setStars(x.getStars())
                         .setViews(x.getViews())
-                        .setCreatedUser(x.getCreatedUser())
-                        .setUpdatedUser(x.getUpdatedUser())
-                        .setDbCreateTime(x.getDbCreateTime())
+                        .setUsername(x.getUsername())
                         .setDbModifyTime(x.getDbModifyTime()))
                 .collect(Collectors.toList());
     }

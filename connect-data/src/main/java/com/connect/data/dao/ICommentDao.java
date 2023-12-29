@@ -1,5 +1,6 @@
 package com.connect.data.dao;
 
+import com.connect.data.dto.CommentDto;
 import com.connect.data.entity.Comment;
 
 import java.util.List;
@@ -15,11 +16,11 @@ public interface ICommentDao {
 
     int deleteComment(long id, long userId);
 
-    Comment queryCommentById(long id, long userId);
+    CommentDto queryCommentById(long id, long userId);
 
     Comment internalQueryCommentById(long id);
 
-    List<Comment> queryComment(String keyword, String tags, long userId);
+    List<CommentDto> queryComment(String keyword, String tags, String username, long userId);
 
     boolean commentExisting(long id, long userId);
 }

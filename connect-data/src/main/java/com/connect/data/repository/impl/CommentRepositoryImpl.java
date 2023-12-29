@@ -3,6 +3,7 @@ package com.connect.data.repository.impl;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.data.dao.ICommentDao;
+import com.connect.data.dto.CommentDto;
 import com.connect.data.entity.Comment;
 import com.connect.data.entity.Comment;
 import com.connect.data.entity.Post;
@@ -26,7 +27,7 @@ public class CommentRepositoryImpl implements ICommentRepository {
         this.commentDao = commentDao;
     }
 
-    public Comment queryCommentById(long id, long userId) {
+    public CommentDto queryCommentById(long id, long userId) {
         return commentDao.queryCommentById(id, userId);
     }
 
@@ -34,10 +35,11 @@ public class CommentRepositoryImpl implements ICommentRepository {
         return commentDao.internalQueryCommentById(id);
     }
 
-    public List<Comment> queryComment(QueryCommentParam param, long userId) {
+    public List<CommentDto> queryComment(QueryCommentParam param, long userId) {
         return commentDao.queryComment(
                 param.getKeyword(),
                 param.getTags(),
+                param.getUsername(),
                 userId
         );
     }

@@ -8,6 +8,7 @@ import com.connect.api.post.vo.QueryPostVo;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.post.IPostService;
+import com.connect.data.dto.PostDto;
 import com.connect.data.entity.Post;
 import com.connect.data.param.QueryPostParam;
 import com.connect.data.repository.IPostRepository;
@@ -28,7 +29,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public QueryPostVo queryPostById(long id, RequestMetaInfo requestMetaInfo) {
-        Post post = postRepository.queryPostById(id, requestMetaInfo.getUserId());
+        PostDto post = postRepository.queryPostById(id, requestMetaInfo.getUserId());
         if (post == null) {
             log.error("query post not found or not authorized to retrieve");
             return null;
@@ -41,12 +42,10 @@ public class PostServiceImpl implements IPostService {
 
         QueryPostVo postDto = new QueryPostVo()
                 .setId(post.getId())
+                .setUsername(post.getUsername())
                 .setStatus(post.getStatus())
                 .setStars(post.getStars())
                 .setViews(post.getViews())
-                .setCreatedUser(post.getCreatedUser())
-                .setUpdatedUser(post.getUpdatedUser())
-                .setDbCreateTime(post.getDbCreateTime())
                 .setDbModifyTime(post.getDbModifyTime());
         if (post.getContent() != null) {
             postDto.setContent(post.getContent());
@@ -60,23 +59,22 @@ public class PostServiceImpl implements IPostService {
     @Override
     public List<QueryPostVo> queryPost(QueryPostRequest request, RequestMetaInfo requestMetaInfo) {
         QueryPostParam param = new QueryPostParam()
+                .setUsername(request.getUsername())
                 .setKeyword(request.getKeyword())
                 .setTags(request.getTags());
 
-        List<Post> postList = postRepository.queryPost(param, requestMetaInfo.getUserId());
+        List<PostDto> postList = postRepository.queryPost(param, requestMetaInfo.getUserId());
 
         return postList
                 .stream()
                 .map(x -> new QueryPostVo()
                         .setId(x.getId())
+                        .setUsername(x.getUsername())
                         .setStatus(x.getStatus())
                         .setContent(x.getContent())
                         .setStars(x.getStars())
                         .setViews(x.getViews())
                         .setReferencePost(checkReferencePost(x.getReferenceId(), requestMetaInfo.getUserId()))
-                        .setCreatedUser(x.getCreatedUser())
-                        .setUpdatedUser(x.getUpdatedUser())
-                        .setDbCreateTime(x.getDbCreateTime())
                         .setDbModifyTime(x.getDbModifyTime()))
                 .collect(Collectors.toList());
     }
@@ -160,7 +158,7 @@ public class PostServiceImpl implements IPostService {
             return null;
         }
 
-        Post referencePost = postRepository.queryPostById(referenceId, userId);
+        PostDto referencePost = postRepository.queryPostById(referenceId, userId);
 
         if (referencePost == null) {
             log.warn("reference post not found or not authorized to retrieve");
@@ -170,7 +168,7 @@ public class PostServiceImpl implements IPostService {
         return new QueryPostVo()
                 .setId(referencePost.getId())
                 .setContent(referencePost.getContent())
-                .setUpdatedUser(referencePost.getUpdatedUser())
+                .setUsername(referencePost.getUsername())
                 .setDbModifyTime(referencePost.getDbModifyTime());
     }
 }

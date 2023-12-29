@@ -1,33 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.connect.data.dao.IUserDao">
-    <resultMap id="userResultMap" type="com.connect.data.entity.User">
+    <resultMap id="userDtoResultMap" type="com.connect.data.dto.UserDto">
         <id property="userId" column="userId"/>
+        <result property="uuid" column="uuid"/>
         <result property="username" column="username"/>
-        <result property="password" column="password"/>
-        <result property="status" column="status"/>
-        <result property="role" column="role"/>
         <result property="description" column="description"/>
-        <result property="email" column="email"/>
+        <result property="role" column="role"/>
+        <result property="status" column="status"/>
         <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="profileImage" column="profileImage"/>
         <result property="views" column="views"/>
+        <result property="version" column="version"/>
         <result property="followers" column="followers"/>
         <result property="followings" column="followings"/>
+    </resultMap>
+
+    <resultMap id="userResultMap" type="com.connect.data.entity.User">
+        <id property="userId" column="userId"/>
+        <result property="uuid" column="uuid"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="description" column="description"/>
+        <result property="role" column="role"/>
+        <result property="status" column="status"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
         <result property="profileImage" column="profileImage"/>
-        <result property="dbCreateTime" column="db_create_time"/>
-        <result property="dbModifyTime" column="db_modify_time"/>
+        <result property="views" column="views"/>
+        <result property="version" column="version"/>
+        <result property="followers" column="followers"/>
+        <result property="followings" column="followings"/>
     </resultMap>
 
     <select id="signIn" resultMap="userResultMap">
-        SELECT userId, username, status, role, password
+        SELECT userId, uuid, username, status, role, password, description, email, phone, profileImage, views,
+        followers, followings, version
+
         FROM user
         WHERE username = #{username,jdbcType=VARCHAR}
     </select>
 
     <insert id="signUp" parameterType="com.connect.data.entity.User" useGeneratedKeys="true"
             keyProperty="userId" keyColumn="userId">
-        INSERT INTO user(username, password, status, description, email, phone, profileImage)
+        INSERT INTO user(uuid, username, password, status, description, email, phone, profileImage)
         VALUES (
+        #{uuid, jdbcType=VARCHAR},
         #{username, jdbcType=VARCHAR},
         #{password,jdbcType=VARCHAR},
         #{status,jdbcType=TINYINT},
@@ -82,10 +101,9 @@
         WHERE userId = #{userId, jdbcType=BIGINT}
     </delete>
 
-    <select id="queryUser" resultMap="userResultMap">
-        SELECT userId, username, status, role, description, email, phone, profileImage, views, followers, followings, version,
-        db_create_time, db_modify_time
-
+    <select id="queryUser" resultMap="userDtoResultMap">
+        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers, followings,
+        version
         FROM user
         WHERE (username LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
         AND (
@@ -96,12 +114,12 @@
         )
     </select>
 
-    <select id="queryUserByUserId" resultMap="userResultMap">
-        SELECT userId, username, status, role, description, email, phone, profileImage, views, followers, followings, version,
-        db_create_time, db_modify_time
+    <select id="queryUserByUsername" resultMap="userDtoResultMap">
+        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers, followings,
+        version
 
         FROM user
-        WHERE userId = #{userId}
+        WHERE username = #{username}
         AND (
         status = 0
         OR (status = 1
@@ -111,8 +129,8 @@
     </select>
 
     <select id="internalQueryUserByUsername" resultMap="userResultMap">
-        SELECT userId, username, status, role, description, email, phone, profileImage, views, followers, followings, version,
-        db_create_time, db_modify_time
+        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers, followings,
+        version
 
         FROM user
         WHERE username = #{username}
@@ -120,8 +138,8 @@
     </select>
 
     <select id="internalQueryUserByUserId" resultMap="userResultMap">
-        SELECT userId, username, status, role, description, email, phone, profileImage, views, followers, followings, version,
-        db_create_time, db_modify_time
+        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers, followings,
+        version
 
         FROM user
         WHERE userId = #{userId}
