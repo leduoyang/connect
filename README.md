@@ -105,39 +105,31 @@ Params:
 | pageSize           | Integer   | 20     |
 
 #### Edit Personal Info
-- Endpoint: `/user/me/edit`
+- Endpoint: `/user/me/info`
 - Method: PATCH
 
 Payload:
 
 | Parameter       | Type     | Example      |
 |-----------------|----------|--------------|
-| username          | String   | john_doe     |
 | passowrd        | String   |  |
 | status          | Integer  | 0 - public, 1 - semi, 2 - private |
-| description     | String   | john_doe's profile |
 | email           | String   |  |
 | phone           | String   |  |
 
 Note. TODO email should be verficiation again if getting updated
 
 #### Edit Profile
-- Endpoint: `/user/{username}`
+- Endpoint: `/user/me/profile`
 - Method: PATCH
-
-PathVariable:
-
-| Parameter        | Type     | Example      |
-|------------------|----------|--------------|
-| username           | String   | john_doe     |
 
 Payload:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
 | username           | String   | john_doe     |
-| status           | Integer   | 0 - public, 1 - semi, 2 - private |
 | description      | String   | john_doe's profile |
+| socialLinks      | Map<String, String>   | "socialLinks": {"github": "leduoyang", "instagram": "leduoyang"} |
 
 
 #### Delete User
