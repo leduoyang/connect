@@ -9,4 +9,6 @@ public class QueryPostParam {
     private String keyword;
 
     private String tags;
+
+    private String username;
 }

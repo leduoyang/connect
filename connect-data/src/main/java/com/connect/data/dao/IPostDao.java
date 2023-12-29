@@ -20,7 +20,7 @@ public interface IPostDao {
 
     Post internalQueryPostById(long id);
 
-    List<PostDto> queryPost(String keyword, String tags, long userId);
+    List<PostDto> queryPost(String keyword, String tags, String username, long userId);
 
     boolean postExisting(long id, long userId);
 }

@@ -36,6 +36,7 @@ public class ProjectRepositoryImpl implements IProjectRepository {
         return projectDao.queryProject(
                 param.getKeyword(),
                 param.getTags(),
+                param.getUsername(),
                 userId
         );
     }

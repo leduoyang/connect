@@ -10,6 +10,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class QueryCommentRequest {
+    private String username;
+
     private String keyword;
 
     private String tags;

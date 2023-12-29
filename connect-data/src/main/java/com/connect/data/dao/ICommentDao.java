@@ -20,7 +20,7 @@ public interface ICommentDao {
 
     Comment internalQueryCommentById(long id);
 
-    List<CommentDto> queryComment(String keyword, String tags, long userId);
+    List<CommentDto> queryComment(String keyword, String tags, String username, long userId);
 
     boolean commentExisting(long id, long userId);
 }

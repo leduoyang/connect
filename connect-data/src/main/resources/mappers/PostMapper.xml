@@ -3,14 +3,12 @@
 <mapper namespace="com.connect.data.dao.IPostDao">
     <resultMap id="postDtoResultMap" type="com.connect.data.dto.PostDto">
         <id property="id" column="id"/>
+        <id property="username" column="username"/>
         <result property="content" column="content"/>
         <result property="referenceId" column="referenceId"/>
         <result property="tags" column="tag"/>
         <result property="stars" column="stars"/>
         <result property="views" column="views"/>
-        <result property="createdUser" column="created_user"/>
-        <result property="updatedUser" column="updated_user"/>
-        <result property="dbCreateTime" column="db_create_time"/>
         <result property="dbModifyTime" column="db_modify_time"/>
     </resultMap>
 
@@ -80,17 +78,17 @@
         WHERE id = #{id, jdbcType=BIGINT}
     </delete>
 
-    <select id="queryPostById" resultMap="postResultMap">
-        SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time,
-        db_modify_time
+    <select id="queryPostById" resultMap="postDtoResultMap">
+        SELECT p.id, u.username, p.content, p.referenceId, p.tags, p.stars, p.views, p.version, p.db_modify_time
 
-        FROM post
-        WHERE id = #{id}
+        FROM post AS p
+        JOIN user AS u on p.updated_user = u.userId
+        WHERE p.id = #{id}
         AND (
-        status = 0
-        OR (status = 1
-        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
-        OR (status != 3 AND created_user = #{userId} )
+        p.status = 0
+        OR (p.status = 1
+        AND p.updated_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (p.status != 3 AND p.updated_user = #{userId} )
         )
     </select>
 
@@ -102,11 +100,11 @@
         WHERE id = #{id}
     </select>
 
-    <select id="queryPost" resultMap="postResultMap">
-        SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time,
-        db_modify_time
+    <select id="queryPost" resultMap="postDtoResultMap">
+        SELECT p.id, u.username, p.content, p.referenceId, p.tags, p.stars, p.views, p.version, p.db_modify_time
 
-        FROM post
+        FROM post AS p
+        JOIN user AS u on p.updated_user = u.userId
         WHERE 1=1
         <if test="keyword != null and keyword != ''">
             AND content LIKE CONCAT('%', #{keyword}, '%')
@@ -114,13 +112,16 @@
         <if test="tags != null and tags != ''">
             AND find_in_set(#{tags}, tags) &gt; 0
         </if>
+        <if test="username != null and username != ''">
+            AND u.username = #{username}
+        </if>
         AND (
-        status = 0
-        OR (status = 1
-        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
-        OR (status != 3 AND created_user = #{userId} )
+        p.status = 0
+        OR (p.status = 1
+        AND p.updated_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (p.status != 3 AND p.updated_user = #{userId} )
         )
-        ORDER BY db_modify_time DESC, db_create_time DESC
+        ORDER BY db_modify_time DESC
     </select>
 
     <select id="postExisting" resultType="java.lang.Boolean">

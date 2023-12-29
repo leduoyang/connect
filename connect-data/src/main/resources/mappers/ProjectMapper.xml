@@ -90,7 +90,8 @@
     </delete>
 
     <select id="queryProjectById" resultMap="projectDtoResultMap">
-        SELECT p.id, u.username, p.title, p.description, p.status, p.tags, p.boosted, p.stars, p.views, p.version, p.db_modify_time
+        SELECT p.id, u.username, p.title, p.description, p.status, p.tags, p.boosted, p.stars, p.views, p.version,
+        p.db_modify_time
 
         FROM project AS p
         JOIN user AS u on p.updated_user = u.userId
@@ -112,7 +113,8 @@
     </select>
 
     <select id="queryProject" resultMap="projectDtoResultMap">
-        SELECT p.id, u.username, p.title, p.description, p.status, p.tags, p.boosted, p.stars, p.views, p.version, p.db_modify_time
+        SELECT p.id, u.username, p.title, p.description, p.status, p.tags, p.boosted, p.stars, p.views, p.version,
+        p.db_modify_time
 
         FROM project AS p
         JOIN user AS u on p.updated_user = u.userId
@@ -122,6 +124,9 @@
         </if>
         <if test="tags != null and tags != ''">
             AND find_in_set(#{tags}, tags) &gt; 0
+        </if>
+        <if test="username != null and username != ''">
+            AND u.username = #{username}
         </if>
         AND (
         p.status = 0

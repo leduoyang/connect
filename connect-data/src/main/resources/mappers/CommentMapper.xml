@@ -114,6 +114,9 @@
         <if test="tags != null and tags != ''">
             AND find_in_set(#{tags}, c.tags) &gt; 0
         </if>
+        <if test="username != null and username != ''">
+            AND u.username = #{username}
+        </if>
         AND (
         c.status = 0
         OR (c.status = 1

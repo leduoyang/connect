@@ -20,7 +20,7 @@ public interface IProjectDao {
 
     Project internalQueryProjectById(long id);
 
-    List<ProjectDto> queryProject(String keyword, String tags, long userId);
+    List<ProjectDto> queryProject(String keyword, String tags, String username, long userId);
 
     boolean projectExisting(long id, long userId);
 }

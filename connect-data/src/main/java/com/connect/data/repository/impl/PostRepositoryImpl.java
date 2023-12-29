@@ -40,6 +40,7 @@ public class PostRepositoryImpl implements IPostRepository {
         return postDao.queryPost(
                 param.getKeyword(),
                 param.getTags(),
+                param.getUsername(),
                 userId
         );
     }

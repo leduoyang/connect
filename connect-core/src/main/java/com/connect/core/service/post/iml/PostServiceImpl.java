@@ -59,6 +59,7 @@ public class PostServiceImpl implements IPostService {
     @Override
     public List<QueryPostVo> queryPost(QueryPostRequest request, RequestMetaInfo requestMetaInfo) {
         QueryPostParam param = new QueryPostParam()
+                .setKeyword(request.getUsername())
                 .setKeyword(request.getKeyword())
                 .setTags(request.getTags());
 
