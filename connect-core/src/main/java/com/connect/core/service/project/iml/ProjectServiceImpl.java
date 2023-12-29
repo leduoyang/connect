@@ -57,7 +57,7 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public List<QueryProjectVo> queryProject(QueryProjectRequest request, RequestMetaInfo requestMetaInfo) {
         QueryProjectParam param = new QueryProjectParam()
-                .setKeyword(request.getUsername())
+                .setUsername(request.getUsername())
                 .setKeyword(request.getKeyword())
                 .setTags(request.getTags());
 

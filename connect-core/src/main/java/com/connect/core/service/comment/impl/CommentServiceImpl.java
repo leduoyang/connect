@@ -56,7 +56,7 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public List<QueryCommentVo> queryComment(QueryCommentRequest request, RequestMetaInfo requestMetaInfo) {
         QueryCommentParam param = new QueryCommentParam()
-                .setKeyword(request.getUsername())
+                .setUsername(request.getUsername())
                 .setKeyword(request.getKeyword())
                 .setTags(request.getTags());
 
