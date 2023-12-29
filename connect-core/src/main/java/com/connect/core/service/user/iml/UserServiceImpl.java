@@ -154,7 +154,7 @@ public class UserServiceImpl implements IUserService {
         User user = userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId());
         String profileImage =
                 imageUploadUtil.profileImage(
-                        user.getUserId().toString() + "." + imageUploadUtil.getExtension(image),
+                        user.getUuid() + "." + imageUploadUtil.getExtension(image),
                         image
                 );
 

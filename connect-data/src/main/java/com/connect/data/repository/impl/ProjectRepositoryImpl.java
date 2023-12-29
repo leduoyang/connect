@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Repository
@@ -42,6 +43,7 @@ public class ProjectRepositoryImpl implements IProjectRepository {
     }
 
     public long createProject(Project project) {
+        project.setUuid(UUID.randomUUID().toString());
         int affected = projectDao.createProject(project);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.PROJECT_CREATE_EXCEPTION);

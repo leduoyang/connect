@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Repository
@@ -51,6 +52,7 @@ public class UserRepositoryImpl implements IUserRepository {
             );
         }
 
+        user.setUuid(UUID.randomUUID().toString());
         log.info("payload for creating user - " + user);
         int affected = userDao.signUp(user);
         if (affected <= 0) {
