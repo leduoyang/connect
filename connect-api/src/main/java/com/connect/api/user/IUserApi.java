@@ -22,7 +22,7 @@ public interface IUserApi {
 
     @PatchMapping(value = "/user/me/info")
     APIResponse<Void> editPersonalInfo(
-            @Validated @RequestBody EditUserRequest request
+            @Validated @RequestBody EditUserInfoRequest request
     );
 
     @PatchMapping(value = "/user/me/profile")

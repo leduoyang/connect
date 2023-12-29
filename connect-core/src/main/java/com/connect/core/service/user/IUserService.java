@@ -1,7 +1,6 @@
 package com.connect.core.service.user;
 
 import com.connect.api.common.RequestMetaInfo;
-import com.connect.api.root.request.RootLoginRequest;
 import com.connect.api.user.vo.UserVo;
 import com.connect.api.user.request.*;
 import com.connect.common.enums.StarTargetType;
@@ -15,7 +14,7 @@ public interface IUserService {
 
     void signUp(SignUpRequest request);
 
-    void editUser(EditUserRequest request, RequestMetaInfo requestMetaInfo);
+    void editUserInfo(EditUserInfoRequest request, RequestMetaInfo requestMetaInfo);
 
     void editUserProfile(EditProfileRequest request, RequestMetaInfo requestMetaInfo);
 

@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @Data
-public class EditUserRequest {
+public class EditUserInfoRequest {
     @Size(min = 8, max = 20, message = "password must be between 8 to 20")
     private String password;
 

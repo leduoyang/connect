@@ -101,14 +101,14 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> editPersonalInfo(
-            @RequestBody EditUserRequest request
+            @RequestBody EditUserInfoRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        userService.editUser(request, requestMetaInfo);
+        userService.editUserInfo(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
