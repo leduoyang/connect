@@ -20,14 +20,13 @@ public interface IUserApi {
             @Validated @RequestBody SignUpRequest request
     );
 
-    @PatchMapping(value = "/user/me/edit")
+    @PatchMapping(value = "/user/me/info")
     APIResponse<Void> editPersonalInfo(
             @Validated @RequestBody EditUserRequest request
     );
 
-    @PatchMapping(value = "/user/{userId}")
+    @PatchMapping(value = "/user/me/profile")
     APIResponse<Void> editProfile(
-            @Validated @NotNull @PathVariable String userId,
             @Validated @RequestBody EditProfileRequest request
     );
 

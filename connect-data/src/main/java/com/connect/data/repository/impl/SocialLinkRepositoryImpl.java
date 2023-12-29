@@ -25,6 +25,7 @@ public class SocialLinkRepositoryImpl implements ISocialLinkRepository {
     }
 
     public void updateSocialLink(SocialLink socialLink) {
+        log.info("payload for updating social link - " + socialLink);
         if (!socialLinkDao.platformExisting(socialLink.getUserId(), socialLink.getPlatform())) {
             int affected = socialLinkDao.createSocialLink(socialLink);
             if (affected <= 0) {
