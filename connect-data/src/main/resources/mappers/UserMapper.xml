@@ -102,8 +102,9 @@
     </delete>
 
     <select id="queryUser" resultMap="userDtoResultMap">
-        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers, followings,
-        version
+        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers,
+        followings, version
+
         FROM user
         WHERE (username LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
         AND (
@@ -115,8 +116,8 @@
     </select>
 
     <select id="queryUserByUsername" resultMap="userDtoResultMap">
-        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers, followings,
-        version
+        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers,
+        followings, version
 
         FROM user
         WHERE username = #{username}
@@ -129,8 +130,8 @@
     </select>
 
     <select id="internalQueryUserByUsername" resultMap="userResultMap">
-        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers, followings,
-        version
+        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers,
+        followings, version
 
         FROM user
         WHERE username = #{username}
@@ -138,8 +139,8 @@
     </select>
 
     <select id="internalQueryUserByUserId" resultMap="userResultMap">
-        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers, followings,
-        version
+        SELECT userId, uuid, username, status, role, description, email, phone, profileImage, views, followers,
+        followings, version
 
         FROM user
         WHERE userId = #{userId}

@@ -155,7 +155,6 @@ public class UserController implements IUserApi {
         List<UserVo> userVoList = new ArrayList<>();
         userVoList.add(new UserVo()
                 .setUsername(userDto.getUsername())
-                .setStatus(userDto.getStatus())
                 .setDescription(userDto.getDescription())
                 .setFollowings(userDto.getFollowings())
                 .setFollowers(userDto.getFollowers())
@@ -173,13 +172,18 @@ public class UserController implements IUserApi {
     @Override
     public APIResponse<QueryUserResponse> queryUserByUsername(String username) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(Long.parseLong(authentication.getName()))
-                .setDetails(authentication.getDetails());
 
-        UserVo userDto = userService.queryUserByUsername(username, requestMetaInfo);
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            requestMetaInfo.setIsPublic(Boolean.TRUE);
+        } else {
+            requestMetaInfo
+                    .setUserId(Long.parseLong(authentication.getName()))
+                    .setDetails(authentication.getDetails());
+        }
+        UserVo userVo = userService.queryUserByUsername(username, requestMetaInfo);
         List<UserVo> userVoList = new ArrayList<>();
-        userVoList.add(userDto);
+        userVoList.add(userVo);
 
         QueryUserResponse response = new QueryUserResponse()
                 .setItems(userVoList)

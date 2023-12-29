@@ -175,20 +175,30 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserVo queryUserByUsername(String username, RequestMetaInfo requestMetaInfo) {
-        UserDto user = userRepository.queryUserByUsername(username, requestMetaInfo.getUserId());
+        UserDto userDto;
+        if(requestMetaInfo.getIsPublic()) {
+            userDto = internalQueryUserByUsername(username);
+            if(UserStatus.PUBLIC.getCode() != userDto.getStatus()) {
+                throw new ConnectDataException(
+                        ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
+                        String.format("User %s is not a PUBLIC account", username)
+                );
+            }
+        } else {
+            userDto = userRepository.queryUserByUsername(username, requestMetaInfo.getUserId());
+        }
         userRepository.incrementViews(
-                user.getUserId(),
-                user.getVersion()
+                userDto.getUserId(),
+                userDto.getVersion()
         );
 
         UserVo userVo = new UserVo()
-                .setUsername(user.getUsername())
-                .setStatus(user.getStatus())
-                .setDescription(user.getDescription())
-                .setProfileImage(user.getProfileImage())
-                .setViews(user.getViews())
-                .setFollowers(user.getFollowers())
-                .setFollowings(user.getFollowings());
+                .setUsername(userDto.getUsername())
+                .setDescription(userDto.getDescription())
+                .setProfileImage(userDto.getProfileImage())
+                .setViews(userDto.getViews())
+                .setFollowers(userDto.getFollowers())
+                .setFollowings(userDto.getFollowings());
         return userVo;
     }
 
@@ -218,6 +228,7 @@ public class UserServiceImpl implements IUserService {
                 .setDescription(user.getDescription())
                 .setProfileImage(user.getProfileImage())
                 .setViews(user.getViews())
+                .setVersion(user.getVersion())
                 .setFollowers(user.getFollowers())
                 .setFollowings(user.getFollowings());
     }
@@ -230,7 +241,6 @@ public class UserServiceImpl implements IUserService {
         return userList
                 .stream()
                 .map(x -> new UserVo()
-                        .setStatus(x.getStatus())
                         .setDescription(x.getDescription())
                         .setProfileImage(x.getProfileImage())
                         .setViews(x.getViews())

@@ -10,8 +10,6 @@ public class UserVo {
 
     private String description;
 
-    private Integer status;
-
     private String profileImage;
 
     private Integer views;

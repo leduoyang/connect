@@ -9,4 +9,6 @@ public class RequestMetaInfo {
     private Long userId;
 
     private Object details;
+
+    private Boolean isPublic;
 }
