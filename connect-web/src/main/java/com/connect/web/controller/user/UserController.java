@@ -126,22 +126,13 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<Void> deleteUser(
-            @PathVariable String userId
-    ) {
+    public APIResponse<Void> deleteUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!authentication.getName().equals(userId) &&
-                !authentication.getAuthorities()
-                        .stream()
-                        .findFirst()
-                        .equals(UserRole.getRole(UserRole.ADMIN.getCode()))) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
-                    "unauthorized request for deleting target user " + userId
-            );
-        }
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(Long.parseLong(authentication.getName()))
+                .setDetails(authentication.getDetails());
 
-        userService.deleteUser(userId);
+        userService.deleteUser(requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
@@ -168,6 +159,7 @@ public class UserController implements IUserApi {
                 .setDescription(userDto.getDescription())
                 .setFollowings(userDto.getFollowings())
                 .setFollowers(userDto.getFollowers())
+                .setProfileImage(userDto.getProfileImage())
                 .setViews(userDto.getViews())
         );
 
@@ -179,7 +171,7 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QueryUserResponse> queryUser(String username) {
+    public APIResponse<QueryUserResponse> queryUserByUsername(String username) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))

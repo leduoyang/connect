@@ -30,10 +30,8 @@ public interface IUserApi {
             @Validated @RequestBody EditProfileRequest request
     );
 
-    @DeleteMapping(value = "/user/{userId}")
-    APIResponse<Void> deleteUser(
-            @Validated @NotNull @PathVariable String userId
-    );
+    @DeleteMapping(value = "/user/me")
+    APIResponse<Void> deleteUser();
 
     @PostMapping(value = {"/user/upload/profileImage"})
     APIResponse<Void> uploadProfileImage(
@@ -55,8 +53,8 @@ public interface IUserApi {
     @GetMapping(value = "/user/me/followingList")
     APIResponse<QueryFollowingListResponse> queryPersonalFollowingList();
 
-    @GetMapping(value = {"/user/{userId}", "/public/user/{userId}"})
-    APIResponse<QueryUserResponse> queryUser(@NotNull @PathVariable String userId);
+    @GetMapping(value = {"/user/{username}", "/public/user/{username}"})
+    APIResponse<QueryUserResponse> queryUserByUsername(@NotNull @PathVariable String username);
 
     @GetMapping(value = "/user")
     APIResponse<QueryUserResponse> queryUserWithFilter(

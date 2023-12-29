@@ -164,9 +164,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void deleteUser(String username) {
-        User targetUser = userRepository.internalQueryUserByUsername(username);
-        userRepository.deleteUser(targetUser.getUserId());
+    public void deleteUser(RequestMetaInfo requestMetaInfo) {
+        userRepository.deleteUser(requestMetaInfo.getUserId());
     }
 
     @Override
@@ -183,6 +182,7 @@ public class UserServiceImpl implements IUserService {
         );
 
         UserVo userVo = new UserVo()
+                .setUsername(user.getUsername())
                 .setStatus(user.getStatus())
                 .setDescription(user.getDescription())
                 .setProfileImage(user.getProfileImage())

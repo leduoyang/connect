@@ -20,7 +20,7 @@ public interface IUserService {
 
     void editProfileImage(MultipartFile image, RequestMetaInfo requestMetaInfo);
 
-    void deleteUser(String username);
+    void deleteUser(RequestMetaInfo requestMetaInfo);
 
     List<UserVo> queryUser(QueryUserRequest request, RequestMetaInfo requestMetaInfo);
 
