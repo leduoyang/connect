@@ -12,6 +12,7 @@ import com.connect.core.service.star.IStarService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -27,7 +28,10 @@ public class StarController implements IStarApi {
     }
 
     @Override
-    public APIResponse<Void> star(StarRequest request) {
+    public APIResponse<Void> star(
+            String authorizationHeader,
+            StarRequest request
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -38,7 +42,10 @@ public class StarController implements IStarApi {
     }
 
     @Override
-    public APIResponse<Void> removeStar(UnStarRequest request) {
+    public APIResponse<Void> removeStar(
+            String authorizationHeader,
+            UnStarRequest request
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -49,7 +56,10 @@ public class StarController implements IStarApi {
     }
 
     @Override
-    public APIResponse<Map<String, Boolean>> starExisting(QueryStarRequest request) {
+    public APIResponse<Map<String, Boolean>> starExisting(
+            String authorizationHeader,
+            QueryStarRequest request
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))

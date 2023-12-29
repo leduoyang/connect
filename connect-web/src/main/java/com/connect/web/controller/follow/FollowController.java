@@ -31,7 +31,7 @@ public class FollowController implements IFollowApi {
     }
 
     @Override
-    public APIResponse<Void> follow(String following) {
+    public APIResponse<Void> follow(String authorizationHeader, String following) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -42,7 +42,7 @@ public class FollowController implements IFollowApi {
     }
 
     @Override
-    public APIResponse<Void> unfollow(String following) {
+    public APIResponse<Void> unfollow(String authorizationHeader, String following) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -53,7 +53,7 @@ public class FollowController implements IFollowApi {
     }
 
     @Override
-    public APIResponse<Map<String, Boolean>> isFollowing(String following) {
+    public APIResponse<Map<String, Boolean>> isFollowing(String authorizationHeader, String following) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -66,7 +66,7 @@ public class FollowController implements IFollowApi {
     }
 
     @Override
-    public APIResponse<Void> approve(String follower) {
+    public APIResponse<Void> approve(String authorizationHeader, String follower) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -85,7 +85,7 @@ public class FollowController implements IFollowApi {
     }
 
     @Override
-    public APIResponse<Void> reject(String follower) {
+    public APIResponse<Void> reject(String authorizationHeader, String follower) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -104,7 +104,7 @@ public class FollowController implements IFollowApi {
     }
 
     @Override
-    public APIResponse<Void> remove(String follower) {
+    public APIResponse<Void> remove(String authorizationHeader, String follower) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -115,7 +115,7 @@ public class FollowController implements IFollowApi {
     }
 
     @Override
-    public APIResponse<Void> approveAll() {
+    public APIResponse<Void> approveAll(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))

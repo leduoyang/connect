@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -36,7 +37,10 @@ public class PostController implements IPostApi {
     }
 
     @Override
-    public APIResponse<com.connect.api.post.response.QueryPostVo> queryPost(Long postId) {
+    public APIResponse<com.connect.api.post.response.QueryPostVo> queryPost(
+            String authorizationHeader,
+            Long postId
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -61,6 +65,7 @@ public class PostController implements IPostApi {
 
     @Override
     public APIResponse<com.connect.api.post.response.QueryPostVo> queryPostWithFilter(
+            String authorizationHeader,
             QueryPostRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -78,6 +83,7 @@ public class PostController implements IPostApi {
 
     @Override
     public APIResponse<Long> createPost(
+            String authorizationHeader,
             @RequestBody CreatePostRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -97,6 +103,7 @@ public class PostController implements IPostApi {
 
     @Override
     public APIResponse<Void> updatePost(
+            String authorizationHeader,
             @PathVariable Long postId,
             @RequestBody UpdatePostRequest request
     ) {
@@ -117,6 +124,7 @@ public class PostController implements IPostApi {
 
     @Override
     public APIResponse<Void> deletePost(
+            String authorizationHeader,
             @PathVariable Long postId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -14,26 +14,33 @@ import org.springframework.web.bind.annotation.*;
 public interface ICommentApi {
 
     @GetMapping(value = "/comment/{commentId}")
-    APIResponse<QueryCommentResponse> queryComment(@NotNull @PathVariable Long commentId);
+    APIResponse<QueryCommentResponse> queryComment(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
+            @NotNull @PathVariable Long commentId
+    );
 
     @GetMapping(value = "/comment")
     APIResponse<QueryCommentResponse> queryCommentWithFilter(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated QueryCommentRequest request
     );
 
     @PostMapping(value = "/comment")
     APIResponse<Long> createComment(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated @RequestBody CreateCommentRequest request
     );
 
     @PatchMapping(value = "/comment/{commentId}")
     APIResponse<Void> updateComment(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated @NotNull @PathVariable Long commentId,
             @Validated @RequestBody UpdateCommentRequest request
     );
 
     @DeleteMapping(value = "/comment/{commentId}")
     APIResponse<Void> deleteComment(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated @NotNull @PathVariable Long commentId
     );
 }

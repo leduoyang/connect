@@ -14,7 +14,6 @@ import com.connect.api.user.response.QueryFollowerListResponse;
 import com.connect.api.user.response.QueryUserResponse;
 import com.connect.common.enums.RedisPrefix;
 import com.connect.common.enums.StarTargetType;
-import com.connect.common.enums.UserRole;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -29,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,7 +61,21 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse signIn(@RequestBody SignInRequest request) {
+    public APIResponse<QueryUserResponse> publicQueryUserByUsername(String username) {
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo().setIsPublic(Boolean.TRUE);
+        UserVo userVo = userService.queryUserByUsername(username, requestMetaInfo);
+        List<UserVo> userVoList = new ArrayList<>();
+        userVoList.add(userVo);
+
+        QueryUserResponse response = new QueryUserResponse()
+                .setItems(userVoList)
+                .setTotal(userVoList.size());
+
+        return APIResponse.getOKJsonResult(response);
+    }
+
+    @Override
+    public APIResponse signIn(SignInRequest request) {
         UserDto userDto = userService.signIn(request);
         if (userDto == null) {
             throw new ConnectDataException(
@@ -77,9 +89,7 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<Void> signUp(
-            @RequestBody SignUpRequest request
-    ) {
+    public APIResponse<Void> signUp(SignUpRequest request) {
         if (!userVerificationService.checkEmailComplete(request.getEmail())) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_VERIFICATION_NOT_EXISTED_EXCEPTION,
@@ -101,7 +111,8 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> editPersonalInfo(
-            @RequestBody EditUserInfoRequest request
+            String authorizationHeader,
+            EditUserInfoRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
@@ -114,7 +125,8 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> editProfile(
-            @RequestBody EditProfileRequest request
+            String authorizationHeader,
+            EditProfileRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
@@ -126,7 +138,7 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<Void> deleteUser() {
+    public APIResponse<Void> deleteUser(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -137,7 +149,10 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<Void> uploadProfileImage(@RequestParam("file") MultipartFile profileImage) {
+    public APIResponse<Void> uploadProfileImage(
+            String authorizationHeader,
+            MultipartFile profileImage
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -149,7 +164,7 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QueryUserResponse> queryPersonalInfo() {
+    public APIResponse<QueryUserResponse> queryPersonalInfo(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDto userDto = userService.internalQueryUserByUserId(Long.parseLong(authentication.getName()));
         List<UserVo> userVoList = new ArrayList<>();
@@ -170,17 +185,15 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QueryUserResponse> queryUserByUsername(String username) {
+    public APIResponse<QueryUserResponse> queryUserByUsername(
+            String authorizationHeader,
+            String username
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        RequestMetaInfo requestMetaInfo = new RequestMetaInfo();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            requestMetaInfo.setIsPublic(Boolean.TRUE);
-        } else {
-            requestMetaInfo
-                    .setUserId(Long.parseLong(authentication.getName()))
-                    .setDetails(authentication.getDetails());
-        }
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(Long.parseLong(authentication.getName()))
+                .setDetails(authentication.getDetails());
         UserVo userVo = userService.queryUserByUsername(username, requestMetaInfo);
         List<UserVo> userVoList = new ArrayList<>();
         userVoList.add(userVo);
@@ -194,7 +207,8 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<QueryUserResponse> queryUserWithFilter(
-            @Validated QueryUserRequest request
+            String authorizationHeader,
+            QueryUserRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
@@ -209,7 +223,7 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QueryStarListResponse> queryPersonalStarList() {
+    public APIResponse<QueryStarListResponse> queryPersonalStarList(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -233,7 +247,7 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QueryFollowerListResponse> queryPersonalFollowerList() {
+    public APIResponse<QueryFollowerListResponse> queryPersonalFollowerList(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDto userDto = userService.internalQueryUserByUserId(Long.parseLong(authentication.getName()));
         List<UserVo> userVoList = userService.queryFollowerList(userDto.getUsername());
@@ -245,7 +259,7 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QueryFollowingListResponse> queryPersonalFollowingList() {
+    public APIResponse<QueryFollowingListResponse> queryPersonalFollowingList(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDto userDto = userService.internalQueryUserByUserId(Long.parseLong(authentication.getName()));
         List<UserVo> userVoList = userService.queryFollowingList(userDto.getUsername());
@@ -257,7 +271,7 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QueryFollowerListResponse> queryPersonalPendingList() {
+    public APIResponse<QueryFollowerListResponse> queryPersonalPendingList(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDto userDto = userService.internalQueryUserByUserId(Long.parseLong(authentication.getName()));
         if (userDto.getStatus() != UserStatus.SEMI.getCode()) {
