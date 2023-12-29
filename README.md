@@ -63,7 +63,7 @@ Payload:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| userId         | String   | john_doe      |
+| username         | String   | john_doe      |
 | password            | String   |  |
 | description         | String   |   |
 | email         | String   | user@email.com  |
@@ -79,18 +79,18 @@ Payload:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| userId         | String   | john_doe      |
+| username         | String   | john_doe      |
 | password            | String   |  |
 
-#### Query User By User Id
-- Endpoint: `/user/{userId}`
+#### Query User By Username
+- Endpoint: `/user/{username}`
 - Method: GET
 
 PathVariable:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| userId           | String   | john_doe     |
+| username           | String   | john_doe     |
 
 #### Query User With Filter
 - Endpoint: `/user`
@@ -112,7 +112,7 @@ Payload:
 
 | Parameter       | Type     | Example      |
 |-----------------|----------|--------------|
-| userId          | String   | john_doe     |
+| username          | String   | john_doe     |
 | passowrd        | String   |  |
 | status          | Integer  | 0 - public, 1 - semi, 2 - private |
 | description     | String   | john_doe's profile |
@@ -122,33 +122,33 @@ Payload:
 Note. TODO email should be verficiation again if getting updated
 
 #### Edit Profile
-- Endpoint: `/user/{userId}`
+- Endpoint: `/user/{username}`
 - Method: PATCH
 
 PathVariable:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| userId           | String   | john_doe     |
+| username           | String   | john_doe     |
 
 Payload:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| userId           | String   | john_doe     |
+| username           | String   | john_doe     |
 | status           | Integer   | 0 - public, 1 - semi, 2 - private |
 | description      | String   | john_doe's profile |
 
 
 #### Delete User
-- Endpoint: `/user/{userId}`
+- Endpoint: `/user/{username}`
 - Method: DELETE
 
 PathVariable:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| userId           | String   | john_doe     |
+| username           | String   | john_doe     |
 
 #### Upload Profile Image
 - Endpoint: `/user/upload/profileImage`
@@ -216,43 +216,43 @@ PathVariable:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| followingId (target userId to follow )   | String   |  john_doe   |
+| followingId (target username to follow )   | String   |  john_doe   |
 
 #### Unfollow
-- Endpoint: `/follow/{followingId}`
+- Endpoint: `/follow/{following}`
 - Method: DELETE
 
 PathVariable:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| followingId (target userId to unfollow )   | String   |  john_doe   |
+| following (target username to unfollow )   | String   |  john_doe   |
 
 
 #### Is Following
-- Endpoint: `/follow/isFollowing/{followingId}`
+- Endpoint: `/follow/isFollowing/{following}`
 - Method: GET
-- Description: check if the current user is following user {followingId}
+- Description: check if the current user is following user {following}
 
 PathVariable:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| followingId   | String   |  john_doe   |
+| following   | String   |  john_doe   |
 
 #### Remove
-- Endpoint: `/follow/remove/{followerId}`
+- Endpoint: `/follow/remove/{follower}`
 - Method: DELETE
-- Description: remove a user {followerId} from the follower list
+- Description: remove a user {follower} from the follower list
 
 PathVariable:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| followerId (target userId to remove from followers )   | String   |  john_doe   |
+| follower (target username to remove from followers )   | String   |  john_doe   |
 
 #### Approve
-- Endpoint: `/follow/approve/{followerId}`
+- Endpoint: `/follow/approve/{follower}`
 - Method: POST
 - Description: when the current user is a semi-public account, approve the follow request from user {followerId}
 
@@ -260,10 +260,10 @@ PathVariable:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| followerId   | String   |  john_doe   |
+| follower   | String   |  john_doe   |
 
 #### Reject
-- Endpoint: `/follow/reject/{followerId}`
+- Endpoint: `/follow/reject/{follower}`
 - Method: POST
 - Description: when the current user is a semi-public account, reject the follow request from user {followerId}
 
@@ -271,7 +271,7 @@ PathVariable:
 
 | Parameter        | Type     | Example      |
 |------------------|----------|--------------|
-| followerId   | String   |  john_doe   |
+| follower   | String   |  john_doe   |
 
 #### Approve All
 - Endpoint: `/follow/approveAll`
