@@ -8,7 +8,7 @@ import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.follow.IFollowService;
 import com.connect.core.service.user.IUserService;
-import com.connect.core.service.user.dto.UserDto;
+import com.connect.data.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

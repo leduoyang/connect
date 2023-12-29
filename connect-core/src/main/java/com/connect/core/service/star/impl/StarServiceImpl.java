@@ -8,7 +8,7 @@ import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.star.IStarService;
 import com.connect.core.service.user.IUserService;
-import com.connect.core.service.user.dto.UserDto;
+import com.connect.data.dto.UserDto;
 import com.connect.data.entity.*;
 import com.connect.data.repository.*;
 import lombok.extern.log4j.Log4j2;

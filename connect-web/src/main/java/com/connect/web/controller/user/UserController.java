@@ -22,7 +22,7 @@ import com.connect.common.util.RedisUtil;
 import com.connect.core.service.star.IStarService;
 import com.connect.core.service.user.IUserService;
 import com.connect.core.service.user.IUserVerificationService;
-import com.connect.core.service.user.dto.UserDto;
+import com.connect.data.dto.UserDto;
 import com.connect.web.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

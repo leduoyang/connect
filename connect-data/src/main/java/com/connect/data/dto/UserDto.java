@@ -1,4 +1,4 @@
-package com.connect.core.service.user.dto;
+package com.connect.data.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -25,6 +25,8 @@ public class UserDto {
     private String profileImage;
 
     private Integer views;
+
+    private Integer version;
 
     private Integer followers;
 
