@@ -1,7 +1,6 @@
 package com.connect.core.service.star.impl;
 
 import com.connect.api.common.RequestMetaInfo;
-import com.connect.api.star.dto.UnStarDto;
 import com.connect.api.star.request.StarRequest;
 import com.connect.api.star.request.UnStarRequest;
 import com.connect.common.enums.StarTargetType;

@@ -8,6 +8,7 @@ import com.connect.api.project.vo.QueryProjectVo;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.project.IProjectService;
+import com.connect.data.dto.ProjectDto;
 import com.connect.data.entity.Project;
 import com.connect.data.param.QueryProjectParam;
 import com.connect.data.repository.IProjectRepository;
@@ -28,7 +29,7 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Override
     public QueryProjectVo queryProjectById(long id, RequestMetaInfo requestMetaInfo) {
-        Project project = projectRepository.queryProjectById(id, requestMetaInfo.getUserId());
+        ProjectDto project = projectRepository.queryProjectById(id, requestMetaInfo.getUserId());
         if (project == null) {
             log.error("query project not found or not authorized to retrieve");
             return null;
@@ -41,6 +42,7 @@ public class ProjectServiceImpl implements IProjectService {
 
         QueryProjectVo projectDto = new QueryProjectVo()
                 .setId(project.getId())
+                .setUsername(project.getUsername())
                 .setTitle(project.getTitle())
                 .setDescription(project.getDescription())
                 .setStatus(project.getStatus())
@@ -48,9 +50,6 @@ public class ProjectServiceImpl implements IProjectService {
                 .setBoosted(project.getBoosted())
                 .setStars(project.getStars())
                 .setViews(project.getViews())
-                .setCreatedUser(project.getCreatedUser())
-                .setUpdatedUser(project.getUpdatedUser())
-                .setDbCreateTime(project.getDbCreateTime())
                 .setDbModifyTime(project.getDbModifyTime());
         return projectDto;
     }
@@ -61,12 +60,13 @@ public class ProjectServiceImpl implements IProjectService {
                 .setKeyword(request.getKeyword())
                 .setTags(request.getTags());
 
-        List<Project> projectList = projectRepository.queryProject(param, requestMetaInfo.getUserId());
+        List<ProjectDto> projectList = projectRepository.queryProject(param, requestMetaInfo.getUserId());
 
         return projectList
                 .stream()
                 .map(x -> new QueryProjectVo()
                         .setId(x.getId())
+                        .setUsername(x.getUsername())
                         .setTitle(x.getTitle())
                         .setDescription(x.getDescription())
                         .setStatus(x.getStatus())
@@ -74,9 +74,6 @@ public class ProjectServiceImpl implements IProjectService {
                         .setBoosted(x.getBoosted())
                         .setStars(x.getStars())
                         .setViews(x.getViews())
-                        .setCreatedUser(x.getCreatedUser())
-                        .setUpdatedUser(x.getUpdatedUser())
-                        .setDbCreateTime(x.getDbCreateTime())
                         .setDbModifyTime(x.getDbModifyTime())
                 )
                 .collect(Collectors.toList());

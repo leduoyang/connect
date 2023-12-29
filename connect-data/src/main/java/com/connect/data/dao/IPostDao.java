@@ -1,5 +1,6 @@
 package com.connect.data.dao;
 
+import com.connect.data.dto.PostDto;
 import com.connect.data.entity.Post;
 
 import java.util.List;
@@ -15,11 +16,11 @@ public interface IPostDao {
 
     int deletePost(long id, long userId);
 
-    Post queryPostById(long id, long userId);
+    PostDto queryPostById(long id, long userId);
 
     Post internalQueryPostById(long id);
 
-    List<Post> queryPost(String keyword, String tags, long userId);
+    List<PostDto> queryPost(String keyword, String tags, long userId);
 
     boolean postExisting(long id, long userId);
 }

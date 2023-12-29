@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.connect.data.dao.ICommentDao">
-    <resultMap id="commentResultMap" type="com.connect.data.entity.Comment">
+    <resultMap id="commentDtoResultMap" type="com.connect.data.dto.CommentDto">
+        <id property="id" column="id"/>
+        <result property="postId" column="postId"/>
+        <result property="username" column="username"/>
+        <result property="content" column="content"/>
+        <result property="status" column="status"/>
+        <result property="tags" column="tag"/>
+        <result property="version" column="version"/>
+        <result property="stars" column="stars"/>
+        <result property="views" column="views"/>
+        <result property="dbModifyTime" column="db_modify_time"/>
+    </resultMap>
+
+    <resultMap id="commentResultMap" type="com.connect.data.dto.CommentDto">
         <id property="id" column="id"/>
         <result property="postId" column="postId"/>
         <result property="content" column="content"/>
         <result property="status" column="status"/>
         <result property="tags" column="tag"/>
-        <result property="createdUser" column="created_user"/>
-        <result property="updatedUser" column="updated_user"/>
+        <result property="version" column="version"/>
         <result property="stars" column="stars"/>
         <result property="views" column="views"/>
+        <result property="createdUser" column="created_user"/>
+        <result property="updatedUser" column="updated_user"/>
         <result property="dbCreateTime" column="db_create_time"/>
         <result property="dbModifyTime" column="db_modify_time"/>
     </resultMap>
@@ -66,17 +80,17 @@
         WHERE id = #{id, jdbcType=BIGINT}
     </delete>
 
-    <select id="queryCommentById" resultMap="commentResultMap">
-        SELECT id, postId, content, tags, status, stars, views, version, created_user, updated_user, db_create_time,
-        db_modify_time
+    <select id="queryCommentById" resultMap="commentDtoResultMap">
+        SELECT c.id, c.postId, c.content, c.tags, c.status, c.stars, c.views, c.version, u.username, c.db_modify_time
 
-        FROM comment
+        FROM comment AS c
+        JOIN user AS u on c.updated_user = u.userId
         WHERE id = #{id}
         AND (
-        status = 0
-        OR (status = 1
-        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
-        OR (status != 3 AND created_user = #{userId} )
+        c.status = 0
+        OR (c.status = 1
+        AND c.updated_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (c.status != 3 AND c.updated_user = #{userId} )
         )
     </select>
 
@@ -88,32 +102,32 @@
         WHERE id = #{id}
     </select>
 
-    <select id="queryComment" resultMap="commentResultMap">
-        SELECT id, postId, content, tags, status, stars, views, version, created_user, updated_user, db_create_time,
-        db_modify_time
+    <select id="queryComment" resultMap="commentDtoResultMap">
+        SELECT c.id, c.postId, c.content, c.tags, c.status, c.stars, c.views, u.username, c.db_modify_time
 
-        FROM comment
+        FROM comment AS c
+        JOIN user AS u on c.updated_user = u.userId
         WHERE 1=1
         <if test="keyword != null and keyword != ''">
-            AND content LIKE CONCAT('%', #{keyword}, '%')
+            AND c.content LIKE CONCAT('%', #{keyword}, '%')
         </if>
         <if test="tags != null and tags != ''">
-            AND find_in_set(#{tags}, tags) &gt; 0
+            AND find_in_set(#{tags}, c.tags) &gt; 0
         </if>
         AND (
-        status = 0
-        OR (status = 1
-        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
-        OR (status != 3 AND created_user = #{userId} )
+        c.status = 0
+        OR (c.status = 1
+        AND c.updated_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (c.status != 3 AND c.updated_user = #{userId} )
         )
-        ORDER BY db_modify_time DESC, db_create_time DESC
+        ORDER BY c.db_modify_time DESC
     </select>
 
     <select id="commentExisting" resultType="java.lang.Boolean">
         SELECT EXISTS(
         SELECT id
         FROM comment
-        WHERE id = #{id,jdbcType=BIGINT} AND created_user = #{userId, jdbcType=BIGINT} AND status != 3
+        WHERE id = #{id,jdbcType=BIGINT} AND updated_user = #{userId, jdbcType=BIGINT} AND status != 3
         )
     </select>
 </mapper>

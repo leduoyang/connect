@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.connect.data.dao.IPostDao">
+    <resultMap id="postDtoResultMap" type="com.connect.data.dto.PostDto">
+        <id property="id" column="id"/>
+        <result property="content" column="content"/>
+        <result property="referenceId" column="referenceId"/>
+        <result property="tags" column="tag"/>
+        <result property="stars" column="stars"/>
+        <result property="views" column="views"/>
+        <result property="createdUser" column="created_user"/>
+        <result property="updatedUser" column="updated_user"/>
+        <result property="dbCreateTime" column="db_create_time"/>
+        <result property="dbModifyTime" column="db_modify_time"/>
+    </resultMap>
+
     <resultMap id="postResultMap" type="com.connect.data.entity.Post">
         <id property="id" column="id"/>
         <result property="content" column="content"/>

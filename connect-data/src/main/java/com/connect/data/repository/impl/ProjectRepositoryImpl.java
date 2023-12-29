@@ -3,6 +3,7 @@ package com.connect.data.repository.impl;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.data.dao.IProjectDao;
+import com.connect.data.dto.ProjectDto;
 import com.connect.data.entity.Project;
 import com.connect.data.param.QueryProjectParam;
 import com.connect.data.repository.IProjectRepository;
@@ -23,7 +24,7 @@ public class ProjectRepositoryImpl implements IProjectRepository {
         this.projectDao = projectDao;
     }
 
-    public Project queryProjectById(long id, long userId) {
+    public ProjectDto queryProjectById(long id, long userId) {
         return projectDao.queryProjectById(id, userId);
     }
 
@@ -31,7 +32,7 @@ public class ProjectRepositoryImpl implements IProjectRepository {
         return projectDao.internalQueryProjectById(id);
     }
 
-    public List<Project> queryProject(QueryProjectParam param, long userId) {
+    public List<ProjectDto> queryProject(QueryProjectParam param, long userId) {
         return projectDao.queryProject(
                 param.getKeyword(),
                 param.getTags(),
