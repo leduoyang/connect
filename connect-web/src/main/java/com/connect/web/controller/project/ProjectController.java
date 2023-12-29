@@ -37,7 +37,10 @@ public class ProjectController implements IProjectApi {
     }
 
     @Override
-    public APIResponse<QueryProjectResponse> queryProject(Long projectId) {
+    public APIResponse<QueryProjectResponse> queryProject(
+            String authorizationHeader,
+            Long projectId
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -62,6 +65,7 @@ public class ProjectController implements IProjectApi {
 
     @Override
     public APIResponse<QueryProjectResponse> queryProjectWithFilter(
+            String authorizationHeader,
             QueryProjectRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -78,7 +82,8 @@ public class ProjectController implements IProjectApi {
 
     @Override
     public APIResponse<Long> createProject(
-            @RequestBody CreateProjectRequest request
+            String authorizationHeader,
+            CreateProjectRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
@@ -91,8 +96,9 @@ public class ProjectController implements IProjectApi {
 
     @Override
     public APIResponse<Void> updateProject(
-            @PathVariable Long projectId,
-            @RequestBody UpdateProjectRequest request
+            String authorizationHeader,
+            Long projectId,
+            UpdateProjectRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
@@ -105,7 +111,8 @@ public class ProjectController implements IProjectApi {
 
     @Override
     public APIResponse<Void> deleteProject(
-            @PathVariable Long projectId
+            String authorizationHeader,
+            Long projectId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()

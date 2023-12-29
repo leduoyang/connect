@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -31,7 +32,10 @@ public class CommentController implements ICommentApi {
     }
 
     @Override
-    public APIResponse<QueryCommentResponse> queryComment(Long commentId) {
+    public APIResponse<QueryCommentResponse> queryComment(
+            String authorizationHeader,
+            Long commentId
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
                 .setUserId(Long.parseLong(authentication.getName()))
@@ -57,6 +61,7 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<QueryCommentResponse> queryCommentWithFilter(
+            String authorizationHeader,
             QueryCommentRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -74,7 +79,8 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<Long> createComment(
-            @RequestBody CreateCommentRequest request
+            String authorizationHeader,
+            CreateCommentRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
@@ -87,8 +93,9 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<Void> updateComment(
-            @PathVariable Long commentId,
-            @RequestBody UpdateCommentRequest request
+            String authorizationHeader,
+            Long commentId,
+            UpdateCommentRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
@@ -101,7 +108,8 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<Void> deleteComment(
-            @PathVariable Long commentId
+            String authorizationHeader,
+            Long commentId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()

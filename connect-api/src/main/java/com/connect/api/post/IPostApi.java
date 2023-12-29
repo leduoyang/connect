@@ -13,26 +13,33 @@ import org.springframework.web.bind.annotation.*;
 public interface IPostApi {
 
     @GetMapping(value = "/post/{postId}")
-    APIResponse<QueryPostVo> queryPost(@NotNull @PathVariable Long postId);
+    APIResponse<QueryPostVo> queryPost(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
+            @NotNull @PathVariable Long postId
+    );
 
     @GetMapping(value = "/post")
     APIResponse<QueryPostVo> queryPostWithFilter(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated QueryPostRequest request
     );
 
     @PostMapping(value = "/post")
     APIResponse<Long> createPost(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated @RequestBody CreatePostRequest request
     );
 
     @PatchMapping(value = "/post/{postId}")
     APIResponse<Void> updatePost(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated @NotNull @PathVariable Long postId,
             @Validated @RequestBody UpdatePostRequest request
     );
 
     @DeleteMapping(value = "/post/{postId}")
     APIResponse<Void> deletePost(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated @NotNull @PathVariable Long postId
     );
 }

@@ -14,16 +14,19 @@ import java.util.Map;
 public interface IStarApi {
     @PostMapping(value = "/star")
     APIResponse<Void> star(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated @RequestBody StarRequest request
     );
 
     @DeleteMapping(value = "/star")
     APIResponse<Void> removeStar(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated @RequestBody UnStarRequest request
     );
 
     @GetMapping(value = "/starExisting")
     APIResponse<Map<String, Boolean>> starExisting(
+            @RequestHeader(name = "Authorization") String authorizationHeader,
             @Validated QueryStarRequest request
     );
 }
