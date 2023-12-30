@@ -5,11 +5,13 @@ import com.connect.api.comment.request.QueryCommentRequest;
 import com.connect.api.comment.request.UpdateCommentRequest;
 import com.connect.api.comment.response.QueryCommentResponse;
 import com.connect.api.common.APIResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
+@Hidden
 @RequestMapping(value = "/api/connect/v1")
 public interface ICommentApi {
 
