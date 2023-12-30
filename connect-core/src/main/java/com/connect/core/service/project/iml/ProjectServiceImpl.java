@@ -1,11 +1,14 @@
 package com.connect.core.service.project.iml;
 
 import com.connect.api.common.RequestMetaInfo;
-import com.connect.api.project.dto.*;
+import com.connect.api.project.request.CreateProjectRequest;
 import com.connect.api.project.request.QueryProjectRequest;
+import com.connect.api.project.request.UpdateProjectRequest;
+import com.connect.api.project.vo.QueryProjectVo;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.project.IProjectService;
+import com.connect.data.dto.ProjectDto;
 import com.connect.data.entity.Project;
 import com.connect.data.param.QueryProjectParam;
 import com.connect.data.repository.IProjectRepository;
@@ -25,8 +28,8 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public QueryProjectResponseDto queryProjectById(long id, RequestMetaInfo requestMetaInfo) {
-        Project project = projectRepository.queryProjectById(id, requestMetaInfo.getUserId());
+    public QueryProjectVo queryProjectById(long id, RequestMetaInfo requestMetaInfo) {
+        ProjectDto project = projectRepository.queryProjectById(id, requestMetaInfo.getUserId());
         if (project == null) {
             log.error("query project not found or not authorized to retrieve");
             return null;
@@ -37,8 +40,9 @@ public class ProjectServiceImpl implements IProjectService {
                 project.getVersion()
         );
 
-        QueryProjectResponseDto projectDto = new QueryProjectResponseDto()
+        QueryProjectVo projectDto = new QueryProjectVo()
                 .setId(project.getId())
+                .setUsername(project.getUsername())
                 .setTitle(project.getTitle())
                 .setDescription(project.getDescription())
                 .setStatus(project.getStatus())
@@ -46,27 +50,24 @@ public class ProjectServiceImpl implements IProjectService {
                 .setBoosted(project.getBoosted())
                 .setStars(project.getStars())
                 .setViews(project.getViews())
-                .setCreatedUser(project.getCreatedUser())
-                .setUpdatedUser(project.getUpdatedUser())
-                .setDbCreateTime(project.getDbCreateTime())
                 .setDbModifyTime(project.getDbModifyTime());
         return projectDto;
     }
 
     @Override
-    public List<QueryProjectResponseDto> queryProject(QueryProjectRequest request, RequestMetaInfo requestMetaInfo) {
+    public List<QueryProjectVo> queryProject(QueryProjectRequest request, RequestMetaInfo requestMetaInfo) {
         QueryProjectParam param = new QueryProjectParam()
-                .setProjectId(request.getProjectId())
+                .setUsername(request.getUsername())
                 .setKeyword(request.getKeyword())
-                .setUserId(request.getUserId())
                 .setTags(request.getTags());
 
-        List<Project> projectList = projectRepository.queryProject(param, request.getUserId());
+        List<ProjectDto> projectList = projectRepository.queryProject(param, requestMetaInfo.getUserId());
 
         return projectList
                 .stream()
-                .map(x -> new QueryProjectResponseDto()
+                .map(x -> new QueryProjectVo()
                         .setId(x.getId())
+                        .setUsername(x.getUsername())
                         .setTitle(x.getTitle())
                         .setDescription(x.getDescription())
                         .setStatus(x.getStatus())
@@ -74,16 +75,13 @@ public class ProjectServiceImpl implements IProjectService {
                         .setBoosted(x.getBoosted())
                         .setStars(x.getStars())
                         .setViews(x.getViews())
-                        .setCreatedUser(x.getCreatedUser())
-                        .setUpdatedUser(x.getUpdatedUser())
-                        .setDbCreateTime(x.getDbCreateTime())
                         .setDbModifyTime(x.getDbModifyTime())
                 )
                 .collect(Collectors.toList());
     }
 
     @Override
-    public long createProject(CreateProjectDto request, RequestMetaInfo requestMetaInfo) {
+    public long createProject(CreateProjectRequest request, RequestMetaInfo requestMetaInfo) {
         if (request.getStatus() < 0 || request.getStatus() > 2) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
@@ -110,9 +108,9 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public void updateProject(UpdateProjectDto request, RequestMetaInfo requestMetaInfo) {
+    public void updateProject(long id, UpdateProjectRequest request, RequestMetaInfo requestMetaInfo) {
         Project project = new Project()
-                .setId(request.getId())
+                .setId(id)
                 .setTitle(request.getTitle())
                 .setDescription(request.getDescription())
                 .setTags(request.getTags())
@@ -140,9 +138,9 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public void deleteProject(DeleteProjectDto request, RequestMetaInfo requestMetaInfo) {
+    public void deleteProject(long id, RequestMetaInfo requestMetaInfo) {
         Project project = new Project()
-                .setId(request.getId())
+                .setId(id)
                 .setUpdatedUser(requestMetaInfo.getUserId());
 
         projectRepository.deleteProject(project);

@@ -9,11 +9,11 @@ public interface IStarRepository {
 
     void updateStar(Star star);
 
-    boolean starExisting(String userId, long targetId, int targetType);
+    boolean starExisting(long userId, long targetId, int targetType);
 
-    boolean starExisting(String userId, long targetId, int targetType, Boolean isActive);
+    boolean starExisting(long userId, long targetId, int targetType, Boolean isActive);
 
     int countStars(long targetId, int targetType);
 
-    List<Integer> queryTargetIdList(int targetType, String userId);
+    List<Integer> queryTargetIdList(int targetType, long userId);
 }

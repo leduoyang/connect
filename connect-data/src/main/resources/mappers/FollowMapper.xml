@@ -14,8 +14,8 @@
             keyProperty="id" keyColumn="id">
         INSERT INTO follow(followerId, followingId, status)
         VALUES (
-        #{followerId, jdbcType=VARCHAR},
-        #{followingId, jdbcType=VARCHAR},
+        #{followerId, jdbcType=BIGINT},
+        #{followingId, jdbcType=BIGINT},
         #{status,jdbcType=TINYINT}
         )
     </insert>
@@ -25,10 +25,10 @@
         SET status = #{status, jdbcType=TINYINT}
         WHERE 1=1
         <if test="followerId != null and followerId != ''">
-            AND followerId = #{followerId, jdbcType=VARCHAR}
+            AND followerId = #{followerId, jdbcType=BIGINT}
         </if>
         <if test="followingId != null and followingId != ''">
-            AND followingId = #{followingId, jdbcType=VARCHAR}
+            AND followingId = #{followingId, jdbcType=BIGINT}
         </if>
     </update>
 
@@ -36,8 +36,8 @@
         SELECT EXISTS(
         SELECT id
         FROM follow
-        WHERE followerId = #{followerId, jdbcType=VARCHAR}
-        AND followingId = #{followingId, jdbcType=VARCHAR}
+        WHERE followerId = #{followerId, jdbcType=BIGINT}
+        AND followingId = #{followingId, jdbcType=BIGINT}
         )
     </select>
 
@@ -45,8 +45,8 @@
         SELECT EXISTS(
         SELECT id
         FROM follow
-        WHERE followerId = #{followerId, jdbcType=VARCHAR}
-        AND followingId = #{followingId, jdbcType=VARCHAR}
+        WHERE followerId = #{followerId, jdbcType=BIGINT}
+        AND followingId = #{followingId, jdbcType=BIGINT}
         AND status = #{status, jdbcType=TINYINT}
         )
     </select>
@@ -54,38 +54,38 @@
     <select id="countFollower" resultType="java.lang.Integer">
         SELECT COUNT(followerId)
         FROM follow
-        WHERE followingId = #{followingId, jdbcType=VARCHAR}
+        WHERE followingId = #{followingId, jdbcType=BIGINT}
         AND status = 2
     </select>
 
     <select id="countFollowing" resultType="java.lang.Integer">
         SELECT COUNT(followingId)
         FROM follow
-        WHERE followerId = #{followerId, jdbcType=VARCHAR}
+        WHERE followerId = #{followerId, jdbcType=BIGINT}
         AND status = 2
     </select>
 
-    <select id="queryFollowerIdList" resultType="java.lang.String">
+    <select id="queryFollowerIdList" resultType="java.lang.Long">
         SELECT followerId
 
         FROM follow
-        WHERE followingId = #{followingId, jdbcType=VARCHAR}
+        WHERE followingId = #{followingId, jdbcType=BIGINT}
         AND status = 2
     </select>
 
-    <select id="queryPendingIdList" resultType="java.lang.String">
+    <select id="queryPendingIdList" resultType="java.lang.Long">
         SELECT followerId
 
         FROM follow
-        WHERE followingId = #{followingId, jdbcType=VARCHAR}
+        WHERE followingId = #{followingId, jdbcType=BIGINT}
         AND status = 1
     </select>
 
-    <select id="queryFollowingIdList" resultType="java.lang.String">
+    <select id="queryFollowingIdList" resultType="java.lang.Long">
         SELECT followingId
 
         FROM follow
-        WHERE followerId = #{followerId, jdbcType=VARCHAR}
+        WHERE followerId = #{followerId, jdbcType=BIGINT}
         AND status = 2
     </select>
 </mapper>

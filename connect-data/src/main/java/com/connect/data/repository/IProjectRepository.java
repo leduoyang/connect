@@ -1,5 +1,6 @@
 package com.connect.data.repository;
 
+import com.connect.data.dto.ProjectDto;
 import com.connect.data.entity.Project;
 import com.connect.data.param.QueryProjectParam;
 
@@ -16,7 +17,9 @@ public interface IProjectRepository {
 
     void deleteProject(Project project);
 
-    Project queryProjectById(long id, String userId);
+    ProjectDto queryProjectById(long id, long userId);
 
-    List<Project> queryProject(QueryProjectParam param, String userId);
+    Project internalQueryProjectById(long id);
+
+    List<ProjectDto> queryProject(QueryProjectParam param, long userId);
 }

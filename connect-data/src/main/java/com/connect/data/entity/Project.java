@@ -10,6 +10,8 @@ import java.util.Date;
 public class Project {
     private Long id;
 
+    private String uuid;
+
     private String title;
 
     private String description;
@@ -26,9 +28,9 @@ public class Project {
 
     private Integer version;
 
-    private String createdUser;
+    private Long createdUser;
 
-    private String updatedUser;
+    private Long updatedUser;
 
     private Date dbCreateTime;
 

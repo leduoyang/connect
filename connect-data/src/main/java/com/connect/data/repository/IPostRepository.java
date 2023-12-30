@@ -1,6 +1,7 @@
 package com.connect.data.repository;
 
 import com.connect.api.common.RequestMetaInfo;
+import com.connect.data.dto.PostDto;
 import com.connect.data.entity.Post;
 import com.connect.data.param.QueryPostParam;
 
@@ -17,7 +18,9 @@ public interface IPostRepository {
 
     void deletePost(Post post);
 
-    Post queryPostById(long id, String userId);
+    PostDto queryPostById(long id, long userId);
 
-    List<Post> queryPost(QueryPostParam param, String userId);
+    Post internalQueryPostById(long id);
+
+    List<PostDto> queryPost(QueryPostParam param, long userId);
 }

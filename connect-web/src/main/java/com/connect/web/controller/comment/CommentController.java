@@ -1,22 +1,22 @@
 package com.connect.web.controller.comment;
 
 import com.connect.api.comment.ICommentApi;
-import com.connect.api.comment.dto.*;
 import com.connect.api.comment.request.CreateCommentRequest;
 import com.connect.api.comment.request.QueryCommentRequest;
 import com.connect.api.comment.request.UpdateCommentRequest;
 import com.connect.api.comment.response.QueryCommentResponse;
+import com.connect.api.comment.vo.QueryCommentVo;
 import com.connect.api.common.APIResponse;
 import com.connect.api.common.RequestMetaInfo;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.comment.ICommentService;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -32,13 +32,16 @@ public class CommentController implements ICommentApi {
     }
 
     @Override
-    public APIResponse<QueryCommentResponse> queryComment(Long commentId) {
+    public APIResponse<QueryCommentResponse> queryComment(
+            String authorizationHeader,
+            Long commentId
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        QueryCommentResponseDto commentDto = commentService.queryCommentById(commentId, requestMetaInfo);
+        QueryCommentVo commentDto = commentService.queryCommentById(commentId, requestMetaInfo);
         if (commentDto == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
@@ -46,7 +49,7 @@ public class CommentController implements ICommentApi {
             );
         }
 
-        List<QueryCommentResponseDto> commentDtoList = new ArrayList<>();
+        List<QueryCommentVo> commentDtoList = new ArrayList<>();
         commentDtoList.add(commentDto);
 
         QueryCommentResponse response = new QueryCommentResponse()
@@ -58,14 +61,15 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<QueryCommentResponse> queryCommentWithFilter(
+            String authorizationHeader,
             QueryCommentRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        List<QueryCommentResponseDto> commentDtoList = commentService.queryComment(request, requestMetaInfo);
+        List<QueryCommentVo> commentDtoList = commentService.queryComment(request, requestMetaInfo);
 
         QueryCommentResponse response = new QueryCommentResponse()
                 .setItems(commentDtoList)
@@ -75,55 +79,44 @@ public class CommentController implements ICommentApi {
 
     @Override
     public APIResponse<Long> createComment(
-            @RequestBody CreateCommentRequest request
+            String authorizationHeader,
+            CreateCommentRequest request
     ) {
-        CreateCommentDto createCommentDto = new CreateCommentDto();
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.map(request, createCommentDto);
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        Long id = commentService.createComment(createCommentDto, requestMetaInfo);
-
+        Long id = commentService.createComment(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(id);
     }
 
     @Override
     public APIResponse<Void> updateComment(
-            @PathVariable Long commentId,
-            @RequestBody UpdateCommentRequest request
+            String authorizationHeader,
+            Long commentId,
+            UpdateCommentRequest request
     ) {
-        UpdateCommentDto updateCommentDto = new UpdateCommentDto();
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.map(request, updateCommentDto);
-        updateCommentDto.setId(commentId);
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        commentService.updateComment(updateCommentDto, requestMetaInfo);
-
+        commentService.updateComment(commentId, request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
     public APIResponse<Void> deleteComment(
-            @PathVariable Long commentId
+            String authorizationHeader,
+            Long commentId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        DeleteCommentDto deleteCommentDto = new DeleteCommentDto()
-                .setId(commentId);
-        commentService.deleteComment(deleteCommentDto, requestMetaInfo);
-
+        commentService.deleteComment(commentId, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 }

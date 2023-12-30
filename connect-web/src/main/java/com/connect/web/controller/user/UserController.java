@@ -1,15 +1,12 @@
 package com.connect.web.controller.user;
 
-import com.connect.api.comment.dto.QueryCommentDto;
-import com.connect.api.comment.dto.QueryCommentResponseDto;
+import com.connect.api.comment.vo.QueryCommentVo;
 import com.connect.api.common.APIResponse;
 import com.connect.api.common.RequestMetaInfo;
-import com.connect.api.post.dto.QueryPostDto;
-import com.connect.api.post.dto.QueryPostResponseDto;
-import com.connect.api.project.dto.QueryProjectDto;
-import com.connect.api.project.dto.QueryProjectResponseDto;
+import com.connect.api.post.vo.QueryPostVo;
+import com.connect.api.project.vo.QueryProjectVo;
 import com.connect.api.user.IUserApi;
-import com.connect.api.user.dto.UserDto;
+import com.connect.api.user.vo.UserVo;
 import com.connect.api.user.request.*;
 import com.connect.api.user.response.QueryFollowingListResponse;
 import com.connect.api.user.response.QueryStarListResponse;
@@ -17,7 +14,6 @@ import com.connect.api.user.response.QueryFollowerListResponse;
 import com.connect.api.user.response.QueryUserResponse;
 import com.connect.common.enums.RedisPrefix;
 import com.connect.common.enums.StarTargetType;
-import com.connect.common.enums.UserRole;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
@@ -25,13 +21,13 @@ import com.connect.common.util.RedisUtil;
 import com.connect.core.service.star.IStarService;
 import com.connect.core.service.user.IUserService;
 import com.connect.core.service.user.IUserVerificationService;
+import com.connect.data.dto.UserDto;
 import com.connect.web.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,7 +61,21 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse signIn(@RequestBody SignInRequest request) {
+    public APIResponse<QueryUserResponse> publicQueryUserByUsername(String username) {
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo().setIsPublic(Boolean.TRUE);
+        UserVo userVo = userService.queryUserByUsername(username, requestMetaInfo);
+        List<UserVo> userVoList = new ArrayList<>();
+        userVoList.add(userVo);
+
+        QueryUserResponse response = new QueryUserResponse()
+                .setItems(userVoList)
+                .setTotal(userVoList.size());
+
+        return APIResponse.getOKJsonResult(response);
+    }
+
+    @Override
+    public APIResponse signIn(SignInRequest request) {
         UserDto userDto = userService.signIn(request);
         if (userDto == null) {
             throw new ConnectDataException(
@@ -74,17 +84,12 @@ public class UserController implements IUserApi {
             );
         }
 
-        String token = jwtTokenUtil.generateToken(
-                request.getUserId(),
-                UserRole.getRole(userDto.getRole())
-        );
+        String token = jwtTokenUtil.generateToken(userDto.getUserId());
         return APIResponse.getOKJsonResult(token);
     }
 
     @Override
-    public APIResponse<Void> signUp(
-            @RequestBody SignUpRequest request
-    ) {
+    public APIResponse<Void> signUp(SignUpRequest request) {
         if (!userVerificationService.checkEmailComplete(request.getEmail())) {
             throw new ConnectDataException(
                     ConnectErrorCode.USER_VERIFICATION_NOT_EXISTED_EXCEPTION,
@@ -106,67 +111,51 @@ public class UserController implements IUserApi {
 
     @Override
     public APIResponse<Void> editPersonalInfo(
-            @RequestBody EditUserRequest request
+            String authorizationHeader,
+            EditUserInfoRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        userService.editUser(request, requestMetaInfo);
+        userService.editUserInfo(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
     public APIResponse<Void> editProfile(
-            @PathVariable String userId,
-            @RequestBody EditProfileRequest request
+            String authorizationHeader,
+            EditProfileRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
-
-        if (!authentication.getName().equals(userId) &&
-                !authentication.getAuthorities()
-                        .stream()
-                        .findFirst()
-                        .equals(UserRole.getRole(UserRole.ADMIN.getCode()))) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
-                    "unauthorized request for editing target user " + userId
-            );
-        }
 
         userService.editUserProfile(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
-    public APIResponse<Void> deleteUser(
-            @PathVariable String userId
-    ) {
+    public APIResponse<Void> deleteUser(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!authentication.getName().equals(userId) &&
-                !authentication.getAuthorities()
-                        .stream()
-                        .findFirst()
-                        .equals(UserRole.getRole(UserRole.ADMIN.getCode()))) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
-                    "unauthorized request for deleting target user " + userId
-            );
-        }
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(Long.parseLong(authentication.getName()))
+                .setDetails(authentication.getDetails());
 
-        userService.deleteUser(userId);
+        userService.deleteUser(requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
-    public APIResponse<Void> uploadProfileImage(@RequestParam("file") MultipartFile profileImage) {
+    public APIResponse<Void> uploadProfileImage(
+            String authorizationHeader,
+            MultipartFile profileImage
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
         userService.editProfileImage(profileImage, requestMetaInfo);
@@ -175,67 +164,77 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QueryUserResponse> queryPersonalInfo() {
+    public APIResponse<QueryUserResponse> queryPersonalInfo(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDto userDto = userService.internalQueryUserByUserId(authentication.getName());
-        List<UserDto> userDtoList = new ArrayList<>();
-        userDtoList.add(userDto);
+        UserDto userDto = userService.internalQueryUserByUserId(Long.parseLong(authentication.getName()));
+        List<UserVo> userVoList = new ArrayList<>();
+        userVoList.add(new UserVo()
+                .setUsername(userDto.getUsername())
+                .setDescription(userDto.getDescription())
+                .setFollowings(userDto.getFollowings())
+                .setFollowers(userDto.getFollowers())
+                .setProfileImage(userDto.getProfileImage())
+                .setViews(userDto.getViews())
+        );
 
         QueryUserResponse response = new QueryUserResponse()
-                .setItems(userDtoList)
-                .setTotal(userDtoList.size());
+                .setItems(userVoList)
+                .setTotal(userVoList.size());
 
         return APIResponse.getOKJsonResult(response);
     }
 
     @Override
-    public APIResponse<QueryUserResponse> queryUser(String userId) {
+    public APIResponse<QueryUserResponse> queryUserByUsername(
+            String authorizationHeader,
+            String username
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
-                .setDetails(authentication.getDetails());
 
-        UserDto userDto = userService.queryUserByUserId(userId, requestMetaInfo);
-        List<UserDto> userDtoList = new ArrayList<>();
-        userDtoList.add(userDto);
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(Long.parseLong(authentication.getName()))
+                .setDetails(authentication.getDetails());
+        UserVo userVo = userService.queryUserByUsername(username, requestMetaInfo);
+        List<UserVo> userVoList = new ArrayList<>();
+        userVoList.add(userVo);
 
         QueryUserResponse response = new QueryUserResponse()
-                .setItems(userDtoList)
-                .setTotal(userDtoList.size());
+                .setItems(userVoList)
+                .setTotal(userVoList.size());
 
         return APIResponse.getOKJsonResult(response);
     }
 
     @Override
     public APIResponse<QueryUserResponse> queryUserWithFilter(
-            @Validated QueryUserRequest request
+            String authorizationHeader,
+            QueryUserRequest request
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
-
-        List<UserDto> userDtoList = userService.queryUser(request, requestMetaInfo);
+        List<UserVo> userVoList = userService.queryUser(request, requestMetaInfo);
 
         QueryUserResponse response = new QueryUserResponse()
-                .setItems(userDtoList)
-                .setTotal(userDtoList.size());
+                .setItems(userVoList)
+                .setTotal(userVoList.size());
         return APIResponse.getOKJsonResult(response);
     }
 
     @Override
-    public APIResponse<QueryStarListResponse> queryPersonalStarList() {
+    public APIResponse<QueryStarListResponse> queryPersonalStarList(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
-                .setUserId(authentication.getName())
+                .setUserId(Long.parseLong(authentication.getName()))
                 .setDetails(authentication.getDetails());
 
-        List<QueryProjectResponseDto> projectDtoList =
-                userService.queryUserStarList(StarTargetType.PROJECT, requestMetaInfo, QueryProjectResponseDto.class);
-        List<QueryPostResponseDto> postDtoList =
-                userService.queryUserStarList(StarTargetType.POST, requestMetaInfo, QueryPostResponseDto.class);
-        List<QueryCommentResponseDto> commentDtoList =
-                userService.queryUserStarList(StarTargetType.COMMENT, requestMetaInfo, QueryCommentResponseDto.class);
+        List<QueryProjectVo> projectDtoList =
+                userService.queryUserStarList(StarTargetType.PROJECT, requestMetaInfo, QueryProjectVo.class);
+        List<QueryPostVo> postDtoList =
+                userService.queryUserStarList(StarTargetType.POST, requestMetaInfo, QueryPostVo.class);
+        List<QueryCommentVo> commentDtoList =
+                userService.queryUserStarList(StarTargetType.COMMENT, requestMetaInfo, QueryCommentVo.class);
 
         QueryStarListResponse response = new QueryStarListResponse()
                 .setProjects(projectDtoList)
@@ -248,31 +247,33 @@ public class UserController implements IUserApi {
     }
 
     @Override
-    public APIResponse<QueryFollowerListResponse> queryPersonalFollowerList() {
+    public APIResponse<QueryFollowerListResponse> queryPersonalFollowerList(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        List<UserDto> userDtoList = userService.queryFollowerList(authentication.getName());
+        UserDto userDto = userService.internalQueryUserByUserId(Long.parseLong(authentication.getName()));
+        List<UserVo> userVoList = userService.queryFollowerList(userDto.getUsername());
 
         QueryFollowerListResponse response = new QueryFollowerListResponse()
-                .setUsers(userDtoList)
-                .setTotal(userDtoList.size());
+                .setUsers(userVoList)
+                .setTotal(userVoList.size());
         return APIResponse.getOKJsonResult(response);
     }
 
     @Override
-    public APIResponse<QueryFollowingListResponse> queryPersonalFollowingList() {
+    public APIResponse<QueryFollowingListResponse> queryPersonalFollowingList(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        List<UserDto> userDtoList = userService.queryFollowingList(authentication.getName());
+        UserDto userDto = userService.internalQueryUserByUserId(Long.parseLong(authentication.getName()));
+        List<UserVo> userVoList = userService.queryFollowingList(userDto.getUsername());
 
         QueryFollowingListResponse response = new QueryFollowingListResponse()
-                .setUsers(userDtoList)
-                .setTotal(userDtoList.size());
+                .setUsers(userVoList)
+                .setTotal(userVoList.size());
         return APIResponse.getOKJsonResult(response);
     }
 
     @Override
-    public APIResponse<QueryFollowerListResponse> queryPersonalPendingList() {
+    public APIResponse<QueryFollowerListResponse> queryPersonalPendingList(String authorizationHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDto userDto = userService.internalQueryUserByUserId(authentication.getName());
+        UserDto userDto = userService.internalQueryUserByUserId(Long.parseLong(authentication.getName()));
         if (userDto.getStatus() != UserStatus.SEMI.getCode()) {
             throw new ConnectDataException(
                     ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
@@ -280,11 +281,11 @@ public class UserController implements IUserApi {
             );
         }
 
-        List<UserDto> userDtoList = userService.queryPendingList(authentication.getName());
+        List<UserVo> userVoList = userService.queryPendingList(userDto.getUsername());
 
         QueryFollowerListResponse response = new QueryFollowerListResponse()
-                .setUsers(userDtoList)
-                .setTotal(userDtoList.size());
+                .setUsers(userVoList)
+                .setTotal(userVoList.size());
         return APIResponse.getOKJsonResult(response);
     }
 }

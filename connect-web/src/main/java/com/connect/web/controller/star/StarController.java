@@ -1,6 +1,7 @@
 package com.connect.web.controller.star;
 
 import com.connect.api.common.APIResponse;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.star.IStarApi;
 import com.connect.api.star.dto.StarDto;
 import com.connect.api.star.dto.UnStarDto;
@@ -11,6 +12,7 @@ import com.connect.core.service.star.IStarService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -26,37 +28,47 @@ public class StarController implements IStarApi {
     }
 
     @Override
-    public APIResponse<Void> star(StarRequest request) {
+    public APIResponse<Void> star(
+            String authorizationHeader,
+            StarRequest request
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        StarDto starDto = new StarDto()
-                .setUserId(authentication.getName())
-                .setTargetId(request.getTargetId())
-                .setTargetType(request.getTargetType());
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(Long.parseLong(authentication.getName()))
+                .setDetails(authentication.getDetails());
 
-        starService.star(starDto);
+        starService.star(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
-    public APIResponse<Void> removeStar(UnStarRequest request) {
+    public APIResponse<Void> removeStar(
+            String authorizationHeader,
+            UnStarRequest request
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UnStarDto unStarDto = new UnStarDto()
-                .setUserId(authentication.getName())
-                .setTargetId(request.getTargetId())
-                .setTargetType(request.getTargetType());
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(Long.parseLong(authentication.getName()))
+                .setDetails(authentication.getDetails());
 
-        starService.unStar(unStarDto);
+        starService.unStar(request, requestMetaInfo);
         return APIResponse.getOKJsonResult(null);
     }
 
     @Override
-    public APIResponse<Map<String, Boolean>> starExisting(QueryStarRequest request) {
+    public APIResponse<Map<String, Boolean>> starExisting(
+            String authorizationHeader,
+            QueryStarRequest request
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(Long.parseLong(authentication.getName()))
+                .setDetails(authentication.getDetails());
+
         boolean existed = starService.starExisting(
-                authentication.getName(),
                 request.getTargetId(),
                 request.getTargetType(),
-                true
+                requestMetaInfo
         );
 
         Map<String, Boolean> result = new HashMap<>();

@@ -38,8 +38,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         }
         log.info("enter jwt filter for " + request.getRequestURI());
 
-        if (request.getRequestURI().startsWith("/api/connect/v1/public/") ||
-                request.getRequestURI().equals("/api/root/test/token")
+        if (!request.getRequestURI().startsWith("/api/connect/") ||
+                request.getRequestURI().startsWith("/api/connect/v1/public/")
         ) {
             filterChain.doFilter(request, response);
             return;

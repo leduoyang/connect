@@ -48,7 +48,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/root/test/token?mockId=john_doe",
+									"raw": "http://localhost:8080/api/root/test/token?mockUsername=john_doe",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -62,7 +62,7 @@
 									],
 									"query": [
 										{
-											"key": "mockId",
+											"key": "mockUsername",
 											"value": "john_doe"
 										}
 									]
@@ -71,7 +71,7 @@
 							"response": []
 						},
 						{
-							"name": "0.5 john editUserProfile to semi public",
+							"name": "0.5 john editPersonalInfo to semi public",
 							"event": [
 								{
 									"listen": "test",
@@ -100,14 +100,14 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"description\": \"update status to semi public\",\n    \"status\": 1\n}",
+									"raw": "// update status to semi public\n{\n    \"status\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+								"url": "http://localhost:8080/api/connect/v1/user/me/info",
 								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
 							},
 							"response": []
@@ -241,7 +241,7 @@
 								}
 							],
 							"request": {
-								"method": "POST",
+								"method": "DELETE",
 								"header": [
 									{
 										"key": "Authorization",
@@ -249,7 +249,7 @@
 										"type": "text"
 									}
 								],
-								"url": "http://localhost:8080/api/connect/v1/unfollow/john_doe",
+								"url": "http://localhost:8080/api/connect/v1/follow/john_doe",
 								"description": "This test is written to validate the server performed a function as expected."
 							},
 							"response": []
@@ -452,7 +452,7 @@
 											}
 										],
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/follow/ROOT",
+											"raw": "http://localhost:8080/api/connect/v1/follow/bob_smith",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -463,7 +463,7 @@
 												"connect",
 												"v1",
 												"follow",
-												"ROOT"
+												"bob_smith"
 											],
 											"query": [
 												{
@@ -473,6 +473,33 @@
 												}
 											]
 										},
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "followExisting Copy",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": "http://localhost:8080/api/connect/v1/follow/isFollowing/bob_smith",
 										"description": "This test is written to validate the server performed a function as expected."
 									},
 									"response": []
@@ -500,6 +527,33 @@
 											}
 										],
 										"url": "http://localhost:8080/api/connect/v1/follow/bob_smith",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "followExisting Copy 2",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": "http://localhost:8080/api/connect/v1/follow/isFollowing/bob_smith",
 										"description": "This test is written to validate the server performed a function as expected."
 									},
 									"response": []
@@ -705,56 +759,6 @@
 							"name": "Star",
 							"item": [
 								{
-									"name": "starExisting",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "{{Authorization}}",
-												"type": "text"
-											}
-										],
-										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/starExisting?targetId=2&targetType=1",
-											"protocol": "http",
-											"host": [
-												"localhost"
-											],
-											"port": "8080",
-											"path": [
-												"api",
-												"connect",
-												"v1",
-												"starExisting"
-											],
-											"query": [
-												{
-													"key": "targetId",
-													"value": "2"
-												},
-												{
-													"key": "targetType",
-													"value": "1"
-												}
-											]
-										},
-										"description": "This test is written to validate the server performed a function as expected."
-									},
-									"response": []
-								},
-								{
 									"name": "star",
 									"event": [
 										{
@@ -791,6 +795,56 @@
 									"response": []
 								},
 								{
+									"name": "starExisting",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/starExisting?targetId=14&targetType=2",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"starExisting"
+											],
+											"query": [
+												{
+													"key": "targetId",
+													"value": "14"
+												},
+												{
+													"key": "targetType",
+													"value": "2"
+												}
+											]
+										},
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
 									"name": "unstar",
 									"event": [
 										{
@@ -814,7 +868,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"targetId\": 1,\n    \"targetType\": 0\n}",
+											"raw": "{\n    \"targetId\": 14,\n    \"targetType\": 2\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -822,6 +876,56 @@
 											}
 										},
 										"url": "http://localhost:8080/api/connect/v1/star",
+										"description": "This test is written to validate the server performed a function as expected."
+									},
+									"response": []
+								},
+								{
+									"name": "starExisting Copy",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:8080/api/connect/v1/starExisting?targetId=14&targetType=2",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api",
+												"connect",
+												"v1",
+												"starExisting"
+											],
+											"query": [
+												{
+													"key": "targetId",
+													"value": "14"
+												},
+												{
+													"key": "targetType",
+													"value": "2"
+												}
+											]
+										},
 										"description": "This test is written to validate the server performed a function as expected."
 									},
 									"response": []
@@ -861,7 +965,7 @@
 											"urlencoded": []
 										},
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/project?tags=科技",
+											"raw": "http://localhost:8080/api/connect/v1/project?tags=科技&username=alice_smith",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -877,6 +981,10 @@
 												{
 													"key": "tags",
 													"value": "科技"
+												},
+												{
+													"key": "username",
+													"value": "alice_smith"
 												}
 											]
 										},
@@ -1104,7 +1212,7 @@
 									"response": []
 								},
 								{
-									"name": "getUserByUserId",
+									"name": "getUserByUsername",
 									"event": [
 										{
 											"listen": "test",
@@ -1125,6 +1233,11 @@
 											{
 												"key": "Authorization",
 												"value": "{{Authorization}}",
+												"type": "text"
+											},
+											{
+												"key": "Origin",
+												"value": "http://localhost:3000",
 												"type": "text"
 											}
 										],
@@ -1201,14 +1314,56 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "// user profile of the current token will be updated\n// status default set to null\n{\n    \"description\": \"description\",\n    \"status\": 1\n}",
+											"raw": "{\n    \"description\": \"description\",\n    \"socialLinks\": {\"github\": \"123\", \"instagram\": null}\n}",
 											"options": {
 												"raw": {
 													"language": "json"
 												}
 											}
 										},
-										"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+										"url": "http://localhost:8080/api/connect/v1/user/me/profile",
+										"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
+									},
+									"response": []
+								},
+								{
+									"name": "editPersonalInfo",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{Authorization}}",
+												"type": "text"
+											},
+											{
+												"key": "",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"password\": \"updatedpassword\",\n    \"status\": 0\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "http://localhost:8080/api/connect/v1/user/me/info",
 										"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
 									},
 									"response": []
@@ -1333,7 +1488,7 @@
 												}
 											}
 										},
-										"url": "http://localhost:8080/api/connect/v1/post/1",
+										"url": "http://localhost:8080/api/connect/v1/post/53",
 										"description": "This test is written to validate the server performed a function as expected."
 									},
 									"response": []
@@ -1361,7 +1516,7 @@
 											}
 										],
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/post?userId=john_doe",
+											"raw": "http://localhost:8080/api/connect/v1/post?username=john_doe&keyword=探索",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -1375,8 +1530,12 @@
 											],
 											"query": [
 												{
-													"key": "userId",
+													"key": "username",
 													"value": "john_doe"
+												},
+												{
+													"key": "keyword",
+													"value": "探索"
 												}
 											]
 										},
@@ -1406,7 +1565,7 @@
 												"type": "text"
 											}
 										],
-										"url": "http://localhost:8080/api/connect/v1/post/47",
+										"url": "http://localhost:8080/api/connect/v1/post/2",
 										"description": "This test is written to validate that response payloads returned from the server are well-formed. It uses the [Tiny Validator for JSON Schema v4](http://geraintluff.github.io/tv4/).\n\nThe Postman sandbox offers a built-in tv4 validator to simplify your assertions. Use [JSON-schema](http://json-schema.org/) [draft v4](http://json-schema.org/latest/json-schema-core.html) to validate simple values and complex objects using a rich [validation vocabulary](http://json-schema.org/latest/json-schema-validation.html) ([examples](http://json-schema.org/examples.html))."
 									},
 									"response": []
@@ -1439,7 +1598,7 @@
 											}
 										],
 										"url": {
-											"raw": "http://localhost:8080/api/connect/v1/comment?userId=yangming",
+											"raw": "http://localhost:8080/api/connect/v1/comment?username=ROOT&keyword=Great",
 											"protocol": "http",
 											"host": [
 												"localhost"
@@ -1453,8 +1612,12 @@
 											],
 											"query": [
 												{
-													"key": "userId",
-													"value": "yangming"
+													"key": "username",
+													"value": "ROOT"
+												},
+												{
+													"key": "keyword",
+													"value": "Great"
 												}
 											]
 										},
@@ -1484,7 +1647,7 @@
 												"type": "text"
 											}
 										],
-										"url": "http://localhost:8080/api/connect/v1/comment/13",
+										"url": "http://localhost:8080/api/connect/v1/comment/1",
 										"description": "This test is written to validate that response payloads returned from the server are well-formed. It uses the [Tiny Validator for JSON Schema v4](http://geraintluff.github.io/tv4/).\n\nThe Postman sandbox offers a built-in tv4 validator to simplify your assertions. Use [JSON-schema](http://json-schema.org/) [draft v4](http://json-schema.org/latest/json-schema-core.html) to validate simple values and complex objects using a rich [validation vocabulary](http://json-schema.org/latest/json-schema-validation.html) ([examples](http://json-schema.org/examples.html))."
 									},
 									"response": []
@@ -1535,7 +1698,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/root/test/token?mockId=john_doe",
+									"raw": "http://localhost:8080/api/root/test/token?mockUsername=john_doe",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -1549,7 +1712,7 @@
 									],
 									"query": [
 										{
-											"key": "mockId",
+											"key": "mockUsername",
 											"value": "john_doe"
 										}
 									]
@@ -1558,7 +1721,7 @@
 							"response": []
 						},
 						{
-							"name": "1. john editUserProfile to semi public",
+							"name": "1. john editPersonalInfo to semi public",
 							"event": [
 								{
 									"listen": "test",
@@ -1577,23 +1740,18 @@
 										"key": "Authorization",
 										"value": "{{Authorization}}",
 										"type": "text"
-									},
-									{
-										"key": "traceId",
-										"value": "{{testTraceId}}",
-										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"description\": \"update status to semi public\",\n    \"status\": 1\n}",
+									"raw": "// update status to semi public\n{\n    \"status\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+								"url": "http://localhost:8080/api/connect/v1/user/me/info",
 								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
 							},
 							"response": []
@@ -1826,7 +1984,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/root/test/token?mockId=john_doe",
+									"raw": "http://localhost:8080/api/root/test/token?mockUsername=john_doe",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -1840,7 +1998,7 @@
 									],
 									"query": [
 										{
-											"key": "mockId",
+											"key": "mockUsername",
 											"value": "john_doe"
 										}
 									]
@@ -1849,7 +2007,7 @@
 							"response": []
 						},
 						{
-							"name": "8. john editUserProfile to public (ROOT should follow john afterwards)",
+							"name": "8. john editPersonalInfo to public (ROOT should follow john afterwards)",
 							"event": [
 								{
 									"listen": "test",
@@ -1878,14 +2036,14 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"description\": \"update status to public\",\n    \"status\": 0\n}",
+									"raw": "{\n    \"status\": 0\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "http://localhost:8080/api/connect/v1/user/me/edit",
+								"url": "http://localhost:8080/api/connect/v1/user/me/info",
 								"description": "This test is to validate the response time. This Snippet is also available on the right sidebar under `Response time is less than 200ms`."
 							},
 							"response": []
@@ -2030,7 +2188,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/api/root/test/token",
+							"raw": "http://localhost:8080/api/root/test/token?mockId=john_doe",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -2045,6 +2203,10 @@
 							"query": [
 								{
 									"key": "mockId",
+									"value": "john_doe"
+								},
+								{
+									"key": "mockUsername",
 									"value": "john_doe",
 									"disabled": true
 								}
@@ -2113,7 +2275,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"leduoyoung@gmail.com\",\n    \"code\": \"c2474\"\n}",
+							"raw": "{\n    \"email\": \"leduoyoung@gmail.com\",\n    \"code\": \"344de\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2132,7 +2294,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"userId\": \"leduoyang\",\n  \"password\": \"thisispassword\",\n  \"description\": \"uid is acquired from the response of verifying email\",\n  \"email\": \"leduoyoung@gmail.com\",\n  \"uid\": \"32e55c14-3cb7-42ad-849d-edaaeeec7917\"\n}",
+							"raw": "{\n  \"username\": \"leduoyang\",\n  \"password\": \"thisispassword\",\n  \"description\": \"uid is acquired from the response of verifying email\",\n  \"email\": \"leduoyoung@gmail.com\",\n  \"uid\": \"9891a775-7039-4874-8779-ead7f5e26947\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2145,12 +2307,25 @@
 				},
 				{
 					"name": "4. login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let token = pm.response.json().data;",
+									"pm.globals.set('Authorization', token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "// follow step 1, 2, 3 to signUp and signIn to get jwt token for further requests (token should be added to headers as Authorziation)\n// otherwise, use step 0 to acquire token for testing purposes\n{\n  \"userId\": \"leduoyang\",\n  \"password\": \"thisispassword\"\n}",
+							"raw": "// follow step 1, 2, 3 to signUp and signIn to get jwt token for further requests (token should be added to headers as Authorziation)\n// otherwise, use step 0 to acquire token for testing purposes\n{\n  \"username\": \"leduoyang\",\n  \"password\": \"thisispassword\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2163,6 +2338,17 @@
 				},
 				{
 					"name": "uploadProfileImage",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -2178,7 +2364,7 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/Users/yangleduo/Desktop/台胞证正面.png"
+									"src": "/Users/yangleduo/台胞證.jpg"
 								}
 							]
 						},

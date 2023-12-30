@@ -3,6 +3,7 @@ package com.connect.data.repository.impl;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.data.dao.IProjectDao;
+import com.connect.data.dto.ProjectDto;
 import com.connect.data.entity.Project;
 import com.connect.data.param.QueryProjectParam;
 import com.connect.data.repository.IProjectRepository;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Repository
@@ -23,21 +25,25 @@ public class ProjectRepositoryImpl implements IProjectRepository {
         this.projectDao = projectDao;
     }
 
-    public Project queryProjectById(long id, String userId) {
+    public ProjectDto queryProjectById(long id, long userId) {
         return projectDao.queryProjectById(id, userId);
     }
 
-    public List<Project> queryProject(QueryProjectParam param, String userId) {
+    public Project internalQueryProjectById(long id) {
+        return projectDao.internalQueryProjectById(id);
+    }
+
+    public List<ProjectDto> queryProject(QueryProjectParam param, long userId) {
         return projectDao.queryProject(
-                param.getProjectId(),
-                param.getUserId(),
                 param.getKeyword(),
                 param.getTags(),
+                param.getUsername(),
                 userId
         );
     }
 
     public long createProject(Project project) {
+        project.setUuid(UUID.randomUUID().toString());
         int affected = projectDao.createProject(project);
         if (affected <= 0) {
             throw new ConnectDataException(ConnectErrorCode.PROJECT_CREATE_EXCEPTION);
@@ -48,7 +54,7 @@ public class ProjectRepositoryImpl implements IProjectRepository {
 
     public void updateProject(Project project) {
         long targetId = project.getId();
-        String userId = project.getUpdatedUser();
+        Long userId = project.getUpdatedUser();
         boolean existed = projectDao.projectExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
@@ -66,20 +72,20 @@ public class ProjectRepositoryImpl implements IProjectRepository {
     public void incrementViews(long id, int version) {
         int affected = projectDao.incrementViews(id, version);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.PROJECT_UPDATE_EXCEPTION, "update viewCounts failed");
+            log.error(ConnectErrorCode.OPTIMISTIC_LOCK_CONFLICT_EXCEPTION + "project incrementViews failed");
         }
     }
 
     public void refreshStars(long id, int version, int stars) {
         int affected = projectDao.refreshStars(id, version, stars);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.PROJECT_UPDATE_EXCEPTION, "update likesCount failed");
+            log.error(ConnectErrorCode.OPTIMISTIC_LOCK_CONFLICT_EXCEPTION + "project refreshStars failed");
         }
     }
 
     public void deleteProject(Project project) {
         long targetId = project.getId();
-        String userId = project.getUpdatedUser();
+        Long userId = project.getUpdatedUser();
         boolean existed = projectDao.projectExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(

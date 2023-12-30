@@ -20,29 +20,10 @@ public class EditProfileRequestValidationTest {
     @Test
     public void test_create_editProfileRequest_with_valid_payload_should_pass_validation() {
         EditProfileRequest editProfileRequest = new EditProfileRequest()
-                .setUserId("12345678")
-                .setStatus(1)
+                .setUsername("12345678")
                 .setDescription("12345678");
         Set<ConstraintViolation<EditProfileRequest>> violations = validator.validate(editProfileRequest);
         assertTrue(violations.isEmpty(), "Validation should pass for a valid editProfile request");
-    }
-
-    @Test
-    public void test_create_editProfileRequest_with_null_status_should_pass_validation() {
-        EditProfileRequest editProfileRequest = new EditProfileRequest()
-                .setUserId("12345678")
-                .setDescription("12345678");
-        Set<ConstraintViolation<EditProfileRequest>> violations = validator.validate(editProfileRequest);
-        assertTrue(violations.isEmpty(), "Validation should pass for a valid editProfile request");
-    }
-
-    @Test
-    public void test_create_editProfileRequest_with_invalid_status_should_fail_validation() {
-        EditProfileRequest editProfileRequest = new EditProfileRequest()
-                .setStatus(-1)
-                .setDescription("12345678");
-        Set<ConstraintViolation<EditProfileRequest>> violations = validator.validate(editProfileRequest);
-        assertEquals(1, violations.size(), "Validation should fail for a invalid editProfile request");
     }
 
     @Test
@@ -56,8 +37,7 @@ public class EditProfileRequestValidationTest {
     @Test
     public void test_create_editProfileRequest_with_blank_userId_should_fail_validation() {
         EditProfileRequest editProfileRequest = new EditProfileRequest()
-                .setUserId("")
-                .setStatus(1)
+                .setUsername("")
                 .setDescription("12345678");
         Set<ConstraintViolation<EditProfileRequest>> violations = validator.validate(editProfileRequest);
         assertEquals(1, violations.size(), "Validation should fail for a invalid editProfile request");
@@ -66,8 +46,7 @@ public class EditProfileRequestValidationTest {
     @Test
     public void test_create_editProfileRequest_with_over_max_userId_should_fail_validation() {
         EditProfileRequest editProfileRequest = new EditProfileRequest()
-                .setUserId("a".repeat(21))
-                .setStatus(1)
+                .setUsername("a".repeat(21))
                 .setDescription("12345678");
         Set<ConstraintViolation<EditProfileRequest>> violations = validator.validate(editProfileRequest);
         assertEquals(1, violations.size(), "Validation should fail for a invalid editProfile request");

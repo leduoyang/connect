@@ -1,14 +1,16 @@
-package com.connect.api.user.dto;
+package com.connect.data.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
-
 @Accessors(chain = true)
 @Data
 public class UserDto {
-    private String userId;
+    private Long userId;
+
+    private String uuid;
+
+    private String username;
 
     private String description;
 
@@ -16,15 +18,17 @@ public class UserDto {
 
     private Integer role;
 
+    private String phone;
+
+    private String email;
+
     private String profileImage;
 
     private Integer views;
 
+    private Integer version;
+
     private Integer followers;
 
     private Integer followings;
-
-    private Date dbCreateTime;
-
-    private Date dbModifyTime;
 }

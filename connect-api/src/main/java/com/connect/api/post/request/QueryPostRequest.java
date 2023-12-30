@@ -9,9 +9,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Data
 public class QueryPostRequest {
-    private Long postId;
-
-    private String userId;
+    private String username;
 
     private String keyword;
 

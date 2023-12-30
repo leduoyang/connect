@@ -1,6 +1,6 @@
 package com.connect.core.service.follow.iml;
 
-import com.connect.api.follow.dto.FollowDto;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.common.enums.FollowStatus;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
@@ -29,33 +29,34 @@ public class FollowServiceImpl implements IFollowService {
     }
 
     @Override
-    public void follow(FollowDto request) {
-        if (userRepository.internalQueryUserByUserId(request.getFollowerId()) == null) {
-            throw new ConnectDataException(
-                    ConnectErrorCode.PARAM_EXCEPTION,
-                    "follower not existed: " + request.getFollowingId()
-            );
-        }
-        User targetUser = userRepository.internalQueryUserByUserId(request.getFollowingId());
+    public void follow(String following, RequestMetaInfo requestMetaInfo) {
+        User targetUser = userRepository.internalQueryUserByUsername(following);
         if (targetUser == null) {
             throw new ConnectDataException(
                     ConnectErrorCode.PARAM_EXCEPTION,
-                    "following userId not existed: " + request.getFollowingId()
+                    "following user not existed: " + following
             );
         }
+        if (requestMetaInfo.getUserId().equals(targetUser.getUserId())) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    String.format("nested follow found")
+            );
+        }
+
         UserStatus status = UserStatus.getStatus(targetUser.getStatus());
         if (status.equals(UserStatus.PRIVATE)
                 || status.equals(UserStatus.DELETED)
         ) {
             throw new ConnectDataException(
                     ConnectErrorCode.ILLEGAL_REQUESTER_ERROR,
-                    "target userId not available for following: " + request.getFollowingId()
+                    "target user not available for following: " + following
             );
         }
 
         Follow follow = new Follow()
-                .setFollowerId(request.getFollowerId())
-                .setFollowingId(request.getFollowingId());
+                .setFollowerId(requestMetaInfo.getUserId())
+                .setFollowingId(targetUser.getUserId());
         if (status.equals(UserStatus.SEMI)) {
             follow.setStatus(FollowStatus.PENDING.getCode());
         } else {
@@ -66,14 +67,27 @@ public class FollowServiceImpl implements IFollowService {
     }
 
     @Override
-    public void unfollow(FollowDto request) {
-        String followerId = request.getFollowerId();
-        String followingId = request.getFollowingId();
+    public void unfollow(String following, RequestMetaInfo requestMetaInfo) {
+        long followerId = requestMetaInfo.getUserId();
+        User targetUser = userRepository.internalQueryUserByUsername(following);
+        if (targetUser == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "following user not existed: " + following
+            );
+        }
+        long followingId = targetUser.getUserId();
+        if (requestMetaInfo.getUserId().equals(followingId)) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    String.format("nested unfollow found")
+            );
+        }
 
         if (!followRepository.isFollowing(followerId, followingId, FollowStatus.APPROVED.getCode())) {
             throw new ConnectDataException(
                     ConnectErrorCode.FOLLOW_NOT_EXISTED_EXCEPTION,
-                    String.format("UNFOLLOW FAILED! %s is not following %s", followerId, followingId)
+                    String.format("UNFOLLOW FAILED! you are not following %s", followingId)
             );
         }
 
@@ -85,18 +99,33 @@ public class FollowServiceImpl implements IFollowService {
     }
 
     @Override
-    public boolean isFollowing(String followerId, String followingId, FollowStatus status) {
+    public boolean isFollowing(String following, RequestMetaInfo requestMetaInfo) {
+        User followingUser = userRepository.internalQueryUserByUsername(following);
+        if (followingUser == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "following user not existed: " + following
+            );
+        }
+
         return followRepository.isFollowing(
-                followerId,
-                followingId,
-                status.getCode()
+                requestMetaInfo.getUserId(),
+                followingUser.getUserId(),
+                FollowStatus.APPROVED.getCode()
         );
     }
 
     @Override
-    public void approve(FollowDto request) {
-        String followerId = request.getFollowerId();
-        String followingId = request.getFollowingId();
+    public void approve(String follower, RequestMetaInfo requestMetaInfo) {
+        long followingId = requestMetaInfo.getUserId();
+        User targetUser = userRepository.internalQueryUserByUsername(follower);
+        if (targetUser == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "following user not existed: " + follower
+            );
+        }
+        long followerId = targetUser.getUserId();
 
         if (!followRepository.isFollowing(followerId, followingId, FollowStatus.PENDING.getCode())) {
             throw new ConnectDataException(
@@ -113,9 +142,16 @@ public class FollowServiceImpl implements IFollowService {
     }
 
     @Override
-    public void reject(FollowDto request) {
-        String followerId = request.getFollowerId();
-        String followingId = request.getFollowingId();
+    public void reject(String follower, RequestMetaInfo requestMetaInfo) {
+        long followingId = requestMetaInfo.getUserId();
+        User targetUser = userRepository.internalQueryUserByUsername(follower);
+        if (targetUser == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "following user not existed: " + follower
+            );
+        }
+        long followerId = targetUser.getUserId();
 
         if (!followRepository.isFollowing(followerId, followingId, FollowStatus.PENDING.getCode())) {
             throw new ConnectDataException(
@@ -132,9 +168,16 @@ public class FollowServiceImpl implements IFollowService {
     }
 
     @Override
-    public void remove(FollowDto request) {
-        String followerId = request.getFollowerId();
-        String followingId = request.getFollowingId();
+    public void remove(String follower, RequestMetaInfo requestMetaInfo) {
+        long followingId = requestMetaInfo.getUserId();
+        User targetUser = userRepository.internalQueryUserByUsername(follower);
+        if (targetUser == null) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    "following user not existed: " + follower
+            );
+        }
+        long followerId = targetUser.getUserId();
 
         if (!followRepository.isFollowing(followerId, followingId, FollowStatus.APPROVED.getCode())) {
             throw new ConnectDataException(
@@ -151,21 +194,21 @@ public class FollowServiceImpl implements IFollowService {
     }
 
     @Override
-    public void approveAll(FollowDto request) {
+    public void approveAll(RequestMetaInfo requestMetaInfo) {
         Follow follow = new Follow()
-                .setFollowingId(request.getFollowingId())
+                .setFollowingId(requestMetaInfo.getUserId())
                 .setStatus(FollowStatus.APPROVED.getCode());
         followRepository.updateFollow(follow);
     }
 
     @Override
-    public List<String> queryPendingIdList(String followingId) {
-        return followRepository.queryPendingIdList(followingId);
+    public List<Long> queryPendingIdList(RequestMetaInfo requestMetaInfo) {
+        return followRepository.queryPendingIdList(requestMetaInfo.getUserId());
     }
 
     private void updateTargetStatus(Follow follow) {
-        String followerId = follow.getFollowerId();
-        String followingId = follow.getFollowingId();
+        long followerId = follow.getFollowerId();
+        long followingId = follow.getFollowingId();
 
         if (followRepository.isFollowing(followerId, followingId)) {
             followRepository.updateFollow(follow);
@@ -176,7 +219,7 @@ public class FollowServiceImpl implements IFollowService {
         updateFollowerCount(followingId);
     }
 
-    private void updateFollowingCount(String followerId) {
+    private void updateFollowingCount(long followerId) {
         int followings = followRepository.countFollowing(followerId);
         User user = userRepository.internalQueryUserByUserId(followerId);
         user.setFollowings(followings);
@@ -187,7 +230,7 @@ public class FollowServiceImpl implements IFollowService {
         );
     }
 
-    private void updateFollowerCount(String followingId) {
+    private void updateFollowerCount(long followingId) {
         int followers = followRepository.countFollower(followingId);
         User user = userRepository.internalQueryUserByUserId(followingId);
         user.setFollowings(followers);

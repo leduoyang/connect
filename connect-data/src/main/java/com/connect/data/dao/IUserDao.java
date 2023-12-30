@@ -1,5 +1,6 @@
 package com.connect.data.dao;
 
+import com.connect.data.dto.UserDto;
 import com.connect.data.entity.Profile;
 import com.connect.data.entity.User;
 import com.connect.data.entity.UserVerification;
@@ -9,7 +10,7 @@ import java.util.List;
 public interface IUserDao {
     boolean authenticateRootUser(String userId, String password);
 
-    User signIn(String userId);
+    User signIn(String username);
 
     int signUp(User user);
 
@@ -17,21 +18,25 @@ public interface IUserDao {
 
     int editUserProfile(Profile profile);
 
-    int incrementViews(String userId, int version);
+    int incrementViews(Long userId, int version);
 
-    int refreshFollowers(String userId, int version, int followers);
+    int refreshFollowers(Long userId, int version, int followers);
 
-    int refreshFollowings(String userId, int version, int followings);
+    int refreshFollowings(Long userId, int version, int followings);
 
-    int deleteUser(String userId);
+    int deleteUser(Long userId);
 
-    List<User> queryUser(String keyword, String requesterId);
+    List<UserDto> queryUser(String keyword, Long requesterId);
 
-    User internalQueryUserByUserId(String userId);
+    User internalQueryUserByUserId(Long userId);
 
-    User queryUserByUserId(String userId, String requesterId);
+    User internalQueryUserByUsername(String username);
 
-    boolean userExisting(String userId);
+    UserDto queryUserByUsername(String username, Long requesterId);
 
-    boolean userExistingWithEmail(String userId, String email);
+    boolean userExisting(Long userId);
+
+    boolean userExistingWithUsernameAndEmail(String username, String email);
+
+    boolean isEmailExisting(String email);
 }

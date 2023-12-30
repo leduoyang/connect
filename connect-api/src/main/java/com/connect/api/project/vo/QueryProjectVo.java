@@ -1,4 +1,4 @@
-package com.connect.api.project.dto;
+package com.connect.api.project.vo;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Accessors(chain = true)
 @Data
-public class QueryProjectDto {
+public class QueryProjectVo {
     private Long id;
 
     private String title;
@@ -24,11 +24,7 @@ public class QueryProjectDto {
 
     private Integer views;
 
-    private String createdUser;
-
-    private String updatedUser;
-
-    private Date dbCreateTime;
+    private String username;
 
     private Date dbModifyTime;
 }

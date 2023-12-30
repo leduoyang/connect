@@ -3,7 +3,10 @@ package com.connect.core.service.user.iml;
 import com.connect.api.verification.request.QueryEmailVerificationRequest;
 import com.connect.api.verification.request.VerifyEmailVerificationRequest;
 import com.connect.common.enums.CodeStatus;
+import com.connect.common.exception.ConnectDataException;
+import com.connect.common.exception.ConnectErrorCode;
 import com.connect.common.util.EmailUtil;
+import com.connect.core.service.user.IUserService;
 import com.connect.core.service.user.IUserVerificationService;
 import com.connect.data.entity.User;
 import com.connect.data.entity.UserVerification;
@@ -23,13 +26,22 @@ public class UserVerificationServiceImpl implements IUserVerificationService {
 
     private IUserVerificationRepository userVerificationRepository;
 
-    public UserVerificationServiceImpl(IUserVerificationRepository userVerificationRepository) {
+    private IUserService userService;
+
+    public UserVerificationServiceImpl(IUserVerificationRepository userVerificationRepository, IUserService userService) {
         this.userVerificationRepository = userVerificationRepository;
+        this.userService = userService;
     }
 
     @Override
     public boolean sendCodeByEmail(QueryEmailVerificationRequest request) {
         String targetEmail = request.getEmail();
+        if(userService.isEmailExisting(targetEmail)) {
+            throw new ConnectDataException(
+                    ConnectErrorCode.PARAM_EXCEPTION,
+                    String.format("email %s has been registered!", targetEmail)
+            );
+        }
         String code = generateRandomCode();
 
         UserVerification userVerification = new UserVerification()

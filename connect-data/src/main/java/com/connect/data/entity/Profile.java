@@ -8,11 +8,9 @@ import java.util.Date;
 @Accessors(chain = true)
 @Data
 public class Profile {
-    private Long id;
+    private Long userId;
 
-    private String userId;
-
-    private Integer status;
+    private String username;
 
     private String description;
 

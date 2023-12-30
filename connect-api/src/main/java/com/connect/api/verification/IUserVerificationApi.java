@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping(value = "/api/connect/v1")
 public interface IUserVerificationApi {
-    @GetMapping(value = {"/verification/email", "/public/verification/email"})
+    @GetMapping(value = "/public/verification/email")
     APIResponse<QueryEmailVerificationResponse> queryEmailVerification(
             @Validated QueryEmailVerificationRequest request
     );
 
-    @PostMapping(value = {"/verification/email", "/public/verification/email"})
+    @PostMapping(value = "/public/verification/email")
     APIResponse<VerifyEmailVerificationResponse> verifyEmailVerification(
             @Validated @RequestBody VerifyEmailVerificationRequest request
     );

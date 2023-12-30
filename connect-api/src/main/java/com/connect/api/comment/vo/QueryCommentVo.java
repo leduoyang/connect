@@ -1,4 +1,4 @@
-package com.connect.api.comment.dto;
+package com.connect.api.comment.vo;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Accessors(chain = true)
 @Data
-public class QueryCommentDto {
+public class QueryCommentVo {
     private Long id;
 
     private Integer status;
@@ -20,11 +20,7 @@ public class QueryCommentDto {
 
     private Integer views;
 
-    private String createdUser;
-
-    private String updatedUser;
-
-    private Date dbCreateTime;
+    private String username;
 
     private Date dbModifyTime;
 }

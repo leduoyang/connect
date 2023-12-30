@@ -3,6 +3,7 @@ package com.connect.data.repository.impl;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.data.dao.ICommentDao;
+import com.connect.data.dto.CommentDto;
 import com.connect.data.entity.Comment;
 import com.connect.data.entity.Comment;
 import com.connect.data.entity.Post;
@@ -26,16 +27,19 @@ public class CommentRepositoryImpl implements ICommentRepository {
         this.commentDao = commentDao;
     }
 
-    public Comment queryCommentById(long id, String userId) {
+    public CommentDto queryCommentById(long id, long userId) {
         return commentDao.queryCommentById(id, userId);
     }
 
-    public List<Comment> queryComment(QueryCommentParam param, String userId) {
+    public Comment internalQueryCommentById(long id) {
+        return commentDao.internalQueryCommentById(id);
+    }
+
+    public List<CommentDto> queryComment(QueryCommentParam param, long userId) {
         return commentDao.queryComment(
-                param.getPostId(),
-                param.getUserId(),
                 param.getKeyword(),
                 param.getTags(),
+                param.getUsername(),
                 userId
         );
     }
@@ -51,7 +55,7 @@ public class CommentRepositoryImpl implements ICommentRepository {
 
     public void updateComment(Comment comment) {
         long targetId = comment.getId();
-        String userId = comment.getUpdatedUser();
+        Long userId = comment.getUpdatedUser();
         boolean existed = commentDao.commentExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(
@@ -69,20 +73,20 @@ public class CommentRepositoryImpl implements ICommentRepository {
     public void incrementViews(long id, int version) {
         int affected = commentDao.incrementViews(id, version);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION, "update viewCounts failed");
+            log.error(ConnectErrorCode.OPTIMISTIC_LOCK_CONFLICT_EXCEPTION + "comment incrementViews failed");
         }
     }
 
     public void refreshStars(long id, int version, int stars) {
         int affected = commentDao.refreshStars(id, version, stars);
         if (affected <= 0) {
-            throw new ConnectDataException(ConnectErrorCode.COMMENT_UPDATE_EXCEPTION, "update likesCount failed");
+            log.error(ConnectErrorCode.OPTIMISTIC_LOCK_CONFLICT_EXCEPTION + "comment refreshStars failed");
         }
     }
 
     public void deleteComment(Comment comment) {
         long targetId = comment.getId();
-        String userId = comment.getUpdatedUser();
+        Long userId = comment.getUpdatedUser();
         boolean existed = commentDao.commentExisting(targetId, userId);
         if (!existed) {
             throw new ConnectDataException(

@@ -1,6 +1,6 @@
 package com.connect.core.service;
 
-import com.connect.api.follow.dto.FollowDto;
+import com.connect.api.common.RequestMetaInfo;
 import com.connect.common.enums.FollowStatus;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
@@ -39,25 +39,24 @@ public class FollowServiceTest {
 
     @Test
     public void test_follow_public_user_should_approve() {
-        String followerId = "followerId";
-        String followingId = "followingId";
-        User follower = new User()
-                .setUserId(followerId)
-                .setStatus(UserStatus.PUBLIC.getCode())
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+        User mockFollower = new User()
+                .setUserId(requestMetaInfo.getUserId())
                 .setVersion(1);
+
+        String followingName = "following";
+        long followingId = 2L;
         User following = new User()
                 .setUserId(followingId)
                 .setStatus(UserStatus.PUBLIC.getCode())
                 .setVersion(1);
-
-        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
+        Mockito.when(userRepository.internalQueryUserByUsername(followingName)).thenReturn(following);
         Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
-        Mockito.when(followRepository.isFollowing(followerId, followingId)).thenReturn(false);
+        Mockito.when(userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId())).thenReturn(mockFollower);
+        Mockito.when(followRepository.isFollowing(requestMetaInfo.getUserId(), followingId)).thenReturn(false);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
-        followService.follow(followDto);
+        followService.follow(followingName, requestMetaInfo);
 
         verify(followRepository, times(1)).createFollow(captor.capture());
         Follow follow = captor.getValue();
@@ -66,25 +65,24 @@ public class FollowServiceTest {
 
     @Test
     public void test_follow_semi_user_should_pending() {
-        String followerId = "followerId";
-        String followingId = "followingId";
-        User follower = new User()
-                .setUserId(followerId)
-                .setStatus(UserStatus.PUBLIC.getCode())
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+        User mockFollower = new User()
+                .setUserId(requestMetaInfo.getUserId())
                 .setVersion(1);
-        User following = new User()
+
+        String followingName = "following";
+        long followingId = 2L;
+        User mockFollowing = new User()
                 .setUserId(followingId)
                 .setStatus(UserStatus.SEMI.getCode())
                 .setVersion(1);
+        Mockito.when(userRepository.internalQueryUserByUsername(followingName)).thenReturn(mockFollowing);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(mockFollowing);
+        Mockito.when(userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId())).thenReturn(mockFollower);
+        Mockito.when(followRepository.isFollowing(requestMetaInfo.getUserId(), followingId)).thenReturn(false);
 
-        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
-        Mockito.when(followRepository.isFollowing(followerId, followingId)).thenReturn(false);
-
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
-        followService.follow(followDto);
+        followService.follow(followingName, requestMetaInfo);
 
         verify(followRepository, times(1)).createFollow(captor.capture());
         Follow follow = captor.getValue();
@@ -93,115 +91,82 @@ public class FollowServiceTest {
 
     @Test
     public void test_follow_private_user_should_failed() {
-        String followerId = "followerId";
-        String followingId = "followingId";
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+
+        String followingName = "following";
+        long followingId = 2L;
         User follower = new User()
-                .setUserId(followerId)
-                .setStatus(UserStatus.PUBLIC.getCode())
+                .setUserId(requestMetaInfo.getUserId())
                 .setVersion(1);
         User following = new User()
                 .setUserId(followingId)
                 .setStatus(UserStatus.PRIVATE.getCode())
                 .setVersion(1);
-
-        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
+        Mockito.when(userRepository.internalQueryUserByUsername(followingName)).thenReturn(following);
         Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
-        Mockito.when(followRepository.isFollowing(followerId, followingId)).thenReturn(false);
+        Mockito.when(userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId())).thenReturn(follower);
+        Mockito.when(followRepository.isFollowing(requestMetaInfo.getUserId(), followingId)).thenReturn(false);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            followService.follow(followDto);
+            followService.follow(followingName, requestMetaInfo);
         });
         assertEquals(
-                "Not permitted for this request:target userId not available for following: " + followingId,
+                "Not permitted for this request:target user not available for following: " + followingName,
                 expectedException.getErrorMsg()
         );
     }
 
     @Test
     public void test_follow_deleted_user_should_failed() {
-        String followerId = "followerId";
-        String followingId = "followingId";
-        User follower = new User()
-                .setUserId(followerId)
-                .setStatus(UserStatus.PUBLIC.getCode())
-                .setVersion(1);
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+
+        String followingName = "following";
+        long followingId = 2L;
         User following = new User()
                 .setUserId(followingId)
                 .setStatus(UserStatus.DELETED.getCode())
                 .setVersion(1);
-
-        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
-        Mockito.when(followRepository.isFollowing(followerId, followingId)).thenReturn(false);
-
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
+        Mockito.when(userRepository.internalQueryUserByUsername(followingName)).thenReturn(following);
+        Mockito.when(followRepository.isFollowing(requestMetaInfo.getUserId(), followingId)).thenReturn(false);
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            followService.follow(followDto);
+            followService.follow(followingName, requestMetaInfo);
         });
         assertEquals(
-                "Not permitted for this request:target userId not available for following: " + followingId,
-                expectedException.getErrorMsg()
-        );
-    }
-
-    @Test
-    public void test_follow_non_existed_user_should_failed() {
-        String followerId = "followerId";
-        String followingId = "followingId";
-        User following = new User()
-                .setUserId(followingId)
-                .setStatus(UserStatus.DELETED.getCode())
-                .setVersion(1);
-
-        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(null);
-        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
-
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
-        ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            followService.follow(followDto);
-        });
-        assertEquals(
-                "Parameters error:follower not existed: " + followingId,
+                "Not permitted for this request:target user not available for following: " + followingName,
                 expectedException.getErrorMsg()
         );
     }
 
     @Test
     public void test_unfollow_following_user_should_unfollow() {
-        String followerId = "followerId";
-        String followingId = "followingId";
-        User follower = new User()
-                .setUserId(followerId)
-                .setStatus(UserStatus.PUBLIC.getCode())
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+        User mockFollower = new User()
+                .setUserId(requestMetaInfo.getUserId())
                 .setVersion(1);
-        User following = new User()
+
+        String followingName = "following";
+        long followingId = 2L;
+        User mockFollowing = new User()
                 .setUserId(followingId)
                 .setStatus(UserStatus.PUBLIC.getCode())
                 .setVersion(1);
-
-        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
+        Mockito.when(userRepository.internalQueryUserByUsername(followingName)).thenReturn(mockFollowing);
+        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(mockFollowing);
+        Mockito.when(userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId())).thenReturn(mockFollower);
         Mockito.when(followRepository.isFollowing(
-                followerId,
+                requestMetaInfo.getUserId(),
                 followingId,
                 FollowStatus.APPROVED.getCode()
         )).thenReturn(true);
         Mockito.when(followRepository.isFollowing(
-                followerId,
+                requestMetaInfo.getUserId(),
                 followingId
         )).thenReturn(true);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
-        followService.unfollow(followDto);
+        followService.unfollow(followingName, requestMetaInfo);
 
         verify(followRepository, times(1)).updateFollow(captor.capture());
         Follow follow = captor.getValue();
@@ -210,80 +175,83 @@ public class FollowServiceTest {
 
     @Test
     public void test_unfollow_not_following_user_should_failed() {
-        String followerId = "followerId";
-        String followingId = "followingId";
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+
+        String followingName = "following";
+        long followingId = 2L;
+        User following = new User()
+                .setUserId(followingId)
+                .setStatus(UserStatus.DELETED.getCode())
+                .setVersion(1);
+        Mockito.when(userRepository.internalQueryUserByUsername(followingName)).thenReturn(following);
 
         Mockito.when(followRepository.isFollowing(
-                followerId,
+                requestMetaInfo.getUserId(),
                 followingId,
                 FollowStatus.APPROVED.getCode()
         )).thenReturn(false);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            followService.unfollow(followDto);
+            followService.unfollow(followingName, requestMetaInfo);
         });
         assertEquals(
-                "Follow not existed.:UNFOLLOW FAILED! followerId is not following " + followingId,
+                "Follow not existed.:UNFOLLOW FAILED! you are not following " + followingId,
                 expectedException.getErrorMsg()
         );
     }
 
     @Test
     public void test_unfollow_non_existed_user_should_failed() {
-        String followerId = "followerId";
-        String followingId = "followingId";
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+
+        String followingName = "following";
+        long followingId = 2L;
         User following = new User()
                 .setUserId(followingId)
                 .setStatus(UserStatus.DELETED.getCode())
                 .setVersion(1);
 
-        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(null);
-        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
-
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
+        Mockito.when(userRepository.internalQueryUserByUsername(followingName)).thenReturn(following);
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            followService.unfollow(followDto);
+            followService.unfollow(followingName, requestMetaInfo);
         });
         assertEquals(
-                "Follow not existed.:UNFOLLOW FAILED! followerId is not following " + followingId,
+                "Follow not existed.:UNFOLLOW FAILED! you are not following " + followingId,
                 expectedException.getErrorMsg()
         );
     }
 
     @Test
     public void test_approve_pending_request_should_update_follower_to_approved() {
-        String followerId = "followerId";
-        String followingId = "followingId";
-        User follower = new User()
-                .setUserId(followerId)
-                .setStatus(UserStatus.PUBLIC.getCode())
-                .setVersion(1);
-        User following = new User()
-                .setUserId(followingId)
-                .setStatus(UserStatus.SEMI.getCode())
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+        User mockFollowing = new User()
+                .setUserId(requestMetaInfo.getUserId())
                 .setVersion(1);
 
-        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
+        String followerName = "follower";
+        long followerId = 2L;
+        User mockFollower = new User()
+                .setUserId(followerId)
+                .setUsername(followerName)
+                .setStatus(UserStatus.PUBLIC.getCode())
+                .setVersion(1);
+        Mockito.when(userRepository.internalQueryUserByUsername(followerName)).thenReturn(mockFollower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(mockFollower);
+        Mockito.when(userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId())).thenReturn(mockFollowing);
         Mockito.when(followRepository.isFollowing(
                 followerId,
-                followingId,
+                requestMetaInfo.getUserId(),
                 FollowStatus.PENDING.getCode()
         )).thenReturn(true);
         Mockito.when(followRepository.isFollowing(
                 followerId,
-                followingId
+                requestMetaInfo.getUserId()
         )).thenReturn(true);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
-        followService.approve(followDto);
+        followService.approve(followerName, requestMetaInfo);
 
         verify(followRepository, times(1)).updateFollow(captor.capture());
         Follow follow = captor.getValue();
@@ -292,27 +260,35 @@ public class FollowServiceTest {
 
     @Test
     public void test_approve_non_pending_request_should_failed() {
-        String followerId = "followerId";
-        String followingId = "followingId";
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+        User mockFollowing = new User()
+                .setUserId(requestMetaInfo.getUserId())
+                .setVersion(1);
 
+        String followerName = "follower";
+        long followerId = 2L;
+        User mockFollower = new User()
+                .setUserId(followerId)
+                .setUsername(followerName)
+                .setStatus(UserStatus.PUBLIC.getCode())
+                .setVersion(1);
+        Mockito.when(userRepository.internalQueryUserByUsername(followerName)).thenReturn(mockFollower);
+        Mockito.when(userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId())).thenReturn(mockFollowing);
         Mockito.when(followRepository.isFollowing(
                 followerId,
-                followingId,
+                requestMetaInfo.getUserId(),
                 FollowStatus.PENDING.getCode()
         )).thenReturn(false);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
-
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            followService.approve(followDto);
+            followService.approve(followerName, requestMetaInfo);
         });
         assertEquals(
                 String.format(
                         "Follow not existed.:PENDING status not found for %s following %s",
                         followerId,
-                        followingId
+                        requestMetaInfo.getUserId()
                 ),
                 expectedException.getErrorMsg()
         );
@@ -320,33 +296,33 @@ public class FollowServiceTest {
 
     @Test
     public void test_reject_pending_request_should_update_follower_to_rejected() {
-        String followerId = "followerId";
-        String followingId = "followingId";
-        User follower = new User()
-                .setUserId(followerId)
-                .setStatus(UserStatus.PUBLIC.getCode())
-                .setVersion(1);
-        User following = new User()
-                .setUserId(followingId)
-                .setStatus(UserStatus.SEMI.getCode())
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+        User mockFollowing = new User()
+                .setUserId(requestMetaInfo.getUserId())
                 .setVersion(1);
 
-        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
+        String followerName = "follower";
+        long followerId = 2L;
+        User mockFollower = new User()
+                .setUserId(followerId)
+                .setUsername(followerName)
+                .setStatus(UserStatus.PUBLIC.getCode())
+                .setVersion(1);
+        Mockito.when(userRepository.internalQueryUserByUsername(followerName)).thenReturn(mockFollower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(mockFollower);
+        Mockito.when(userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId())).thenReturn(mockFollowing);
         Mockito.when(followRepository.isFollowing(
                 followerId,
-                followingId,
+                requestMetaInfo.getUserId(),
                 FollowStatus.PENDING.getCode()
         )).thenReturn(true);
         Mockito.when(followRepository.isFollowing(
                 followerId,
-                followingId
+                requestMetaInfo.getUserId()
         )).thenReturn(true);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
-        followService.reject(followDto);
+        followService.reject(followerName, requestMetaInfo);
 
         verify(followRepository, times(1)).updateFollow(captor.capture());
         Follow follow = captor.getValue();
@@ -355,27 +331,35 @@ public class FollowServiceTest {
 
     @Test
     public void test_reject_non_pending_request_should_failed() {
-        String followerId = "followerId";
-        String followingId = "followingId";
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+        User mockFollowing = new User()
+                .setUserId(requestMetaInfo.getUserId())
+                .setVersion(1);
 
+        String followerName = "follower";
+        long followerId = 2L;
+        User mockFollower = new User()
+                .setUserId(followerId)
+                .setUsername(followerName)
+                .setStatus(UserStatus.PUBLIC.getCode())
+                .setVersion(1);
+        Mockito.when(userRepository.internalQueryUserByUsername(followerName)).thenReturn(mockFollower);
+        Mockito.when(userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId())).thenReturn(mockFollowing);
         Mockito.when(followRepository.isFollowing(
                 followerId,
-                followingId,
+                requestMetaInfo.getUserId(),
                 FollowStatus.PENDING.getCode()
         )).thenReturn(false);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
-
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            followService.reject(followDto);
+            followService.reject(followerName, requestMetaInfo);
         });
         assertEquals(
                 String.format(
                         "Follow not existed.:PENDING status not found for %s following %s",
                         followerId,
-                        followingId
+                        FollowStatus.PENDING.getCode()
                 ),
                 expectedException.getErrorMsg()
         );
@@ -383,33 +367,33 @@ public class FollowServiceTest {
 
     @Test
     public void test_remove_follower_should_update_follower_to_unfollow() {
-        String followerId = "followerId";
-        String followingId = "followingId";
-        User follower = new User()
-                .setUserId(followerId)
-                .setStatus(UserStatus.PUBLIC.getCode())
-                .setVersion(1);
-        User following = new User()
-                .setUserId(followingId)
-                .setStatus(UserStatus.PUBLIC.getCode())
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+        User mockFollowing = new User()
+                .setUserId(requestMetaInfo.getUserId())
                 .setVersion(1);
 
-        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(follower);
-        Mockito.when(userRepository.internalQueryUserByUserId(followingId)).thenReturn(following);
+        String followerName = "follower";
+        long followerId = 2L;
+        User mockFollower = new User()
+                .setUserId(followerId)
+                .setUsername(followerName)
+                .setStatus(UserStatus.PUBLIC.getCode())
+                .setVersion(1);
+        Mockito.when(userRepository.internalQueryUserByUsername(followerName)).thenReturn(mockFollower);
+        Mockito.when(userRepository.internalQueryUserByUserId(followerId)).thenReturn(mockFollower);
+        Mockito.when(userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId())).thenReturn(mockFollowing);
         Mockito.when(followRepository.isFollowing(
                 followerId,
-                followingId,
+                requestMetaInfo.getUserId(),
                 FollowStatus.APPROVED.getCode()
         )).thenReturn(true);
         Mockito.when(followRepository.isFollowing(
                 followerId,
-                followingId
+                requestMetaInfo.getUserId()
         )).thenReturn(true);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
-        followService.remove(followDto);
+        followService.remove(followerName, requestMetaInfo);
 
         verify(followRepository, times(1)).updateFollow(captor.capture());
         Follow follow = captor.getValue();
@@ -418,27 +402,35 @@ public class FollowServiceTest {
 
     @Test
     public void test_remove_non_approved_follower_should_failed() {
-        String followerId = "followerId";
-        String followingId = "followingId";
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
+        User mockFollowing = new User()
+                .setUserId(requestMetaInfo.getUserId())
+                .setVersion(1);
 
+        String followerName = "follower";
+        long followerId = 2L;
+        User mockFollower = new User()
+                .setUserId(followerId)
+                .setUsername(followerName)
+                .setStatus(UserStatus.PUBLIC.getCode())
+                .setVersion(1);
+        Mockito.when(userRepository.internalQueryUserByUsername(followerName)).thenReturn(mockFollower);
+        Mockito.when(userRepository.internalQueryUserByUserId(requestMetaInfo.getUserId())).thenReturn(mockFollowing);
         Mockito.when(followRepository.isFollowing(
                 followerId,
-                followingId,
+                requestMetaInfo.getUserId(),
                 FollowStatus.APPROVED.getCode()
         )).thenReturn(false);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowerId(followerId)
-                .setFollowingId(followingId);
-
         ConnectDataException expectedException = assertThrows(ConnectDataException.class, () -> {
-            followService.remove(followDto);
+            followService.remove(followerName, requestMetaInfo);
         });
         assertEquals(
                 String.format(
                         "Follow not existed.:REMOVE FAILED! %s is not following %s",
                         followerId,
-                        followingId
+                        requestMetaInfo.getUserId()
                 ),
                 expectedException.getErrorMsg()
         );
@@ -446,13 +438,12 @@ public class FollowServiceTest {
 
     @Test
     public void test_approve_all_pending_request_should_success() {
-        String followingId = "followingId";
-        List<String> pendList = List.of("userA", "userB", "userC");
-        Mockito.when(followRepository.queryPendingIdList(followingId)).thenReturn(pendList);
+        RequestMetaInfo requestMetaInfo = new RequestMetaInfo()
+                .setUserId(1L);
 
-        FollowDto followDto = new FollowDto()
-                .setFollowingId(followingId);
-        followService.approveAll(followDto);
+        List<Long> pendList = List.of(2L, 3L, 4L);
+        Mockito.when(followRepository.queryPendingIdList(requestMetaInfo.getUserId())).thenReturn(pendList);
+        followService.approveAll(requestMetaInfo);
 
         verify(followRepository, times(1)).updateFollow(captor.capture());
         Follow follow = captor.getValue();
@@ -465,7 +456,7 @@ public class FollowServiceTest {
      */
 //    @Test
 //    public void test_approve_all_empty_pending_request_should_failed() {
-//        String followingId = "followingId";
+//        long followingId = 2L;
 //        Mockito.when(followRepository.queryPendingIdList(followingId)).thenReturn(null);
 //
 //        FollowDto followDto = new FollowDto().setFollowingId(followingId);

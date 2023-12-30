@@ -20,7 +20,7 @@ public class SignUpRequestValidationTest {
     @Test
     public void test_create_signUpRequest_with_valid_payload_should_pass_validation() {
         SignUpRequest signUpRequest = new SignUpRequest()
-                .setUserId("12345678")
+                .setUsername("12345678")
                 .setPassword("12345678")
                 .setEmail("1234@123.123")
                 .setUid("12345678");
@@ -41,7 +41,7 @@ public class SignUpRequestValidationTest {
     @Test
     public void test_create_signUpRequest_with_blank_userId_should_fail_validation() {
         SignUpRequest signUpRequest = new SignUpRequest()
-                .setUserId("")
+                .setUsername("")
                 .setPassword("12345678")
                 .setEmail("1234@123.123")
                 .setUid("12345678");
@@ -52,7 +52,7 @@ public class SignUpRequestValidationTest {
     @Test
     public void test_create_signUpRequest_with_over_max_userId_should_fail_validation() {
         SignUpRequest signUpRequest = new SignUpRequest()
-                .setUserId("123456789012345678901")
+                .setUsername("123456789012345678901")
                 .setPassword("12345678")
                 .setEmail("1234@123.123")
                 .setUid("12345678");
@@ -63,7 +63,7 @@ public class SignUpRequestValidationTest {
     @Test
     public void test_create_signUpRequest_with_null_password_should_fail_validation() {
         SignUpRequest signUpRequest = new SignUpRequest()
-                .setUserId("12345678")
+                .setUsername("12345678")
                 .setEmail("1234@123.123")
                 .setUid("12345678");
         Set<ConstraintViolation<SignUpRequest>> violations = validator.validate(signUpRequest);
@@ -73,7 +73,7 @@ public class SignUpRequestValidationTest {
     @Test
     public void test_create_signUpRequest_with_below_min_password_should_fail_validation() {
         SignUpRequest signUpRequest = new SignUpRequest()
-                .setUserId("12345678")
+                .setUsername("12345678")
                 .setPassword("1234567")
                 .setEmail("1234@123.123")
                 .setUid("12345678");
@@ -84,7 +84,7 @@ public class SignUpRequestValidationTest {
     @Test
     public void test_create_signUpRequest_with_over_max_password_should_fail_validation() {
         SignUpRequest signUpRequest = new SignUpRequest()
-                .setUserId("12345678")
+                .setUsername("12345678")
                 .setPassword("1234567890123456789012")
                 .setEmail("1234@123.123")
                 .setUid("12345678");
@@ -95,7 +95,7 @@ public class SignUpRequestValidationTest {
     @Test
     public void test_create_signUpRequest_with_over_max_description_should_fail_validation() {
         SignUpRequest signUpRequest = new SignUpRequest()
-                .setUserId("12345678")
+                .setUsername("12345678")
                 .setPassword("12345678")
                 .setDescription("a". repeat(201))
                 .setEmail("1234@123.123")
@@ -107,7 +107,7 @@ public class SignUpRequestValidationTest {
     @Test
     public void test_create_signUpRequest_with_null_email_should_fail_validation() {
         SignUpRequest signUpRequest = new SignUpRequest()
-                .setUserId("12345678")
+                .setUsername("12345678")
                 .setPassword("12345678")
                 .setUid("12345678");
         Set<ConstraintViolation<SignUpRequest>> violations = validator.validate(signUpRequest);
@@ -117,7 +117,7 @@ public class SignUpRequestValidationTest {
     @Test
     public void test_create_signUpRequest_with_invalid_email_should_fail_validation() {
         SignUpRequest signUpRequest = new SignUpRequest()
-                .setUserId("12345678")
+                .setUsername("12345678")
                 .setPassword("12345678")
                 .setEmail("123.123")
                 .setUid("12345678");
@@ -128,7 +128,7 @@ public class SignUpRequestValidationTest {
     @Test
     public void test_create_signUpRequest_with_null_uid_should_fail_validation() {
         SignUpRequest signUpRequest = new SignUpRequest()
-                .setUserId("12345678")
+                .setUsername("12345678")
                 .setPassword("12345678")
                 .setEmail("1234@123.123");
         Set<ConstraintViolation<SignUpRequest>> violations = validator.validate(signUpRequest);

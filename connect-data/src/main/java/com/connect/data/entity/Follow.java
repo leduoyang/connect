@@ -10,9 +10,9 @@ import java.util.Date;
 public class Follow {
     private Long id;
 
-    private String followingId;
+    private Long followingId;
 
-    private String followerId;
+    private Long followerId;
 
     private Integer status;
 

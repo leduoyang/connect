@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.connect.data.dao.IPostDao">
+    <resultMap id="postDtoResultMap" type="com.connect.data.dto.PostDto">
+        <id property="id" column="id"/>
+        <id property="username" column="username"/>
+        <result property="content" column="content"/>
+        <result property="referenceId" column="referenceId"/>
+        <result property="tags" column="tag"/>
+        <result property="stars" column="stars"/>
+        <result property="views" column="views"/>
+        <result property="dbModifyTime" column="db_modify_time"/>
+    </resultMap>
+
     <resultMap id="postResultMap" type="com.connect.data.entity.Post">
         <id property="id" column="id"/>
         <result property="content" column="content"/>
         <result property="referenceId" column="referenceId"/>
         <result property="tags" column="tag"/>
+        <result property="stars" column="stars"/>
+        <result property="views" column="views"/>
         <result property="createdUser" column="created_user"/>
         <result property="updatedUser" column="updated_user"/>
         <result property="dbCreateTime" column="db_create_time"/>
@@ -19,15 +32,15 @@
         #{referenceId,jdbcType=BIGINT},
         #{tags,jdbcType=VARCHAR},
         #{status,jdbcType=TINYINT},
-        #{createdUser,jdbcType=VARCHAR},
-        #{updatedUser,jdbcType=VARCHAR}
+        #{createdUser,jdbcType=BIGINT},
+        #{updatedUser,jdbcType=BIGINT}
         )
     </insert>
 
     <update id="updatePost" parameterType="com.connect.data.entity.Post">
         UPDATE post
         <trim prefix="set" suffixOverrides=",">
-            updated_user = #{updatedUser, jdbcType=VARCHAR},
+            updated_user = #{updatedUser, jdbcType=BIGINT},
             <if test="content != null and content != ''">
                 content = #{content, jdbcType=VARCHAR},
             </if>
@@ -61,56 +74,61 @@
     <delete id="deletePost">
         UPDATE post
         SET `status` = 3,
-        updated_user = #{updatedUser, jdbcType=VARCHAR}
+        updated_user = #{updatedUser, jdbcType=BIGINT}
         WHERE id = #{id, jdbcType=BIGINT}
     </delete>
 
-    <select id="queryPostById" resultMap="postResultMap">
+    <select id="queryPostById" resultMap="postDtoResultMap">
+        SELECT p.id, u.username, p.content, p.referenceId, p.tags, p.stars, p.views, p.version, p.db_modify_time
+
+        FROM post AS p
+        JOIN user AS u on p.updated_user = u.userId
+        WHERE p.id = #{id}
+        AND (
+        p.status = 0
+        OR (p.status = 1
+        AND p.updated_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (p.status != 3 AND p.updated_user = #{userId} )
+        )
+    </select>
+
+    <select id="internalQueryPostById" resultMap="postResultMap">
         SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time,
         db_modify_time
 
         FROM post
         WHERE id = #{id}
-        AND (
-        status = 0
-        OR (status = 1
-        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
-        OR (status != 3 AND created_user = #{userId} )
-        )
     </select>
 
-    <select id="queryPost" resultMap="postResultMap">
-        SELECT id, content, referenceId, tags, stars, views, version, created_user, updated_user, db_create_time,
-        db_modify_time
+    <select id="queryPost" resultMap="postDtoResultMap">
+        SELECT p.id, u.username, p.content, p.referenceId, p.tags, p.stars, p.views, p.version, p.db_modify_time
 
-        FROM post
+        FROM post AS p
+        JOIN user AS u on p.updated_user = u.userId
         WHERE 1=1
-        <if test="postId != null">
-            AND id = #{postId}
-        </if>
-        <if test="createdUserId != null and createdUserId != ''">
-            AND created_user = #{createdUserId}
-        </if>
         <if test="keyword != null and keyword != ''">
             AND content LIKE CONCAT('%', #{keyword}, '%')
         </if>
         <if test="tags != null and tags != ''">
             AND find_in_set(#{tags}, tags) &gt; 0
         </if>
+        <if test="username != null and username != ''">
+            AND u.username = #{username}
+        </if>
         AND (
-        status = 0
-        OR (status = 1
-        AND created_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
-        OR (status != 3 AND created_user = #{userId} )
+        p.status = 0
+        OR (p.status = 1
+        AND p.updated_user IN (SELECT followingId FROM follow WHERE followerId = #{userId} AND status = 2 ) )
+        OR (p.status != 3 AND p.updated_user = #{userId} )
         )
-        ORDER BY db_modify_time DESC, db_create_time DESC
+        ORDER BY db_modify_time DESC
     </select>
 
     <select id="postExisting" resultType="java.lang.Boolean">
         SELECT EXISTS(
         SELECT id
         FROM post
-        WHERE id = #{id, jdbcType=BIGINT} AND created_user = #{userId, jdbcType=VARCHAR} AND status != 3
+        WHERE id = #{id, jdbcType=BIGINT} AND created_user = #{userId, jdbcType=BIGINT} AND status != 3
         )
     </select>
 </mapper>
