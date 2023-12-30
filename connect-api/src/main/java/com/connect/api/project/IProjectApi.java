@@ -5,10 +5,12 @@ import com.connect.api.project.request.CreateProjectRequest;
 import com.connect.api.project.request.QueryProjectRequest;
 import com.connect.api.project.request.UpdateProjectRequest;
 import com.connect.api.project.response.QueryProjectResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Hidden
 @RequestMapping(value = "/api/connect/v1")
 public interface IProjectApi {
 
