@@ -1,4 +1,4 @@
-package com.connect.data.dto;
+package com.connect.api.experience.vo;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -7,9 +7,7 @@ import java.util.Date;
 
 @Accessors(chain = true)
 @Data
-public class ExperienceDto {
-    private Long id;
-
+public class ExperienceVo {
     private String company;
 
     private String title;

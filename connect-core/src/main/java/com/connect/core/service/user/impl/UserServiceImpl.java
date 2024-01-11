@@ -2,8 +2,10 @@ package com.connect.core.service.user.impl;
 
 import com.connect.api.comment.vo.QueryCommentVo;
 import com.connect.api.common.RequestMetaInfo;
+import com.connect.api.experience.vo.ExperienceVo;
 import com.connect.api.post.vo.QueryPostVo;
 import com.connect.api.project.vo.QueryProjectVo;
+import com.connect.api.socialLink.vo.SocialLinkVo;
 import com.connect.api.user.request.*;
 import com.connect.api.user.vo.UserVo;
 import com.connect.common.enums.FollowStatus;
@@ -13,6 +15,7 @@ import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.common.util.ImageUploadUtil;
 import com.connect.core.service.comment.ICommentService;
+import com.connect.core.service.experience.IExperienceService;
 import com.connect.core.service.post.IPostService;
 import com.connect.core.service.project.IProjectService;
 import com.connect.core.service.socialLink.ISocialLinkService;
@@ -52,6 +55,8 @@ public class UserServiceImpl implements IUserService {
 
     private ISocialLinkService socialLinkService;
 
+    private IExperienceService experienceService;
+
     private IProjectService projectService;
 
     private IPostService postService;
@@ -65,6 +70,7 @@ public class UserServiceImpl implements IUserService {
             IFollowRepository followRepository,
             IProjectService projectService,
             IPostService postService,
+            IExperienceService experienceService,
             ICommentService commentService
     ) {
         this.userRepository = userRepository;
@@ -74,6 +80,7 @@ public class UserServiceImpl implements IUserService {
         this.projectService = projectService;
         this.postService = postService;
         this.commentService = commentService;
+        this.experienceService = experienceService;
     }
 
     @Override
@@ -112,7 +119,7 @@ public class UserServiceImpl implements IUserService {
                 .setPassword(request.getPassword())
                 .setEmail(request.getEmail())
                 .setPhone(request.getPhone());
-        if(request.getPassword() != null) {
+        if (request.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
         if (request.getStatus() != null) {
@@ -176,9 +183,9 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserVo queryUserByUsername(String username, RequestMetaInfo requestMetaInfo) {
         UserDto userDto;
-        if(requestMetaInfo.getIsPublic()) {
+        if (requestMetaInfo.getIsPublic() != null && requestMetaInfo.getIsPublic()) {
             userDto = internalQueryUserByUsername(username);
-            if(UserStatus.PUBLIC.getCode() != userDto.getStatus()) {
+            if (UserStatus.PUBLIC.getCode() != userDto.getStatus()) {
                 throw new ConnectDataException(
                         ConnectErrorCode.UNAUTHORIZED_EXCEPTION,
                         String.format("User %s is not a PUBLIC account", username)
@@ -199,6 +206,26 @@ public class UserServiceImpl implements IUserService {
                 .setViews(userDto.getViews())
                 .setFollowers(userDto.getFollowers())
                 .setFollowings(userDto.getFollowings());
+
+        List<ExperienceVo> experienceVoList = experienceService
+                .internalQueryExperienceByUserId(userDto.getUserId())
+                .stream()
+                .map(x -> new ExperienceVo()
+                        .setTitle(x.getTitle())
+                        .setCompany(x.getCompany())
+                        .setStart(x.getStart())
+                        .setUntil(x.getUntil()))
+                .collect(Collectors.toList());
+        userVo.setExperienceVoList(experienceVoList);
+
+        List<SocialLinkVo> socialLinkVoList = socialLinkService
+                .internalQuerySocialLinkByUserId(userDto.getUserId())
+                .stream()
+                .map(x -> new SocialLinkVo()
+                        .setPlatform(x.getPlatform())
+                        .setPlatformId(x.getPlatformId()))
+                .collect(Collectors.toList());
+        userVo.setSocialLinkVoList(socialLinkVoList);
         return userVo;
     }
 

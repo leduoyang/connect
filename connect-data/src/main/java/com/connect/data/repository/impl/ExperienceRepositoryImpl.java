@@ -4,6 +4,7 @@ import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.data.dao.IExperienceDao;
 import com.connect.data.dao.ISocialLinkDao;
+import com.connect.data.dto.ExperienceDto;
 import com.connect.data.entity.Experience;
 import com.connect.data.entity.SocialLink;
 import com.connect.data.repository.IExperienceRepository;
@@ -11,6 +12,8 @@ import com.connect.data.repository.ISocialLinkRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Slf4j
 @Repository
@@ -20,6 +23,10 @@ public class ExperienceRepositoryImpl implements IExperienceRepository {
 
     public ExperienceRepositoryImpl(IExperienceDao experienceDao) {
         this.experienceDao = experienceDao;
+    }
+
+    public List<ExperienceDto> internalQueryExperienceByUserId(long userId) {
+        return experienceDao.internalQueryExperienceByUserId(userId);
     }
 
     public long createExperience(Experience experience) {

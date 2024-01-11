@@ -7,7 +7,6 @@
         <result property="title" column="title"/>
         <result property="start" column="start"/>
         <result property="until" column="until"/>
-        <result property="username" column="username"/>
     </resultMap>
 
     <resultMap id="experienceResultMap" type="com.connect.data.entity.Experience">
@@ -65,5 +64,12 @@
         FROM experience
         WHERE id = #{id, jdbcType=BIGINT} AND userId = #{userId, jdbcType=BIGINT} AND status != 3
         )
+    </select>
+
+    <select id="internalQueryExperienceByUserId" resultMap="experienceDtoResultMap">
+        SELECT id, company, title, start, until
+
+        FROM experience
+        WHERE userId = #{userId, jdbcType=BIGINT} AND status != 3
     </select>
 </mapper>

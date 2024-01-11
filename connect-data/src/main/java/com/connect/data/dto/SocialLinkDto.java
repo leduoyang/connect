@@ -7,14 +7,10 @@ import java.util.Date;
 
 @Accessors(chain = true)
 @Data
-public class ExperienceDto {
+public class SocialLinkDto {
     private Long id;
 
-    private String company;
+    private String platform;
 
-    private String title;
-
-    private Date start;
-
-    private Date until;
+    private String platformId;
 }

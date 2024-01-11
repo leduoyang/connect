@@ -6,6 +6,7 @@ import com.connect.api.experience.request.UpdateExperienceRequest;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.core.service.experience.IExperienceService;
+import com.connect.data.dto.ExperienceDto;
 import com.connect.data.entity.Experience;
 import com.connect.data.repository.IExperienceRepository;
 import lombok.extern.log4j.Log4j2;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -22,6 +24,11 @@ public class ExperienceServiceImpl implements IExperienceService {
 
     public ExperienceServiceImpl(IExperienceRepository experienceRepository) {
         this.experienceRepository = experienceRepository;
+    }
+
+    @Override
+    public List<ExperienceDto> internalQueryExperienceByUserId(long userId) {
+        return experienceRepository.internalQueryExperienceByUserId(userId);
     }
 
     @Override
