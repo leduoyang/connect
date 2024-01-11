@@ -23,7 +23,7 @@ public class UserVo {
 
     private Integer followings;
 
-    private List<SocialLinkVo> socialLinkVoList;
+    private List<SocialLinkVo> socialLinks;
 
-    private List<ExperienceVo> experienceVoList;
+    private List<ExperienceVo> experiences;
 }
