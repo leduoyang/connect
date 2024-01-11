@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.connect.data.dao.IExperienceDao">
+    <resultMap id="experienceDtoResultMap" type="com.connect.data.dto.ExperienceDto">
+        <id property="id" column="id"/>
+        <result property="company" column="company"/>
+        <result property="title" column="title"/>
+        <result property="start" column="start"/>
+        <result property="until" column="until"/>
+        <result property="username" column="username"/>
+    </resultMap>
+
+    <resultMap id="experienceResultMap" type="com.connect.data.entity.Experience">
+        <id property="id" column="id"/>
+        <result property="company" column="company"/>
+        <result property="title" column="title"/>
+        <result property="start" column="start"/>
+        <result property="until" column="until"/>
+        <result property="userId" column="userId"/>
+        <result property="status" column="status"/>
+        <result property="dbCreateTime" column="db_create_time"/>
+        <result property="dbModifyTime" column="db_modify_time"/>
+    </resultMap>
+
+    <insert id="createExperience" parameterType="com.connect.data.entity.Experience" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        INSERT INTO experience(company, title, start, until, userId)
+        VALUES (
+        #{company, jdbcType=VARCHAR},
+        #{title, jdbcType=VARCHAR},
+        #{start, jdbcType=DATE},
+        #{until,jdbcType=DATE},
+        #{userId,jdbcType=BIGINT}
+        )
+    </insert>
+
+    <update id="updateExperience" parameterType="com.connect.data.entity.Experience">
+        UPDATE experience
+        <trim prefix="set" suffixOverrides=",">
+            <if test="title != null and title != ''">
+                title = #{title, jdbcType=VARCHAR},
+            </if>
+            <if test="company != null and company != ''">
+                company = #{company, jdbcType=VARCHAR},
+            </if>
+            <if test="start != null">
+                start = #{start, jdbcType=DATE},
+            </if>
+            <if test="until != null">
+                until = #{until, jdbcType=DATE},
+            </if>
+        </trim>
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteExperience">
+        UPDATE experience
+        SET `status` = 3
+        WHERE id = #{id, jdbcType=BIGINT} AND userId = #{userId, jdbcType=BIGINT}
+    </delete>
+
+    <select id="experienceExisting" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+        SELECT id
+        FROM experience
+        WHERE id = #{id, jdbcType=BIGINT} AND userId = #{userId, jdbcType=BIGINT} AND status != 3
+        )
+    </select>
+</mapper>

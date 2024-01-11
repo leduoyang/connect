@@ -30,6 +30,15 @@ public enum ConnectErrorCode {
     SOCIAL_LINK_EXISTED_EXCEPTION("300005", "Social link has existed."),
 
     /**
+     * Experience
+     */
+    EXPERIENCE_CREATE_EXCEPTION("300001", "Create experience failed"),
+    EXPERIENCE_UPDATE_EXCEPTION("300002", "Update experience failed"),
+    EXPERIENCE_DELETE_EXCEPTION("300003", "Delete experience failed"),
+    EXPERIENCE_NOT_EXISTED_EXCEPTION("300004", "Experience not existed."),
+    EXPERIENCE_EXISTED_EXCEPTION("300005", "Experience has existed."),
+
+    /**
      * User Verification
      */
     USER_VERIFICATION_CREATE_EXCEPTION("300001", "Create user verification failed"),
