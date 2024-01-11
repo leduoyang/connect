@@ -52,7 +52,7 @@
         )
     </select>
 
-    <select id="internalQueryExperienceByUserId" resultMap="socialLinkDtoResultMap">
+    <select id="internalQuerySocialLinkByUserId" resultMap="socialLinkDtoResultMap">
         SELECT id, platform, platform_id
 
         FROM social_link
