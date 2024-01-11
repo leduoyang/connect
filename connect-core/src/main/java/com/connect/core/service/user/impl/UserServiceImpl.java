@@ -216,7 +216,7 @@ public class UserServiceImpl implements IUserService {
                         .setStart(x.getStart())
                         .setUntil(x.getUntil()))
                 .collect(Collectors.toList());
-        userVo.setExperienceVoList(experienceVoList);
+        userVo.setExperiences(experienceVoList);
 
         List<SocialLinkVo> socialLinkVoList = socialLinkService
                 .internalQuerySocialLinkByUserId(userDto.getUserId())
@@ -225,7 +225,7 @@ public class UserServiceImpl implements IUserService {
                         .setPlatform(x.getPlatform())
                         .setPlatformId(x.getPlatformId()))
                 .collect(Collectors.toList());
-        userVo.setSocialLinkVoList(socialLinkVoList);
+        userVo.setSocialLinks(socialLinkVoList);
         return userVo;
     }
 
