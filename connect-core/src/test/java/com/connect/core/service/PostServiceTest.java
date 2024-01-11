@@ -8,7 +8,7 @@ import com.connect.api.post.request.CreatePostRequest;
 import com.connect.api.post.request.UpdatePostRequest;
 import com.connect.common.enums.PostStatus;
 import com.connect.common.exception.ConnectDataException;
-import com.connect.core.service.post.iml.PostServiceImpl;
+import com.connect.core.service.post.impl.PostServiceImpl;
 import com.connect.data.entity.Post;
 import com.connect.data.repository.IPostRepository;
 import org.junit.jupiter.api.Test;

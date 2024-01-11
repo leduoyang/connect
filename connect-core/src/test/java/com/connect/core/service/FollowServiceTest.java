@@ -4,7 +4,7 @@ import com.connect.api.common.RequestMetaInfo;
 import com.connect.common.enums.FollowStatus;
 import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
-import com.connect.core.service.follow.iml.FollowServiceImpl;
+import com.connect.core.service.follow.impl.FollowServiceImpl;
 import com.connect.data.entity.Follow;
 import com.connect.data.entity.User;
 import com.connect.data.repository.IFollowRepository;

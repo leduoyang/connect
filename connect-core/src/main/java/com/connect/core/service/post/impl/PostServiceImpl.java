@@ -1,4 +1,4 @@
-package com.connect.core.service.post.iml;
+package com.connect.core.service.post.impl;
 
 import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.post.request.CreatePostRequest;

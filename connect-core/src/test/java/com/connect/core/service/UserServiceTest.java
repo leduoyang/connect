@@ -10,7 +10,7 @@ import com.connect.core.service.comment.ICommentService;
 import com.connect.core.service.post.IPostService;
 import com.connect.core.service.project.IProjectService;
 import com.connect.core.service.socialLink.ISocialLinkService;
-import com.connect.core.service.user.iml.UserServiceImpl;
+import com.connect.core.service.user.impl.UserServiceImpl;
 import com.connect.data.entity.User;
 import com.connect.data.repository.IFollowRepository;
 import com.connect.data.repository.IStarRepository;

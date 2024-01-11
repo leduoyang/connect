@@ -1,6 +1,5 @@
-package com.connect.core.service.user.iml;
+package com.connect.core.service.user.impl;
 
-import com.connect.data.entity.UserSecurity;
 import com.connect.data.repository.IUserSecurityRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,4 +1,4 @@
-package com.connect.core.service.socialLink.iml;
+package com.connect.core.service.socialLink.impl;
 
 import com.connect.api.common.RequestMetaInfo;
 import com.connect.common.enums.SocialLinkMap;

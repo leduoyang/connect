@@ -1,4 +1,4 @@
-package com.connect.core.service.user.iml;
+package com.connect.core.service.user.impl;
 
 import com.connect.api.comment.vo.QueryCommentVo;
 import com.connect.api.common.RequestMetaInfo;
