@@ -1,4 +1,4 @@
-package com.connect.core.service.project.iml;
+package com.connect.core.service.project.impl;
 
 import com.connect.api.common.RequestMetaInfo;
 import com.connect.api.project.request.CreateProjectRequest;

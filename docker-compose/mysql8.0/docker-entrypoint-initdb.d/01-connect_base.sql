@@ -23,7 +23,7 @@ CREATE TABLE `user` (
 CREATE INDEX idx_userId ON `user` (userId);
 CREATE INDEX idx_username ON `user` (username);
 
--- project table
+-- social_link table
 DROP TABLE IF EXISTS `social_link`;
 CREATE TABLE `social_link` (
     `id`                INT PRIMARY KEY AUTO_INCREMENT,
@@ -33,8 +33,24 @@ CREATE TABLE `social_link` (
     `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
     `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
     FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Project';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Social Link';
 CREATE INDEX idx_userid ON `social_link` (userId);
+
+-- experience table
+DROP TABLE IF EXISTS `experience`;
+CREATE TABLE `experience` (
+    `id`                INT PRIMARY KEY AUTO_INCREMENT,
+    `company`           VARCHAR(256) NOT NULL,
+    `title`             VARCHAR(256) NOT NULL,
+    `start`             DATE NOT NUll,
+    `until`             DATE NOT NUll,
+    `userId`            INT NOT NULL,
+    `status`            TINYINT(4) NOT NULL DEFAULT '0' COMMENT '0 - public, 1 - semi, 2 - private, 3 - deleted',
+    `db_create_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3),
+    `db_modify_time`    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP (3) ON UPDATE CURRENT_TIMESTAMP (3),
+    FOREIGN KEY (userId) REFERENCES `user`(userId) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Experience';
+CREATE INDEX idx_userid ON `experience` (userId);
 
 DROP TABLE IF EXISTS `email_verification`;
 CREATE TABLE `email_verification` (

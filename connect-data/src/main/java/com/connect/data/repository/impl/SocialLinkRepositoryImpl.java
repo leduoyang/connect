@@ -3,11 +3,9 @@ package com.connect.data.repository.impl;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
 import com.connect.data.dao.ISocialLinkDao;
-import com.connect.data.dao.IStarDao;
+import com.connect.data.dto.SocialLinkDto;
 import com.connect.data.entity.SocialLink;
-import com.connect.data.entity.Star;
 import com.connect.data.repository.ISocialLinkRepository;
-import com.connect.data.repository.IStarRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,6 +20,10 @@ public class SocialLinkRepositoryImpl implements ISocialLinkRepository {
 
     public SocialLinkRepositoryImpl(ISocialLinkDao socialLinkDao) {
         this.socialLinkDao = socialLinkDao;
+    }
+
+    public List<SocialLinkDto> internalQuerySocialLinkByUserId(long userId) {
+        return socialLinkDao.internalQuerySocialLinkByUserId(userId);
     }
 
     public void updateSocialLink(SocialLink socialLink) {

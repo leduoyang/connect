@@ -1,4 +1,4 @@
-package com.connect.core.service.follow.iml;
+package com.connect.core.service.follow.impl;
 
 import com.connect.api.common.RequestMetaInfo;
 import com.connect.common.enums.FollowStatus;

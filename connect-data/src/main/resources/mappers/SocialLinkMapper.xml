@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.connect.data.dao.ISocialLinkDao">
+    <resultMap id="socialLinkDtoResultMap" type="com.connect.data.dto.SocialLinkDto">
+        <id property="id" column="id"/>
+        <result property="platform" column="platform"/>
+        <result property="platformId" column="platform_id"/>
+    </resultMap>
+
     <resultMap id="socialLinkResultMap" type="com.connect.data.entity.SocialLink">
         <id property="id" column="id"/>
         <result property="platform" column="platform"/>
@@ -44,5 +50,12 @@
         AND platform = #{platform, jdbcType=VARCHAR}
         AND platform_id IS NOT NULL
         )
+    </select>
+
+    <select id="internalQuerySocialLinkByUserId" resultMap="socialLinkDtoResultMap">
+        SELECT id, platform, platform_id
+
+        FROM social_link
+        WHERE userId = #{userId, jdbcType=BIGINT}
     </select>
 </mapper>

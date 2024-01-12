@@ -3,7 +3,7 @@ package com.connect.web.auth;
 import com.connect.common.enums.UserRole;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.exception.ConnectErrorCode;
-import com.connect.core.service.user.iml.UserSecurityServiceImpl;
+import com.connect.core.service.user.impl.UserSecurityServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;

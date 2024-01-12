@@ -3,7 +3,7 @@
 <mapper namespace="com.connect.data.dao.IPostDao">
     <resultMap id="postDtoResultMap" type="com.connect.data.dto.PostDto">
         <id property="id" column="id"/>
-        <id property="username" column="username"/>
+        <result property="username" column="username"/>
         <result property="content" column="content"/>
         <result property="referenceId" column="referenceId"/>
         <result property="tags" column="tag"/>

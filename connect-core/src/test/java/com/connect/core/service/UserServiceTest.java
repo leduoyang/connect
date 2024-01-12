@@ -7,10 +7,11 @@ import com.connect.common.enums.UserStatus;
 import com.connect.common.exception.ConnectDataException;
 import com.connect.common.util.ImageUploadUtil;
 import com.connect.core.service.comment.ICommentService;
+import com.connect.core.service.experience.IExperienceService;
 import com.connect.core.service.post.IPostService;
 import com.connect.core.service.project.IProjectService;
 import com.connect.core.service.socialLink.ISocialLinkService;
-import com.connect.core.service.user.iml.UserServiceImpl;
+import com.connect.core.service.user.impl.UserServiceImpl;
 import com.connect.data.entity.User;
 import com.connect.data.repository.IFollowRepository;
 import com.connect.data.repository.IStarRepository;
@@ -57,6 +58,9 @@ public class UserServiceTest {
 
     @MockBean
     private ISocialLinkService socialLinkService;
+
+    @MockBean
+    private IExperienceService experienceService;
 
     @Autowired
     private UserServiceImpl userService;

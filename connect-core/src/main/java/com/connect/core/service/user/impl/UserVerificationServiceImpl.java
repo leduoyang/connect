@@ -1,4 +1,4 @@
-package com.connect.core.service.user.iml;
+package com.connect.core.service.user.impl;
 
 import com.connect.api.verification.request.QueryEmailVerificationRequest;
 import com.connect.api.verification.request.VerifyEmailVerificationRequest;
@@ -8,9 +8,7 @@ import com.connect.common.exception.ConnectErrorCode;
 import com.connect.common.util.EmailUtil;
 import com.connect.core.service.user.IUserService;
 import com.connect.core.service.user.IUserVerificationService;
-import com.connect.data.entity.User;
 import com.connect.data.entity.UserVerification;
-import com.connect.data.repository.IUserRepository;
 import com.connect.data.repository.IUserVerificationRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
