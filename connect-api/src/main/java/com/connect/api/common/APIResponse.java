@@ -10,6 +10,8 @@ public class APIResponse<T> {
     private T data;
     private String error;
 
+    private String elapsedTime;
+
     public APIResponse() {
     }
 
@@ -39,6 +41,14 @@ public class APIResponse<T> {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getElapsedTime() {
+        return elapsedTime;
+    }
+
+    public void setElapsedTime(String elapsedTime) {
+        this.elapsedTime = elapsedTime;
     }
 
     public String getMessage() {
